@@ -9,11 +9,15 @@ import java.util.Date;
  */
 public class R {
 
-    public static ResponseBuilder code(Integer code) {
-        return new ResponseBuilder(code);
+    public static ResponseR code(Integer code) {
+        return new ResponseR(code);
     }
 
-    public static class ResponseBuilder {
+    public static ResponseR deleteSuccess() {
+        return new ResponseR(204).message("删除成功").build();
+    }
+
+    public static class ResponseR {
         private String message;
         private Integer code;
         private Date timestamp;
@@ -30,17 +34,17 @@ public class R {
             return timestamp;
         }
 
-        public ResponseBuilder(Integer code) {
+        public ResponseR(Integer code) {
             this.code = code;
             this.timestamp = new Date();
         }
 
-        public ResponseBuilder message(String message) {
+        public ResponseR message(String message) {
             this.message = message;
             return this;
         }
 
-        public ResponseBuilder build() {
+        public ResponseR build() {
             return this;
         }
     }

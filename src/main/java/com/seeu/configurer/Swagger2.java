@@ -47,10 +47,10 @@ public class Swagger2 {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("YWQ Api Document")
-                .description("YWQ 项目 API 文档")
+                .title("广州美术馆 Api Document")
+                .description("广州美术馆 API 文档")
                 .version("1.0")
-                .termsOfServiceUrl("/api/v1/")
+                .termsOfServiceUrl("/api/")
                 .build();
     }
 

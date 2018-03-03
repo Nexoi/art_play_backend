@@ -39,9 +39,9 @@ package com.seeu.file;//package com.seeu.file;
 //    @GetMapping("/data/**")
 //    public Resource loadFile(HttpServletRequest request) {
 //        String filePath = request.getRequestURI().substring(6);// 去掉 '/data/' 这 6 个字符
-//        Resource resource = storageService.loadAsResource(filePath);
-////        return ResponseEntity.ok().body(resource);
-//        return resource;
+//        Resource material = storageService.loadAsResource(filePath);
+////        return ResponseEntity.ok().body(material);
+//        return material;
 //    }
 //
 //    @ApiOperation(value = "文件上传", notes = "只需要传入 file 参数即可，其余参数为用户权限，会自动注入，手动填写视为无效")

@@ -43,9 +43,9 @@ public class UserSignUpServiceImpl implements UserSignUpService {
     MD5Service md5Service;
     @Autowired
     private SMSService smsService;
-    @Value("${artshow.sms.regist_sendcode}")
+    @Value("${artshow.sms.regist_sendmessage}")
     private String message;
-    @Value("${artshow.headicon}")
+    @Value("${artshow.default_headicon}")
     private String headIcon;
 
     public SignUpPhoneResult sendPhoneMessage(String phone) {

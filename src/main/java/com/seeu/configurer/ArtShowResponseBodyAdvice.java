@@ -5,10 +5,12 @@ import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,28 +85,41 @@ public class ArtShowResponseBodyAdvice implements ResponseBodyAdvice {
 //            return returnValue;
         serverHttpResponse.getHeaders().setContentType(MediaType.APPLICATION_JSON); // 全部格成 JSON
 
-        if (mediaType.includes(MediaType.APPLICATION_JSON) ||
-                mediaType.includes(MediaType.APPLICATION_JSON_UTF8)) {
-            if (!serverHttpResponse.getHeaders().containsKey("NOT_TRANSFORM_BODY")) {  //有些错误已经格式化为指定的返回类型
-                HttpServletResponse response = ((ServletServerHttpResponse) serverHttpResponse).getServletResponse();
-                Map map = new HashMap();
-                map.put("timestamp", new Date().getTime());
-                map.put("status", response.getStatus());
-                map.put("path", serverHttpRequest.getURI().getPath());
-                map.put("version", "1.0");
-                if (response.getStatus() == 200) {
-                    map.put("data", returnValue);
-                } else {
-                    map.put("message", returnValue);
+        if (!serverHttpResponse.getHeaders().containsKey("NOT_TRANSFORM_BODY")) {  //有些错误已经格式化为指定的返回类型
+            // request
+            HttpServletRequest request = ((ServletServerHttpRequest) serverHttpRequest).getServletRequest();
+            Map<String, String[]> paramMap = request.getParameterMap();
+            Map params = new HashMap();
+            if (paramMap.size() != 0)
+                for (String name : paramMap.keySet()) {
+                    String[] value = paramMap.get(name);
+                    if (value == null || value.length == 0) continue;
+                    if (value.length == 1)
+                        params.put(name, value[0]);
+                    else
+                        params.put(name, value);
                 }
-                if (mediaType.includes(MediaType.APPLICATION_JSON))
-                    return JSONObject.toJSON(map); // 利用 fastJSON convert 数据
-                else
-                    return JSONObject.toJSON(map).toString(); // 根据 mediaType 的不同，Spring 会在 AbstractMessageConverterMethodProcessor#writeWithMessageConverters() 中产生不同的结果，如果 type 为 plain text 则会无法 convert json 文本
+            //
+            HttpServletResponse response = ((ServletServerHttpResponse) serverHttpResponse).getServletResponse();
+            Map map = new HashMap();
+            map.put("parameters", params); // 请求参数
+            map.put("timestamp", new Date().getTime());
+            map.put("status", response.getStatus());
+            map.put("path", serverHttpRequest.getURI().getPath());
+            map.put("version", "1.0");
+            int code = response.getStatus();
+            if (code >= 200 && code < 300) {
+                map.put("data", returnValue);
             } else {
-                return returnValue;
+                map.put("message", returnValue);
             }
+//            if (mediaType.includes(MediaType.APPLICATION_JSON)
+//                    || mediaType.includes(MediaType.APPLICATION_JSON_UTF8))
+            return JSONObject.toJSON(map); // 利用 fastJSON convert 数据
+//            else
+//                return JSONObject.toJSON(map).toString(); // 根据 mediaType 的不同，Spring 会在 AbstractMessageConverterMethodProcessor#writeWithMessageConverters() 中产生不同的结果，如果 type 为 plain text 则会无法 convert json 文本
+        } else {
+            return returnValue;
         }
-        return returnValue;
     }
 }

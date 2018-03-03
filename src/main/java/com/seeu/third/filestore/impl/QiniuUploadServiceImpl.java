@@ -8,8 +8,8 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import com.seeu.third.filestore.FileUploadService;
-import com.seeu.artshow.resource.model.Image;
-import com.seeu.artshow.resource.model.Video;
+import com.seeu.artshow.material.model.Image;
+import com.seeu.artshow.material.model.Video;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,8 +48,8 @@ public class QiniuUploadServiceImpl implements FileUploadService {
         image.setCreateTime(new Date());
         image.setHeight(imgHeight);
         image.setWidth(imgWidth);
-        image.setImageUrl(url);
-        image.setThumbImageUrl(url + "?imageView2/2/w/300");
+        image.setUrl(url);
+        image.setThumbUrl(url + "?imageView2/2/w/300");
         return image;
     }
 
@@ -144,8 +144,8 @@ public class QiniuUploadServiceImpl implements FileUploadService {
         image.setCreateTime(new Date());
         image.setHeight(imgHeight);
         image.setWidth(imgWidth);
-        image.setImageUrl(url);
-        image.setThumbImageUrl(url + "?imageView2/2/w/300");
+        image.setUrl(url);
+        image.setThumbUrl(url + "?imageView2/2/w/300");
         return image;
     }
 }

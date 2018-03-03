@@ -1,6 +1,5 @@
 package com.seeu.artshow.event_listener;
 
-import com.seeu.third.push.PushService;
 import com.seeu.artshow.event_listener.task.SignInTodayEvent;
 import com.seeu.artshow.utils.DateFormatterService;
 import org.slf4j.Logger;
@@ -16,8 +15,6 @@ import java.util.Random;
 @Component
 public class EventListenerController {
     Logger logger = LoggerFactory.getLogger(EventListenerController.class);
-    @Autowired
-    private PushService pushService;
 
     @Autowired
     private DateFormatterService dateFormatterService;

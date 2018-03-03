@@ -19,7 +19,7 @@ package com.seeu.configurer.httpstatus;//package com.seeu.configurer.httpstatus;
 //
 //    @RequestMapping(ERROR_PATH)
 //    public ResponseEntity errorPage(HttpServletRequest request) {
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("[error] no such resource found");
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("[error] no such material found");
 //    }
 //
 //    @Override

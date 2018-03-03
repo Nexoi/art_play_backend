@@ -1,7 +1,7 @@
 package com.seeu.third.filestore;
 
-import com.seeu.artshow.resource.model.Image;
-import com.seeu.artshow.resource.model.Video;
+import com.seeu.artshow.material.model.Image;
+import com.seeu.artshow.material.model.Video;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
