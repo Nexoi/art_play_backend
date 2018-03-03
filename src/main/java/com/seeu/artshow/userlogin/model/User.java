@@ -18,6 +18,7 @@ import java.util.List;
         @Index(name = "USERLOGIN_INDEX1", unique = true, columnList = "uid"),
         @Index(name = "USERLOGIN_INDEX2", unique = true, columnList = "phone"), // 因为虚拟用户的机制，不再设定为唯一
         @Index(name = "USERLOGIN_INDEX2", unique = false, columnList = "phone"),
+        @Index(name = "USERLOGIN_INDEX3", unique = true, columnList = "third_part_name"),
         @Index(name = "USERLOGIN_INDEX3", unique = false, columnList = "nickname"),
 })
 @DynamicUpdate
@@ -52,6 +53,10 @@ public class User implements UserDetails {
     @Column(length = 15)
     @Length(max = 15, message = "Phone Length could not larger than 15")
     private String phone;
+
+    @ApiParam(hidden = true)
+    @Column(name = "third_part_name", length = 45)
+    private String thirdPartName;
 
     @ApiParam(hidden = true)
     @Column(length = 40)
@@ -173,6 +178,14 @@ public class User implements UserDetails {
     public void setGender(GENDER gender) {
         this.gender = gender;
     }
+
+    public String getThirdPartName() {
+        return thirdPartName;
+    }
+
+    public void setThirdPartName(String thirdPartName) {
+        this.thirdPartName = thirdPartName;
+    }
     // 以下是权限验证块
 
 
@@ -192,6 +205,7 @@ public class User implements UserDetails {
         List<UserAuthRole> roles = this.getRoles();
         if (roles == null) return auths;
         for (UserAuthRole role : roles) {
+            if (role == null) continue;
             auths.add(new SimpleGrantedAuthority(role.getName()));
         }
         return auths;
@@ -204,7 +218,10 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.phone;
+        if (this.phone != null)
+            return this.phone;
+        else
+            return this.thirdPartName;
     }
 
     @ApiParam(hidden = true)

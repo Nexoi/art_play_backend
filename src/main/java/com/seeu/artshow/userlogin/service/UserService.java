@@ -8,6 +8,8 @@ public interface UserService {
 
     User findByPhone(String phone) throws NoSuchUserException;
 
+    User findByThirdPartUserName(String username) throws NoSuchUserException;
+
     User add(User user);
 
     User save(User user);

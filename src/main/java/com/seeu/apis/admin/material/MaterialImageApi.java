@@ -1,4 +1,4 @@
-package com.seeu.artshow.apis.admin.material;
+package com.seeu.apis.admin.material;
 
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.Image;

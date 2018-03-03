@@ -3,7 +3,6 @@ package com.seeu.artshow.userlogin.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.seeu.artshow.userlogin.model.ThirdUserLogin;
 import com.seeu.artshow.userlogin.service.ThirdPartTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,43 +19,43 @@ public class ThirdPartTokenServiceImpl implements ThirdPartTokenService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${qq.appid}")
-    private String qqAppId;
+//    @Value("${qq.appid}")
+//    private String qqAppId;
 
 
     @Override
-    public void validatedInfo(ThirdUserLogin.TYPE type, String username, String token, Processor processor) {
+    public void validatedInfo(ThirdPartTokenService.TYPE type, String username, String token, Processor processor) {
         if (type == null)
             processor.process(false, null, null, null);
-        if (type == ThirdUserLogin.TYPE.QQ)
-            qqValidate(username, token, processor);
-        if (type == ThirdUserLogin.TYPE.Weibo)
+//        if (type == ThirdUserLogin.TYPE.QQ)
+//            qqValidate(username, token, processor);
+        if (type == ThirdPartTokenService.TYPE.Weibo)
             weiboValidate(token, processor);
-        if (type == ThirdUserLogin.TYPE.WeChat)
+        if (type == ThirdPartTokenService.TYPE.WeChat)
             wxValidate(username, token, processor);
     }
 
 
-    private void qqValidate(String openId, String token, Processor processor) {
-        String url = "https://graph.qq.com/user/get_simple_userinfo" +
-                "?access_token=" + token +
-                "&oauth_consumer_key=" + qqAppId +
-                "&openid=" + openId +
-                "&format=json";
-        String voStr = restTemplate.getForObject(url, String.class);
-        if (voStr == null) return;
-        try {
-            JSONObject jo = JSON.parseObject(voStr);
-            if (null != jo.getString("nickname"))
-                processor.process(true, openId, jo.getString("nickname"), jo.getString("figureurl_qq_2"));
-            else
-                processor.process(false, null, null, null);
-            return;
-        } catch (JSONException e) {
-        }
-        // default
-        processor.process(false, null, null, null);
-    }
+//    private void qqValidate(String openId, String token, Processor processor) {
+//        String url = "https://graph.qq.com/user/get_simple_userinfo" +
+//                "?access_token=" + token +
+//                "&oauth_consumer_key=" + qqAppId +
+//                "&openid=" + openId +
+//                "&format=json";
+//        String voStr = restTemplate.getForObject(url, String.class);
+//        if (voStr == null) return;
+//        try {
+//            JSONObject jo = JSON.parseObject(voStr);
+//            if (null != jo.getString("nickname"))
+//                processor.process(true, openId, jo.getString("nickname"), jo.getString("figureurl_qq_2"));
+//            else
+//                processor.process(false, null, null, null);
+//            return;
+//        } catch (JSONException e) {
+//        }
+//        // default
+//        processor.process(false, null, null, null);
+//    }
 
     private void weiboValidate(String token, Processor processor) {
         String url = "https://api.weibo.com/oauth2/get_token_info" +
@@ -66,7 +65,7 @@ public class ThirdPartTokenServiceImpl implements ThirdPartTokenService {
         try {
             JSONObject object = JSONObject.parseObject(voStr);
             if (null != object.getString("uid"))
-                processor.process(true, object.getString("uid"), null, null);
+                processor.process(true, object.getString("uid"), object.getString("uid"), null);
             else
                 processor.process(false, null, null, null);
             return;

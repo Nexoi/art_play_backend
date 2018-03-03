@@ -1,7 +1,6 @@
 package com.seeu.artshow.userlogin.service;
 
 import com.seeu.artshow.userlogin.exception.*;
-import com.seeu.artshow.userlogin.model.ThirdUserLogin;
 import com.seeu.artshow.userlogin.model.User;
 
 /**
@@ -19,10 +18,12 @@ import com.seeu.artshow.userlogin.model.User;
  * 密码会被自动注册为 hashcode，登录时请前台传入用户的 hash 值进行验证
  * 邮件模版在 getContent 方法体内，验证地址在此类修改
  */
-public interface UserSignUpService {
+public interface UserSignInUpService {
 
 
-    SignUpPhoneResult sendPhoneMessage(String phone);
+    SignUpPhoneResult sendPhoneSignUpMessage(String phone);
+
+    SignUpPhoneResult sendPhoneSignInMessage(String phone);
 
     String genSignCheckToken(String phone, String code);
 
@@ -41,14 +42,14 @@ public interface UserSignUpService {
             PhoneNumberHasUsedException,
             JwtCodeException;
 
+    User signUpByPhone(String phone) throws PhoneNumberHasUsedException;
+
     /**
      * 第三方登陆
      *
-     * @param name
-     * @param token
      * @return
      */
-    User signUpWithThirdPart(ThirdUserLogin.TYPE type, String name, String token, String phone, String code, String signCheck) throws PhoneNumberHasUsedException, AccountNameAlreadyExistedException, JwtCodeException, ThirdPartTokenException;
+    User signUpWithThirdPart(ThirdPartTokenService.TYPE type, String openId, String nickname, String headIconUrl);
 
     /**
      * 注销用户
@@ -85,7 +86,5 @@ public interface UserSignUpService {
         }
     }
 
-
-    User signUpByAdmin(String name, String phone, String password) throws NickNameSetException, PhoneNumberHasUsedException, PasswordSetException;
 
 }

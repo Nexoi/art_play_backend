@@ -10,6 +10,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByPhone(@Param("phone") String phone);
 
+    User findByThirdPartName(@Param("username") String username);
+
     Page<User> findAllByUid(@Param("uid") Long uid, Pageable pageable);
 
     Page<User> findAllByPhoneLike(@Param("phone") String phoneLike, Pageable pageable);

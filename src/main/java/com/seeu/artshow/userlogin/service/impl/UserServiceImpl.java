@@ -30,6 +30,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByThirdPartUserName(String username) throws NoSuchUserException {
+        User user = repository.findByThirdPartName(username);
+        if (user == null)
+            throw new NoSuchUserException(null, username);
+        return user;
+    }
+
+    @Override
     public User add(User user) {
         if (user == null) return null;
         user.setUid(null);

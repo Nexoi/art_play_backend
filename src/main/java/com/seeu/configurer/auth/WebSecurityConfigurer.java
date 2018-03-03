@@ -27,7 +27,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     private Integer tokenInterval;
 
     @Autowired
-    private YWQAuthenticationProvider ywqAuthenticationProvider;
+    private ArtAuthenticationProvider artAuthenticationProvider;
 
     @Autowired
     private LoginSuccessHandle loginSuccessHandle;
@@ -41,7 +41,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.userDetailsService(authUserService()); // 只配置了一个数据源，建议用 provider 配置多个，如 CAS、QQ、Weibo 等
-        auth.authenticationProvider(ywqAuthenticationProvider);
+        auth.authenticationProvider(artAuthenticationProvider);
     }
 
 
@@ -58,7 +58,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .usernameParameter("username") // 用 email 登录
-                .loginPage("/api/v1/signin")
+                .loginPage("/signin/use-password")
                 //设置默认登录成功跳转页面
                 .defaultSuccessUrl("/signin-success")
                 .failureUrl("/signin-failure")
@@ -98,12 +98,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
         // 302 转 401 完成 REST-ful 的权限限制时返回 302 的不合理信息
         http.exceptionHandling()
-//                .accessDeniedHandler(new YWQAccessDeniedHandler());
+//                .accessDeniedHandler(new ArtAccessDeniedHandler());
                 //Actually Spring already configures default AuthenticationEntryPoint - LoginUrlAuthenticationEntryPoint
                 //This one is REST-specific addition to default one, that is based on PathRequest
                 .defaultAuthenticationEntryPointFor(
                         getRestAuthenticationEntryPoint(),
-                        new AntPathRequestMatcher("/api/**"));
+                        new AntPathRequestMatcher("/api/**")); // 登陆注册不应在此范围内
 
     }
 
