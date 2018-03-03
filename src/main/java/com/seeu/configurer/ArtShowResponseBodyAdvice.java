@@ -61,7 +61,7 @@ import java.util.Map;
  * "path": "/api/admin/v2/product-category/1"
  * }
  */
-@ControllerAdvice
+@ControllerAdvice(basePackages = {"com.seeu"})
 public class ArtShowResponseBodyAdvice implements ResponseBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Class aClass) {

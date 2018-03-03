@@ -14,7 +14,7 @@ public class R {
     }
 
     public static ResponseR deleteSuccess() {
-        return new ResponseR(204).message("删除成功").build();
+        return new ResponseR(200).message("删除成功").build();
     }
 
     public static class ResponseR {

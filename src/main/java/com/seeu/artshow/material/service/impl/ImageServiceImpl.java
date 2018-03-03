@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -36,5 +38,24 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image save(Image image) {
         return repository.save(image);
+    }
+
+    @Override
+    public Image changeName(Long imageId, String name) throws ResourceNotFoundException {
+        Image image = findOne(imageId);
+        image.setName(name);
+        return save(image);
+    }
+
+    @Override
+    public void delete(Long imageId) {
+        repository.delete(imageId);
+    }
+
+    @Override
+    public void delete(Collection<Long> imageIds) {
+        List<Image> imageList = repository.findAll(imageIds);
+        if (imageList.isEmpty()) return;
+        repository.delete(imageList);
     }
 }

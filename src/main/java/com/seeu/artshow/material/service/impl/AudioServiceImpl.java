@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class AudioServiceImpl implements AudioService {
@@ -37,5 +39,24 @@ public class AudioServiceImpl implements AudioService {
     @Override
     public Audio save(Audio audio) {
         return repository.save(audio);
+    }
+
+    @Override
+    public Audio changeName(Long audioId, String name) throws ResourceNotFoundException {
+        Audio audio = findOne(audioId);
+        audio.setName(name);
+        return save(audio);
+    }
+
+    @Override
+    public void delete(Long audioId) {
+        repository.delete(audioId);
+    }
+
+    @Override
+    public void delete(Collection<Long> audioIds) {
+        List<Audio> audioList = repository.findAll(audioIds);
+        if (audioList.isEmpty()) return;
+        repository.delete(audioList);
     }
 }

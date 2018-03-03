@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.List;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -35,5 +37,24 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public Video save(Video video) {
         return repository.save(video);
+    }
+
+    @Override
+    public Video changeName(Long videoId, String name) throws ResourceNotFoundException {
+        Video video = findOne(videoId);
+        video.setName(name);
+        return save(video);
+    }
+
+    @Override
+    public void delete(Long videoId) {
+        repository.delete(videoId);
+    }
+
+    @Override
+    public void delete(Collection<Long> videoIds) {
+        List<Video> videoList = repository.findAll(videoIds);
+        if (videoList.isEmpty()) return;
+        repository.delete(videoList);
     }
 }

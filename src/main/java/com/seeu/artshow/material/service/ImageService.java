@@ -5,6 +5,8 @@ import com.seeu.artshow.material.model.Image;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
+
 public interface ImageService {
     Page<Image> findAll(Pageable pageable);
 
@@ -12,6 +14,11 @@ public interface ImageService {
 
     Image findOne(Long id) throws ResourceNotFoundException;
 
-    
     Image save(Image image);
+
+    Image changeName(Long imageId, String name) throws ResourceNotFoundException;
+
+    void delete(Long imageId);
+
+    void delete(Collection<Long> imageIds);
 }

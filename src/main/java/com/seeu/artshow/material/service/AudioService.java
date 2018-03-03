@@ -5,6 +5,8 @@ import com.seeu.artshow.material.model.Audio;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
+
 public interface AudioService {
 
     Page<Audio> findAll(Pageable pageable);
@@ -14,4 +16,10 @@ public interface AudioService {
     Audio findOne(Long id) throws ResourceNotFoundException;
 
     Audio save(Audio audio);
+
+    Audio changeName(Long audioId, String name) throws ResourceNotFoundException;
+
+    void delete(Long audioId);
+
+    void delete(Collection<Long> audioIds);
 }
