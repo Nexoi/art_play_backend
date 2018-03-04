@@ -10,7 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ShowServiceImpl implements ShowService {
@@ -50,6 +53,12 @@ public class ShowServiceImpl implements ShowService {
     @Override
     public Page<Show> searchAll(String title, Pageable pageable) {
         return repository.findAllByTitleLikeOrderByStartTimeDesc("%" + title + "%", pageable);
+    }
+
+    @Override
+    public List<Show> findAll(Collection<Long> showIds) {
+        if (showIds == null || showIds.isEmpty()) return new ArrayList<>();
+        return repository.findAllByIdIn(showIds);
     }
 
     @Override

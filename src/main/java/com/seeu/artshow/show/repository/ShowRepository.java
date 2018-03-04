@@ -9,11 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
 
 public interface ShowRepository extends JpaRepository<Show, Long> {
     Page<Show> findAllByTitleLikeOrderByStartTimeDesc(@Param("title") String title, Pageable pageable);
 
     Page<Show> findAllByOrderByStartTimeDesc(Pageable pageable);
+
+    List<Show> findAllByIdIn(@Param("id") Collection<Long> ids);
 
     // 浏览一次
     @Transactional
