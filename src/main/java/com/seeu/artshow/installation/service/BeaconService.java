@@ -8,14 +8,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface BeaconService {
 
     Beacon findOne(String uuid) throws ResourceNotFoundException;
 
+    List<Beacon> findAll(Collection<String> uuids);
+
+    List<Beacon> findAll(Long groupId);
+
     Page<Beacon> findAll(Pageable pageable);
 
-    Page<Beacon> findAllByResourceGroups(Collection<ResourceGroup> resourceGroups, Pageable pageable);
+    Page<Beacon> findAllByResourceGroupIds(Collection<Long> resourceGroupIds, Pageable pageable);
 
     Beacon add(Beacon beacon) throws ActionParameterException;
 
@@ -25,5 +30,5 @@ public interface BeaconService {
 
     void delete(String uuid);
 
-    void delete(Collection<String> uuid);
+    void delete(Collection<String> uuids);
 }

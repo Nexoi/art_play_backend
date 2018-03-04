@@ -25,7 +25,7 @@ public class ShowMapServiceImpl implements ShowMapService {
     @Override
     public ShowMap findOne(Long mapId) throws ResourceNotFoundException {
         ShowMap map = repository.findOne(mapId);
-        if (map == null) throw new ResourceNotFoundException("show_map", "id: " + mapId);
+        if (map == null) throw new ResourceNotFoundException("无此地图 show_map", "id: " + mapId);
         return map;
     }
 

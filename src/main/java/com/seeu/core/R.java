@@ -17,6 +17,11 @@ public class R {
         return new ResponseR(200).message("删除成功").build();
     }
 
+    public static ResponseR noCodeMessage(String message) {
+        return new ResponseR(200).message(message).build();
+    }
+
+
     public static class ResponseR {
         private String message;
         private Integer code;

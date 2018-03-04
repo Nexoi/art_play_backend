@@ -48,9 +48,10 @@ public class Beacon {
     private Integer positionHeight;
 
     // 绑定信息
-    @OneToOne(targetEntity =ResourceGroup.class)
-    @JoinColumn(name = "resources_group_id")
-    private ResourceGroup resourcesGroup;
+//    @OneToOne(targetEntity =ResourceGroup.class)
+//    @JoinColumn(name = "resources_group_id")
+    @Column(name = "resources_group_id")
+    private Long resourcesGroupId;
 
     private Date updateTime;
 
@@ -134,11 +135,11 @@ public class Beacon {
         this.positionHeight = positionHeight;
     }
 
-    public ResourceGroup getResourcesGroup() {
-        return resourcesGroup;
+    public Long getResourcesGroupId() {
+        return resourcesGroupId;
     }
 
-    public void setResourcesGroup(ResourceGroup resourcesGroup) {
-        this.resourcesGroup = resourcesGroup;
+    public void setResourcesGroupId(Long resourcesGroupId) {
+        this.resourcesGroupId = resourcesGroupId;
     }
 }

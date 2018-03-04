@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class BeaconServiceImpl implements BeaconService {
@@ -28,13 +30,25 @@ public class BeaconServiceImpl implements BeaconService {
     }
 
     @Override
+    public List<Beacon> findAll(Collection<String> uuids) {
+        if (uuids != null && !uuids.isEmpty())
+            return repository.findAllByUuidIn(uuids);
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Beacon> findAll(Long groupId) {
+        return repository.findAllByResourcesGroupId(groupId);
+    }
+
+    @Override
     public Page<Beacon> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @Override
-    public Page<Beacon> findAllByResourceGroups(Collection<ResourceGroup> resourceGroups, Pageable pageable) {
-        return repository.findAllByResourcesGroupIn(resourceGroups, pageable);
+    public Page<Beacon> findAllByResourceGroupIds(Collection<Long> resourceGroupIds, Pageable pageable) {
+        return repository.findAllByResourcesGroupIdIn(resourceGroupIds, pageable);
     }
 
     @Override
@@ -57,7 +71,7 @@ public class BeaconServiceImpl implements BeaconService {
             savedBeacon.setPositionHeight(beacon.getPositionHeight());
             savedBeacon.setPositionWidth(beacon.getPositionWidth());
         }
-        if (beacon.getResourcesGroup() != null) savedBeacon.setResourcesGroup(beacon.getResourcesGroup());
+        if (beacon.getResourcesGroupId() != null) savedBeacon.setResourcesGroupId(beacon.getResourcesGroupId());
         if (beacon.getShowMap() != null) savedBeacon.setShowMap(beacon.getShowMap());
         if (beacon.getStatus() != null) savedBeacon.setStatus(beacon.getStatus());
         savedBeacon.setUpdateTime(new Date());
@@ -78,7 +92,8 @@ public class BeaconServiceImpl implements BeaconService {
     }
 
     @Override
-    public void delete(Collection<String> uuid) {
-        repository.deleteAllByUuid(uuid);
+    public void delete(Collection<String> uuids) {
+        if (uuids != null && !uuids.isEmpty())
+            repository.deleteAllByUuidIn(uuids);
     }
 }

@@ -8,9 +8,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface BeaconRepository extends JpaRepository<Beacon, String> {
-    Page<Beacon> findAllByResourcesGroupIn(@Param("resourcesGroup") Collection<ResourceGroup> resourceGroups, Pageable pageable);
+    Page<Beacon> findAllByResourcesGroupIdIn(@Param("resourcesGroupId") Collection<Long> resourceGroupIds, Pageable pageable);
 
-    void deleteAllByUuid(@Param("uuid") Collection<String> uuids);
+    List<Beacon> findAllByResourcesGroupId(@Param("resourcesGroupId") Long resourcesGroupId);
+
+    List<Beacon> findAllByUuidIn(@Param("uuid") Collection<String> uuids);
+
+    void deleteAllByUuidIn(@Param("uuid") Collection<String> uuids);
 }

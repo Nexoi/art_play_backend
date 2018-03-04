@@ -4,7 +4,6 @@ import com.seeu.artshow.userlogin.exception.*;
 import com.seeu.artshow.userlogin.model.User;
 import com.seeu.artshow.userlogin.model.UserAuthRole;
 import com.seeu.artshow.userlogin.repository.UserAuthRoleRepository;
-import com.seeu.artshow.userlogin.repository.UserRepository;
 import com.seeu.artshow.userlogin.service.ThirdPartTokenService;
 import com.seeu.artshow.userlogin.service.UserService;
 import com.seeu.artshow.userlogin.service.UserSignInUpService;
