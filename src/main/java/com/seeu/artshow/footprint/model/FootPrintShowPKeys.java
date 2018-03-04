@@ -6,6 +6,9 @@ public class FootPrintShowPKeys implements Serializable {
     private Long uid;
     private Long showId;
 
+    public FootPrintShowPKeys() {
+    }
+
     public FootPrintShowPKeys(Long uid, Long showId) {
         this.uid = uid;
         this.showId = showId;
