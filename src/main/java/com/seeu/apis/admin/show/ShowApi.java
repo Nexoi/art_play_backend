@@ -45,14 +45,14 @@ public class ShowApi {
                     Date endTime,
                     Long posterImageId,
                     String introduceText) throws ResourceNotFoundException, ActionParameterException {
-        Image image = imageService.findOne(posterImageId);
         Show show = new Show();
-        show.setPosterImage(image);
         show.setTitle(title);
         show.setShowHallName(showHallName);
         show.setStartTime(startTime);
         show.setEndTime(endTime);
         show.setIntroduceText(introduceText);
+        if (posterImageId != null)
+            show.setPosterImage(imageService.findOne(posterImageId));
         return showService.add(show);
     }
 
@@ -64,15 +64,15 @@ public class ShowApi {
                        Date endTime,
                        Long posterImageId,
                        String introduceText) throws ResourceNotFoundException, ActionParameterException {
-        Image image = imageService.findOne(posterImageId);
         Show show = new Show();
         show.setId(showId);
-        show.setPosterImage(image);
         show.setTitle(title);
         show.setShowHallName(showHallName);
         show.setStartTime(startTime);
         show.setEndTime(endTime);
         show.setIntroduceText(introduceText);
+        if (posterImageId != null)
+            show.setPosterImage(imageService.findOne(posterImageId));
         return showService.update(show);
     }
 
