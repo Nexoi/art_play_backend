@@ -10,6 +10,7 @@ import com.seeu.core.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -59,8 +60,9 @@ public class ResourceGroupApi {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResourceGroup add(@PathVariable Long showId,
-                             String name) throws ActionParameterException {
+                             @RequestParam(required = true) String name) throws ActionParameterException {
         ResourceGroup group = new ResourceGroup();
         group.setShowId(showId);
         group.setName(name);
@@ -69,25 +71,25 @@ public class ResourceGroupApi {
 
     @PutMapping("/{groupId}")
     public ResourceGroup changeName(@PathVariable Long groupId,
-                                    String name) throws ActionParameterException, ResourceNotFoundException {
+                                    @RequestParam(required = true) String name) throws ActionParameterException, ResourceNotFoundException {
         return resourceGroupService.changeName(groupId, name);
     }
 
     @PutMapping("/{groupId}/bind-beacons")
     public ResourceGroup bindBeacons(@PathVariable Long groupId,
-                                     String[] uuids) throws ResourceNotFoundException, ActionParameterException {
+                                     @RequestParam(required = true) String[] uuids) throws ResourceNotFoundException, ActionParameterException {
         return resourceGroupService.bindBeacons(groupId, Arrays.asList(uuids));
     }
 
     @PutMapping("/{groupId}/bind-ar")
     public ResourceGroup bindBeacons(@PathVariable Long groupId,
-                                     Long imageId) throws ResourceNotFoundException {
+                                     @RequestParam(required = true) Long imageId) throws ResourceNotFoundException {
         return resourceGroupService.bindAR(groupId, imageId);
     }
 
     @DeleteMapping("/{groupId}/remove-beacons")
     public ResourceGroup unbindBeacons(@PathVariable Long groupId,
-                                       String uuid) throws ResourceNotFoundException, ActionParameterException {
+                                       @RequestParam(required = true) String uuid) throws ResourceNotFoundException, ActionParameterException {
         return resourceGroupService.cancelBindBeacon(groupId, uuid);
     }
 

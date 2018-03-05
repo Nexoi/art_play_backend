@@ -70,7 +70,8 @@ public class MaterialImageApi {
 
     @PutMapping("/{imageId}")
     @ResponseStatus(HttpStatus.OK)
-    public Image changeName(@PathVariable Long imageId, String name) throws ResourceNotFoundException {
+    public Image changeName(@PathVariable Long imageId,
+                            @RequestParam(required = true) String name) throws ResourceNotFoundException {
         return imageService.changeName(imageId, name);
     }
 
@@ -83,7 +84,7 @@ public class MaterialImageApi {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public R.ResponseR deleteAll(@RequestParam Long[] imageIds) {
+    public R.ResponseR deleteAll(@RequestParam(required = true) Long[] imageIds) {
         imageService.delete(Arrays.asList(imageIds));
         return R.deleteSuccess();
     }

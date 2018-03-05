@@ -10,6 +10,7 @@ import com.seeu.core.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("adminShowMapApi")
@@ -33,6 +34,7 @@ public class ShowMapApi {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ShowMap add(String name,
                        String showHallName,
                        Integer width,

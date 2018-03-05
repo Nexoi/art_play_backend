@@ -10,6 +10,7 @@ import com.seeu.core.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("adminBeaconApi")
@@ -32,6 +33,7 @@ public class BeaconApi {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Beacon add(@RequestParam(required = true) String name,
                       @RequestParam(required = true) String uuid,
                       @RequestParam(required = true) String majorValue,
@@ -41,7 +43,6 @@ public class BeaconApi {
                       @RequestParam(required = false) Long mapId,
                       @RequestParam(required = false) Integer width,
                       @RequestParam(required = false) Integer height) throws ResourceNotFoundException, ActionParameterException {
-        ShowMap map = showMapService.findOne(mapId);
         Beacon beacon = new Beacon();
         beacon.setName(name);
         beacon.setUuid(uuid);
@@ -49,9 +50,11 @@ public class BeaconApi {
         beacon.setMinorValue(minorValue);
         beacon.setAvailableRange(availableRange);
         beacon.setStatus(status);
-        beacon.setShowMap(map);
         beacon.setPositionWidth(width);
         beacon.setPositionHeight(height);
+        if (mapId != null)
+            beacon.setShowMap(showMapService.findOne(mapId));
+
         return beaconService.add(beacon);
     }
 

@@ -70,7 +70,8 @@ public class MaterialAudioApi {
 
     @PutMapping("/{audioId}")
     @ResponseStatus(HttpStatus.OK)
-    public Audio changeName(@PathVariable Long audioId, String name) throws ResourceNotFoundException {
+    public Audio changeName(@PathVariable Long audioId,
+                            @RequestParam(required = true) String name) throws ResourceNotFoundException {
         return audioService.changeName(audioId, name);
     }
 
@@ -84,7 +85,7 @@ public class MaterialAudioApi {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public R.ResponseR deleteAll(@RequestParam Long[] audioIds) {
+    public R.ResponseR deleteAll(@RequestParam(required = true) Long[] audioIds) {
         audioService.delete(Arrays.asList(audioIds));
         return R.deleteSuccess();
     }

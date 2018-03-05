@@ -73,7 +73,8 @@ public class MaterialVideoApi {
 
     @PutMapping("/{videoId}")
     @ResponseStatus(HttpStatus.OK)
-    public Video changeName(@PathVariable Long videoId, String name) throws ResourceNotFoundException {
+    public Video changeName(@PathVariable Long videoId,
+                            @RequestParam(required = true) String name) throws ResourceNotFoundException {
         return videoService.changeName(videoId, name);
     }
 
@@ -86,7 +87,7 @@ public class MaterialVideoApi {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public R.ResponseR deleteAll(@RequestParam Long[] videoIds) {
+    public R.ResponseR deleteAll(@RequestParam(required = true) Long[] videoIds) {
         videoService.delete(Arrays.asList(videoIds));
         return R.deleteSuccess();
     }
