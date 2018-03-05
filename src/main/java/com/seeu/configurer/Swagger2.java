@@ -37,16 +37,16 @@ public class Swagger2 {
                 .build();
     }
 
-//    @Bean
-//    public Docket adminApi() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .groupName("管理员平台")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .apis(RequestHandlerSelectors.basePackage("com.seeu.apis"))
-//                .paths(PathSelectors.ant("/api/admin/v1/**"))
-//                .build();
-//    }
+    @Bean
+    public Docket adminApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("管理员平台")
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.seeu.apis"))
+                .paths(PathSelectors.ant("/api/admin/v1/**"))
+                .build();
+    }
 
 
     private ApiInfo apiInfo() {
