@@ -65,10 +65,24 @@ public class ResourceApi {
         return R.noCodeMessage("点赞成功");
     }
 
+    @ApiOperation("取消点赞该资源")
+    @DeleteMapping("/items/{itemId}/like")
+    public R.ResponseR cancelLikeItem(@PathVariable Long itemId) throws ResourceNotFoundException {
+        resourceItemService.cancelLikeOnce(itemId);
+        return R.noCodeMessage("取消点赞成功");
+    }
+
     @ApiOperation("点赞该资源组")
     @PostMapping("/{groupId}/like")
     public R.ResponseR likeGroup(@PathVariable Long groupId) throws ResourceNotFoundException {
         resourceGroupService.likeOnce(groupId);
         return R.noCodeMessage("点赞成功");
+    }
+
+    @ApiOperation("取消点赞该资源组")
+    @DeleteMapping("/{groupId}/like")
+    public R.ResponseR cancelLikeGroup(@PathVariable Long groupId) throws ResourceNotFoundException {
+        resourceGroupService.cancelLikeOnce(groupId);
+        return R.noCodeMessage("取消点赞成功");
     }
 }

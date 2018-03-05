@@ -16,10 +16,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,7 +70,20 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         // 查询参数
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
-        return beaconService.findAllByResourceGroupIds(showFolderIds, request);
+        Page beaconPage = beaconService.findAllByResourceGroupIds(showFolderIds, request);
+        // 填充 ResourceGroup 数据进入 Beacon
+        List<Beacon> beaconList = beaconPage.getContent();
+        Map<Long, ResourceGroup> groups = new HashMap<>();
+        for (ResourceGroup group : showFolders) {
+            if (group == null) continue;
+            groups.put(group.getId(), group);
+        }
+        for (Beacon beacon : beaconList) {
+            if (beacon == null) continue;
+            if (beacon.getResourcesGroupId() == null) continue;
+            beacon.setResourceGroup(groups.get(beacon.getResourcesGroupId()));
+        }
+        return beaconPage;
     }
 
     @Override
@@ -134,7 +144,11 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
             throw new ActionParameterException("传入参数 [beacon:uuids] 有误，无此 beacon 信息");
         group.setBeacons(beacons);
         group.setBeaconsBindTime(new Date());
-        return repository.save(group);
+        group = repository.save(group);
+        // 将第一个 Beacon 的信息作为 group 的地理信息
+        Beacon beacon = beacons.get(0);
+        group = bindMapInfo(groupId, beacon.getPositionWidth(), beacon.getPositionHeight(), beacon.getShowMap());
+        return group;
     }
 
     @Override
@@ -143,6 +157,41 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         ResourceGroup group = findOne(groupId);
         group.setAr(arImage);
         group.setArBindTime(new Date());
+        return repository.save(group);
+    }
+
+    @Override
+    public ResourceGroup cancelBindBeacon(Long groupId, String uuid) throws ResourceNotFoundException, ActionParameterException {
+        ResourceGroup group = findOne(groupId);
+        List<Beacon> beacons = group.getBeacons();
+        if (beacons == null || beacons.isEmpty()) throw new ActionParameterException("取消绑定失败！该资源并未绑定此 beacon");
+        boolean flag = false;
+        for (Beacon beacon : beacons) {
+            if (beacon == null) continue;
+            if (beacon.getUuid().equalsIgnoreCase(uuid)) {
+                beacons.remove(beacon);
+                flag = true;
+            }
+        }
+        if (flag)
+            return repository.save(group);
+        throw new ActionParameterException("取消绑定失败！该资源并未绑定此 beacon");
+    }
+
+    @Override
+    public ResourceGroup cancelBindAR(Long groupId) throws ResourceNotFoundException {
+        ResourceGroup group = findOne(groupId);
+        group.setArBindTime(null);
+        group.setAr(null);
+        return repository.save(group);
+    }
+
+    @Override
+    public ResourceGroup bindMapInfo(Long groupId, Integer width, Integer height, ShowMap map) throws ResourceNotFoundException {
+        ResourceGroup group = findOne(groupId);
+        group.setPositionWidth(width);
+        group.setPositionHeight(height);
+        group.setShowMap(map);
         return repository.save(group);
     }
 

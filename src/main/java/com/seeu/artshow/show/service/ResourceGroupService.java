@@ -3,6 +3,7 @@ package com.seeu.artshow.show.service;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.Beacon;
+import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.show.model.ResourceGroup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,12 @@ public interface ResourceGroupService {
     ResourceGroup bindBeacons(Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException;
 
     ResourceGroup bindAR(Long groupId, Long imageId) throws ResourceNotFoundException;
+
+    ResourceGroup cancelBindBeacon(Long groupId, String uuid) throws ResourceNotFoundException, ActionParameterException;
+
+    ResourceGroup cancelBindAR(Long groupId) throws ResourceNotFoundException;
+
+    ResourceGroup bindMapInfo(Long groupId, Integer width, Integer height, ShowMap map) throws ResourceNotFoundException;
 
     void delete(Long groupId);
 

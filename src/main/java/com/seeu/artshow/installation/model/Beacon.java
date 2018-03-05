@@ -53,6 +53,9 @@ public class Beacon {
     @Column(name = "resources_group_id")
     private Long resourcesGroupId;
 
+    @Transient
+    private ResourceGroup resourceGroup;
+
     private Date updateTime;
 
     public String getName() {
@@ -141,5 +144,13 @@ public class Beacon {
 
     public void setResourcesGroupId(Long resourcesGroupId) {
         this.resourcesGroupId = resourcesGroupId;
+    }
+
+    public ResourceGroup getResourceGroup() {
+        return resourceGroup;
+    }
+
+    public void setResourceGroup(ResourceGroup resourceGroup) {
+        this.resourceGroup = resourceGroup;
     }
 }

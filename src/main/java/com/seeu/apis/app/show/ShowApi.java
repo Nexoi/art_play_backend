@@ -98,4 +98,10 @@ public class ShowApi {
         return R.noCodeMessage("点赞成功");
     }
 
+    @ApiOperation("取消点赞该展览")
+    @DeleteMapping("/{showId}/like")
+    public R.ResponseR cancelLikeGroup(@PathVariable Long showId) throws ResourceNotFoundException {
+        showService.cancelLikeOnce(showId);
+        return R.noCodeMessage("取消点赞成功");
+    }
 }
