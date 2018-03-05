@@ -53,7 +53,11 @@ public class BeaconServiceImpl implements BeaconService {
 
     @Override
     public Beacon add(@Validated Beacon beacon) throws ActionParameterException {
-        if (beacon == null) throw new ActionParameterException("传入参数不完整【Beacon】");
+        if (beacon == null || beacon.getUuid() == null) throw new ActionParameterException("传入参数不完整【Beacon】");
+        // 查看有木有
+        Beacon b = repository.findOne(beacon.getUuid());
+        if (b != null)
+            throw new ActionParameterException("已经存在该 Beacon 【 " + b.getUuid() + " 】了，不可重复添加");
         beacon.setUpdateTime(new Date());
         return repository.save(beacon);
     }
