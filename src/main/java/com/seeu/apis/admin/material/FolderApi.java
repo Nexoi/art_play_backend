@@ -5,6 +5,7 @@ import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.Folder;
 import com.seeu.artshow.material.service.FolderService;
 import com.seeu.core.R;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+@Api(tags = "素材", description = "文件夹")
 @RestController("adminFolderApi")
 @RequestMapping("/api/admin/v1/material/folder")
 public class FolderApi {

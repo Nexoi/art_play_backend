@@ -70,7 +70,7 @@ public class LoginApi {
 
     @ApiOperation(value = "用 TOKEN 登录【TOKEN 需要放在 Cookie 里面】", notes = "HTTP Header 里面放 Cookie 字段，值为： 'token=eysdhewudhushiusxxxxxx'（字符串，不加引号）")
     @PostMapping("/signin/use-token")
-    public ResponseEntity<R.ResponseR> resetUserContext(@CookieValue(required = true) String token) {
+    public ResponseEntity<R.ResponseR> resetUserContext(@CookieValue(required = false) String token) {
         // 验证 TOKEN
         if (token == null || token.trim().length() == 0)
             return ResponseEntity.status(403).body(R.code(403).message("TOKEN 验证失败！"));

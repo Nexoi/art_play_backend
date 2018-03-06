@@ -7,6 +7,7 @@ import com.seeu.artshow.installation.model.Beacon;
 import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.service.ResourceGroupService;
 import com.seeu.core.R;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,8 @@ import java.util.Arrays;
 /**
  * 资源组
  */
+
+@Api(tags = "资源组", description = "CRUD")
 @RestController("adminResourceGroupApi")
 @RequestMapping("/api/admin/v1/show/{showId}/resources-group")
 public class ResourceGroupApi {

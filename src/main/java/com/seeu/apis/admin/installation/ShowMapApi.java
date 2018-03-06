@@ -7,12 +7,14 @@ import com.seeu.artshow.installation.service.ShowMapService;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.material.service.ImageService;
 import com.seeu.core.R;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Api(tags = "地图", description = "CRUD")
 @RestController("adminShowMapApi")
 @RequestMapping("/api/admin/v1/show/maps")
 public class ShowMapApi {

@@ -1,10 +1,10 @@
 package com.seeu.apis.admin.material;
 
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.material.model.Video;
 import com.seeu.artshow.material.model.Folder;
-import com.seeu.artshow.material.service.VideoService;
+import com.seeu.artshow.material.model.Video;
 import com.seeu.artshow.material.service.FolderService;
+import com.seeu.artshow.material.service.VideoService;
 import com.seeu.artshow.material.vo.VideoPageVO;
 import com.seeu.core.R;
 import com.seeu.third.filestore.FileUploadService;
