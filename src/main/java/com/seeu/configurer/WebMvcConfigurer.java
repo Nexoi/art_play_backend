@@ -4,16 +4,26 @@ package com.seeu.configurer;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.seeu.artshow.userlogin.model.User;
+import com.seeu.artshow.utils.AppAuthFlushService;
+import com.seeu.artshow.utils.jwt.JwtUtil;
+import com.seeu.artshow.utils.jwt.PhoneCodeToken;
+import com.seeu.core.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -25,6 +35,11 @@ import java.util.List;
 public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
+
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private AppAuthFlushService appAuthFlushService;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -56,6 +71,35 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 //                System.out.println("SESSION ID >> " + request.getRequestedSessionId());
                 request.getSession().setAttribute("loginSuccessURL", request.getHeader("referer"));
+                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                if (principal != null && principal instanceof UserDetails) {
+                    User authUser = (User) principal;
+                    return true; // 说明已经登录了
+                } else {
+                    // 验证 token
+                    String signToken = null;
+                    // from cookie
+                    Cookie[] cookies = request.getCookies();
+                    if (cookies != null)
+                        for (Cookie cookie : cookies) {
+                            if ("token".equals(cookie.getName())) {
+                                signToken = cookie.getValue();
+                                if (signToken.trim().length() == 0) {
+                                    continue;
+                                }
+                                break;
+                            }
+                        }
+                    if (signToken != null) {
+                        // 验证 token 是否有效
+                        PhoneCodeToken phoneCodeToken = jwtUtil.parseToken(signToken);
+                        if (phoneCodeToken != null && phoneCodeToken.getCode() != null) {
+                            // 更新登录信息
+                            appAuthFlushService.flush(Long.parseLong(phoneCodeToken.getCode()));
+                        }
+                        return true;
+                    }
+                }
                 return true;
             }
 
@@ -70,6 +114,6 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 //                    modelAndView.addObject("signed", authUser.getUsername()); // email
 //                }
             }
-        }).addPathPatterns("/**").excludePathPatterns("/signin", "/*.xml");
+        }).addPathPatterns("/api/**").excludePathPatterns("/signin", "/signin/**", "/*.xml");
     }
 }
