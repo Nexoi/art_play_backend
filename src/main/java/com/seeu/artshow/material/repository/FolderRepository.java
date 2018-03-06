@@ -9,6 +9,8 @@ import java.util.List;
 public interface FolderRepository extends JpaRepository<Folder, Long> {
     Folder findByName(@Param("name") String name);
 
+    Folder findFirstByType(@Param("type") Folder.TYPE type);
+
     List<Folder> findAllByType(@Param("type") Folder.TYPE type);
 
     void deleteByName(@Param("name") String name);

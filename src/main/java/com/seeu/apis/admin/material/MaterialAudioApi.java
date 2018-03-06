@@ -11,12 +11,14 @@ import com.seeu.third.filestore.FileUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -34,11 +36,18 @@ public class MaterialAudioApi {
     @ApiOperation("获取列表")
     @GetMapping("/list")
     @ResponseStatus(HttpStatus.OK)
-    public AudioPageVO list(@RequestParam Long folderId,
+    public AudioPageVO list(@RequestParam(required = false) Long folderId,
                             @RequestParam(defaultValue = "0") Integer page,
-                            @RequestParam(defaultValue = "10") Integer size) throws ResourceNotFoundException {
+                            @RequestParam(defaultValue = "10") Integer size) {
         // 查看是否有此 folder
-        Folder folder = folderService.findOne(folderId);
+        Folder folder = null;
+        try {
+            if (folderId != null)
+                folder = folderService.findOne(folderId);
+        } catch (ResourceNotFoundException e) {
+            folder = folderService.findOne(Folder.TYPE.audio);
+            return new AudioPageVO(null, new PageImpl<Audio>(new ArrayList<>()));
+        }
         return new AudioPageVO(folder, audioService.findAll(folder.getId(), new PageRequest(page, size)));
     }
 

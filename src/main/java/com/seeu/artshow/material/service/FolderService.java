@@ -7,6 +7,10 @@ import com.seeu.artshow.material.model.Folder;
 import java.util.List;
 
 public interface FolderService {
+
+    // 找一个 type 类型的文件夹，第一个
+    Folder findOne(Folder.TYPE type);
+
     Folder findOne(Long id) throws ResourceNotFoundException;
 
     Folder findByName(String name) throws ResourceNotFoundException;

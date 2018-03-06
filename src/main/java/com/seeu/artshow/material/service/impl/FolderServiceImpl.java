@@ -18,6 +18,11 @@ public class FolderServiceImpl implements FolderService {
     private FolderRepository repository;
 
     @Override
+    public Folder findOne(Folder.TYPE type) {
+        return repository.findFirstByType(type);
+    }
+
+    @Override
     public Folder findOne(Long id) throws ResourceNotFoundException {
         Folder folder = repository.findOne(id);
         if (folder == null)
