@@ -47,11 +47,26 @@ public class LoginApi {
     @Autowired
     private UserService userService;
 
+    private String getToken(String phone, Long uid) throws Exception {
+        PhoneCodeToken codeToken = new PhoneCodeToken();
+        codeToken.setPhone(phone);
+        codeToken.setCode("" + uid);
+        String subject = jwtUtil.generalSubject(codeToken);
+        String token = jwtUtil.createJWT(jwtConstant.getJWT_ID(), subject, jwtConstant.getJWT_TOKEN_INTERVAL());
+        return token;
+    }
+
+    private void writeToken2Cookie(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("token", token);
+        cookie.setPath("/");
+        cookie.setMaxAge(86000 * 30);
+        response.addCookie(cookie);
+    }
 
     @ApiOperation("刷新 TOKEN")
     @GetMapping("/refresh-token")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity flushToken(@AuthenticationPrincipal User authUser) {
+    public ResponseEntity flushToken(@AuthenticationPrincipal User authUser, HttpServletResponse response) {
         PhoneCodeToken codeToken = new PhoneCodeToken();
         codeToken.setPhone(authUser.getPhone());
         codeToken.setCode("" + authUser.getUid());
@@ -62,6 +77,7 @@ public class LoginApi {
             map.put("token", token);
             map.put("interval", jwtConstant.getJWT_TOKEN_INTERVAL() / 1000);
             map.put("interval_unit", "秒");
+            writeToken2Cookie(response, token);
             return ResponseEntity.ok(map);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(R.code(500).message("TOKEN 生成失败！请稍后再试"));
@@ -94,7 +110,8 @@ public class LoginApi {
     public ResponseEntity<R.ResponseR> signInWithPhone(@RequestParam(required = true) String phone,
                                                        @RequestParam(required = true) String code,
                                                        @ApiParam(hidden = true, name = "校验签名，存在 cookie 中，不需要手动传入")
-                                                       @CookieValue(required = false) String signCheck) {
+                                                       @CookieValue(required = false) String signCheck,
+                                                       HttpServletResponse response) throws Exception {
         // 验证 TOKEN
         if (signCheck == null || signCheck.trim().length() == 0)
             return ResponseEntity.status(400).body(R.code(400).message("登录失败！验证码错误"));
@@ -116,12 +133,17 @@ public class LoginApi {
         try {
             User user = userService.findByPhone(phoneCodeToken.getPhone());
             appAuthFlushService.flush(user.getUid());
+            // 写 token
+            writeToken2Cookie(response, getToken(user.getPhone(), user.getUid()));
             return ResponseEntity.ok(R.code(200).message("登录成功"));
         } catch (NoSuchUserException e) {
             // 注册！
             try {
-                if (null != userSignInUpService.signUpByPhone(phone))
+                User user = userSignInUpService.signUpByPhone(phone);
+                if (null != user) {
+                    writeToken2Cookie(response, getToken(user.getPhone(), user.getUid()));
                     return ResponseEntity.ok(R.code(200).message("注册并登录成功"));
+                }
             } catch (PhoneNumberHasUsedException e1) {
                 // 不可能的🙈
             }
@@ -158,7 +180,8 @@ public class LoginApi {
             notes = "微信：需要傳入：username[openid]、access_token[access_token]；")
     @PostMapping("/signin/use-wechat")
     public ResponseEntity<R.ResponseR> signUpWithThirdPart(@RequestParam(required = true) String username,
-                                                           @RequestParam(required = true) String access_token) {
+                                                           @RequestParam(required = true) String access_token,
+                                                           HttpServletResponse response) throws Exception {
         final ThirdPartUserVO user = new ThirdPartUserVO();
         thirdPartTokenService.validatedInfo(ThirdPartTokenService.TYPE.WeChat, username, access_token, new ThirdPartTokenService.Processor() {
             @Override
@@ -179,13 +202,15 @@ public class LoginApi {
             try {
                 User authUser = userService.findByThirdPartUserName(user.getOpenId());
                 appAuthFlushService.flush(authUser.getUid());
+                writeToken2Cookie(response, getToken(authUser.getPhone(), authUser.getUid()));
                 return ResponseEntity.ok(R.code(200).message("登录成功"));
             } catch (NoSuchUserException e) {
                 // 注册！
-                userSignInUpService.signUpWithThirdPart(ThirdPartTokenService.TYPE.WeChat,
+                User u = userSignInUpService.signUpWithThirdPart(ThirdPartTokenService.TYPE.WeChat,
                         user.getOpenId(),
                         user.getNickname(),
                         user.getHeadIconUrl()); // 会自动登录的
+                writeToken2Cookie(response, getToken(u.getPhone(), u.getUid()));
                 return ResponseEntity.ok(R.code(200).message("注册并登录成功"));
             }
         } else {
@@ -196,7 +221,8 @@ public class LoginApi {
     @ApiOperation(value = "用微博登录",
             notes = "微博：需要傳入：access_token[access_token]；")
     @PostMapping("/signin/use-weibo")
-    public ResponseEntity<R.ResponseR> signUpWithThirdPart(@RequestParam(required = true) String access_token) {
+    public ResponseEntity<R.ResponseR> signUpWithThirdPart(@RequestParam(required = true) String access_token,
+                                                           HttpServletResponse response) throws Exception {
         final ThirdPartUserVO user = new ThirdPartUserVO();
         thirdPartTokenService.validatedInfo(ThirdPartTokenService.TYPE.WeChat, null, access_token, new ThirdPartTokenService.Processor() {
             @Override
@@ -217,13 +243,15 @@ public class LoginApi {
             try {
                 User authUser = userService.findByThirdPartUserName(user.getOpenId());
                 appAuthFlushService.flush(authUser.getUid());
+                writeToken2Cookie(response, getToken(authUser.getPhone(), authUser.getUid()));
                 return ResponseEntity.ok(R.code(200).message("登录成功"));
             } catch (NoSuchUserException e) {
                 // 注册！
-                userSignInUpService.signUpWithThirdPart(ThirdPartTokenService.TYPE.Weibo,
+                User u = userSignInUpService.signUpWithThirdPart(ThirdPartTokenService.TYPE.Weibo,
                         user.getOpenId(),
                         user.getNickname(),
                         user.getHeadIconUrl()); // 会自动登录的
+                writeToken2Cookie(response, getToken(u.getPhone(), u.getUid()));
                 return ResponseEntity.ok(R.code(200).message("注册并登录成功"));
             }
         } else {
