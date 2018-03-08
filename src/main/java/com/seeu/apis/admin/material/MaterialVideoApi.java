@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,8 @@ public class MaterialVideoApi {
             folder = folderService.findOne(Folder.TYPE.audio);
             return new VideoPageVO(null, new PageImpl<Video>(new ArrayList<>()));
         }
-        return new VideoPageVO(folder, videoService.findAll(folder.getId(), new PageRequest(page, size)));
+        Sort sort = new Sort(Sort.Direction.DESC, "createTime");
+        return new VideoPageVO(folder, videoService.findAll(folder.getId(), new PageRequest(page, size, sort)));
     }
 
     @GetMapping("/{videoId}")
