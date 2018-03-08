@@ -41,8 +41,9 @@ public class MaterialAudioApi {
         try {
             if (folderId != null)
                 folder = folderService.findOne(folderId);
+            else
+                folder = folderService.findOne(Folder.TYPE.audio);
         } catch (ResourceNotFoundException e) {
-            folder = folderService.findOne(Folder.TYPE.audio);
             return new AudioPageVO(null, new PageImpl<Audio>(new ArrayList<>()));
         }
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");

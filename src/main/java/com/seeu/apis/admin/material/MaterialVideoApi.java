@@ -41,8 +41,9 @@ public class MaterialVideoApi {
         try {
             if (folderId != null)
                 folder = folderService.findOne(folderId);
+            else
+                folder = folderService.findOne(Folder.TYPE.video);
         } catch (ResourceNotFoundException e) {
-            folder = folderService.findOne(Folder.TYPE.audio);
             return new VideoPageVO(null, new PageImpl<Video>(new ArrayList<>()));
         }
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
