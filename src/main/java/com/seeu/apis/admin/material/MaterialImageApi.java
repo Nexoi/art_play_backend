@@ -7,7 +7,6 @@ import com.seeu.artshow.material.service.FolderService;
 import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.material.vo.ImagePageVO;
 import com.seeu.core.R;
-import com.seeu.third.filestore.FileUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,8 +28,6 @@ public class MaterialImageApi {
     private FolderService folderService;
     @Autowired
     private ImageService imageService;
-    @Autowired
-    private FileUploadService fileUploadService;
 
     @ApiOperation("获取列表")
     @GetMapping("/list")
@@ -59,13 +55,12 @@ public class MaterialImageApi {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Image add(@RequestParam(required = true) MultipartFile file,
+    public Image add(@RequestParam(required = true) String url,
                      @RequestParam(required = true) Long folderId,
                      @RequestParam(required = true) String name) throws ResourceNotFoundException, IOException {
         Folder folder = folderService.findOne(folderId);
         if (folder.getType() != Folder.TYPE.picture)
             throw new ResourceNotFoundException("folder", "无此图片文件夹");
-        String url = fileUploadService.upload(file);
         Image image = new Image();
         image.setCreateTime(new Date());
         image.setFolderId(folderId);
