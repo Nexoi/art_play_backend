@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleOtherException(HttpServletRequest request, DataIntegrityViolationException exc) {
         if (exc.getCause() instanceof ConstraintViolationException) {
             ConstraintViolationException throwable = (ConstraintViolationException) exc.getCause();
-            return ResponseEntity.badRequest().body("参数值重复，已存在过该记录，数据存储失败 【参数描述： " + throwable.getConstraintName() + " 】");
+            return ResponseEntity.status(HttpStatus.LOCKED).body("数据修改操作失败，存在其余地方的引用，请先删除引用 【参数描述： " + throwable.getConstraintName() + " 】");
         }
         return ResponseEntity.badRequest().body("参数值重复，已存在过该记录，数据存储失败");
     }
