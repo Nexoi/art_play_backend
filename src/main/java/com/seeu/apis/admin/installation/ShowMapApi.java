@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class ShowMapApi {
     @GetMapping
     public Page<ShowMap> list(@RequestParam(defaultValue = "0") Integer page,
                               @RequestParam(defaultValue = "10") Integer size) {
-        return showMapService.findAll(new PageRequest(page, size));
+        return showMapService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
     }
 
     @GetMapping("/{mapId}")
