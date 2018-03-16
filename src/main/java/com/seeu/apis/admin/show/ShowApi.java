@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,8 +45,8 @@ public class ShowApi {
     @ResponseStatus(HttpStatus.CREATED)
     public Show add(String title,
                     String showHallName,
-                    Date startTime,
-                    Date endTime,
+                    @DateTimeFormat(pattern="yyyy-MM-dd") Date startTime,
+                    @DateTimeFormat(pattern="yyyy-MM-dd") Date endTime,
                     Long posterImageId,
                     String introduceText) throws ResourceNotFoundException, ActionParameterException {
         Show show = new Show();
@@ -63,8 +64,8 @@ public class ShowApi {
     public Show update(@PathVariable Long showId,
                        String title,
                        String showHallName,
-                       Date startTime,
-                       Date endTime,
+                       @DateTimeFormat(pattern="yyyy-MM-dd") Date startTime,
+                       @DateTimeFormat(pattern="yyyy-MM-dd") Date endTime,
                        Long posterImageId,
                        String introduceText) throws ResourceNotFoundException, ActionParameterException {
         Show show = new Show();
