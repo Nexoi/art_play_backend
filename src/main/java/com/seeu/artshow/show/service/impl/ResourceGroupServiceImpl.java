@@ -90,7 +90,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     public Page<ResourceGroup> findAllByAR(Long showId, Pageable pageable) {
         Sort sort = new Sort(Sort.Direction.DESC, "arBindTime");
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
-        return repository.findAllByShowId(showId, request);
+        return repository.findAllByShowIdAndArNotNull(showId, request);
     }
 
     @Override

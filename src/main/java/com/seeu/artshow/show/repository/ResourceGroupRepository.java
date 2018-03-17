@@ -20,6 +20,8 @@ public interface ResourceGroupRepository extends JpaRepository<ResourceGroup, Lo
 
     Page<ResourceGroup> findAllByShowId(@Param("showId") Long showId, Pageable pageable);
 
+    Page<ResourceGroup> findAllByShowIdAndArNotNull(@Param("showId") Long showId, Pageable pageable);
+
     List<ResourceGroup> findAllByShowId(@Param("showId") Long showId);
 
     Page<ResourceGroup> findAllByShowMap(@Param("showMap") ShowMap showMap, Pageable pageable);
