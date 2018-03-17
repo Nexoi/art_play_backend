@@ -76,6 +76,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         Map<Long, ResourceGroup> groups = new HashMap<>();
         for (ResourceGroup group : showFolders) {
             if (group == null) continue;
+            group.setBeacons(null); // !IMPORTANT
             groups.put(group.getId(), group);
         }
         for (Beacon beacon : beaconList) {
