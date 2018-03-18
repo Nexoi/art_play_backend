@@ -1,6 +1,7 @@
 package com.seeu.apis.admin.show;
 
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.material.vo.WebPageVO;
 import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.service.ResourceItemService;
 import com.seeu.core.R;
@@ -43,8 +44,9 @@ public class ResourceItemApi {
 
     @PostMapping("/web")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResourceItem addWebPage(@PathVariable Long groupId, @RequestParam(required = true) String title, String coverImageUrl, @RequestParam(required = true) String contentHtml) throws ResourceNotFoundException {
-        return resourceItemService.addWebPage(groupId, title, coverImageUrl, contentHtml);
+    public ResourceItem addWebPage(@PathVariable Long groupId,
+                                   @RequestBody WebPageVO vo) throws ResourceNotFoundException {
+        return resourceItemService.addWebPage(groupId, vo.getTitle(), vo.getCoverImageUrl(), vo.getContentHtml());
     }
 
     @PutMapping("/{itemId}")
