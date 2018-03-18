@@ -4,9 +4,16 @@ import com.seeu.artshow.userlogin.exception.NoSuchUserException;
 import com.seeu.artshow.userlogin.model.User;
 import com.seeu.artshow.userlogin.repository.UserRepository;
 import com.seeu.artshow.userlogin.service.UserService;
+import com.seeu.artshow.userlogin.vo.UserVO;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -60,5 +67,28 @@ public class UserServiceImpl implements UserService {
         // if (user.getPhone() != null) existedUser.setPhone(user.getPhone()); // 不允许修改手机！
         if (user.getGender() != null) existedUser.setGender(user.getGender());
         return repository.save(existedUser);
+    }
+
+    @Override
+    public Page<UserVO> findAll(String word, Pageable pageable) {
+        Page page = null;
+        if (word == null || word.length() == 0)
+            page = repository.findAll(pageable);
+        else {
+            String w = "%" + word + "%";
+            page = repository.findAllByUsernameLikeOrPhoneLike(w, w, pageable);
+        }
+        if (page != null && page.getContent().size() != 0) {
+            List<UserVO> vos = new ArrayList<>();
+            List<User> users = page.getContent();
+            for (User user : users) {
+                if (user == null) continue;
+                UserVO vo = new UserVO();
+                BeanUtils.copyProperties(user, vo);
+                vos.add(vo);
+            }
+            return new PageImpl<UserVO>(vos, pageable, page.getTotalElements());
+        }
+        return new PageImpl<UserVO>(new ArrayList<>());
     }
 }

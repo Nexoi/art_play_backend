@@ -2,6 +2,9 @@ package com.seeu.artshow.userlogin.service;
 
 import com.seeu.artshow.userlogin.exception.NoSuchUserException;
 import com.seeu.artshow.userlogin.model.User;
+import com.seeu.artshow.userlogin.vo.UserVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
     User findOne(Long uid) throws NoSuchUserException;
@@ -22,4 +25,7 @@ public interface UserService {
      */
     User insertSelective(User user) throws NoSuchUserException;
 
+    // admin
+
+    Page<UserVO> findAll(String word, Pageable pageable);
 }
