@@ -17,7 +17,7 @@ public class UserInfoApi {
     private UserService userService;
 
     @GetMapping("/search")
-    public Page<UserVO> list(@RequestParam String word,
+    public Page<UserVO> list(@RequestParam(required = false) String word,
                              @RequestParam(defaultValue = "0") Integer page,
                              @RequestParam(defaultValue = "10") Integer size) {
         return userService.findAll(word, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "lastLoginTime")));

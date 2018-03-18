@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
             page = repository.findAll(pageable);
         else {
             String w = "%" + word + "%";
-            page = repository.findAllByUsernameLikeOrPhoneLike(w, w, pageable);
+            page = repository.findAllByNicknameLikeOrPhoneLike(w, w, pageable);
         }
         if (page != null && page.getContent().size() != 0) {
             List<UserVO> vos = new ArrayList<>();
