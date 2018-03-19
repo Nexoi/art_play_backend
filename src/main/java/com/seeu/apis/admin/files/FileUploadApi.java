@@ -1,5 +1,6 @@
 package com.seeu.apis.admin.files;
 
+import com.seeu.artshow.material.model.Image;
 import com.seeu.third.filestore.FileUploadService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,10 @@ public class FileUploadApi {
         map.put("url", url);
         map.put("size", size);
         return map;
+    }
+
+    @PostMapping("/image")
+    public Image uploadImage(MultipartFile file) throws IOException {
+        return fileUploadService.uploadImage(file);
     }
 }

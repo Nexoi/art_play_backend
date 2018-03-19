@@ -60,6 +60,8 @@ public class MaterialImageApi {
     @ResponseStatus(HttpStatus.CREATED)
     public Image add(@RequestParam(required = true) String url,
                      @RequestParam(required = true) Long folderId,
+                     @RequestParam(required = true) Integer width,
+                     @RequestParam(required = true) Integer height,
                      @RequestParam(required = true) String name) throws ResourceNotFoundException, IOException {
         Folder folder = folderService.findOne(folderId);
         if (folder.getType() != Folder.TYPE.picture)
@@ -70,8 +72,8 @@ public class MaterialImageApi {
         image.setName(name);
         image.setUrl(url);
         image.setThumbUrl(url);
-        image.setHeight(null);
-        image.setWidth(null);
+        image.setHeight(height);
+        image.setWidth(width);
         return imageService.save(image);
     }
 
