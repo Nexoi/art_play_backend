@@ -67,6 +67,10 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
         registry.addInterceptor(new HandlerInterceptorAdapter() {
 
+            private void recordUser(String sessionId, boolean isLogin) {
+
+            }
+
             @Override
             public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 //                System.out.println("SESSION ID >> " + request.getRequestedSessionId());
@@ -74,6 +78,7 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                 Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 if (principal != null && principal instanceof UserDetails) {
                     User authUser = (User) principal;
+                    recordUser(request.getSession().getId(), true);
                     return true; // 说明已经登录了
                 } else {
                     // 验证 token
@@ -96,9 +101,11 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                         if (phoneCodeToken != null && phoneCodeToken.getCode() != null) {
                             // 更新登录信息
                             appAuthFlushService.flush(Long.parseLong(phoneCodeToken.getCode()));
+                            recordUser(request.getSession().getId(), true);
                         }
                         return true;
                     }
+                    recordUser(request.getSession().getId(), false);
                 }
                 return true;
             }
