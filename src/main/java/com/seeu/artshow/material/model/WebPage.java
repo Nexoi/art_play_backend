@@ -24,6 +24,11 @@ public class WebPage {
 
     private String title;
 
+    private String author;
+
+    @Column(length = 1024)
+    private String introduce;
+
     @Column(length = 1024)
     private String coverImageUrl;
 
@@ -116,5 +121,21 @@ public class WebPage {
 
     public void setWechatUrl(String wechatUrl) {
         this.wechatUrl = wechatUrl;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 }

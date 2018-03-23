@@ -115,24 +115,26 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
-    public ResourceItem addWebPage(Long groupId, String title, String coverImageUrl, String contentHtml) {
+    public ResourceItem addWebPage(Long groupId, String title, String author, String coverImageUrl, String introduce, String contentHtml) {
         // 先持久化 resourceItem，生成 id
         ResourceItem item = new ResourceItem();
         item.setResourcesGroupId(groupId);
         item.setId(null);
         item.setLikeTimes(0L);
         item.setViewTimes(0L);
-        item.setType(ResourceItem.TYPE.AUDIO);
+        item.setType(ResourceItem.TYPE.WEB);
         item.setUpdateTime(new Date());
         item.setName(title);
         // item.setUrl(HOST + "/web/001");
         item = repository.save(item); // 持久1，拿到 id
-        item.setUrl(HOST + "/web/" + item.getId());
+        item.setUrl(HOST + "/web/" + item.getId() + ".html");
         item = repository.save(item); // 持久2，更新 url
         // 将 id 赋值至 webpage，再持久化 webpage
         WebPage webPage = new WebPage();
         webPage.setResourceItemId(item.getId());
         webPage.setTitle(title);
+        webPage.setAuthor(author);
+        webPage.setIntroduce(introduce);
         webPage.setCoverImageUrl(coverImageUrl);
         webPage.setContentHtml(contentHtml);
         try {

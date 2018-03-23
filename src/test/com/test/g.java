@@ -1,51 +1,72 @@
 package com.test;
 
-import java.util.Scanner;
-
+import java.io.*;
+import java.util.StringTokenizer;
 public class g {
+    static class InputReader {
+        public BufferedReader reader;
+        public StringTokenizer tokenizer;
+
+        public InputReader(InputStream stream) {
+            reader = new BufferedReader(new InputStreamReader(stream), 32768);
+            tokenizer = null;
+        }
+
+        public String next() {
+            while (tokenizer == null || !tokenizer.hasMoreTokens()) {
+                try {
+                    tokenizer = new StringTokenizer(reader.readLine());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return tokenizer.nextToken();
+        }
+
+        public int nextInt() {
+            return Integer.parseInt(next());
+        }
+    }
     public static void main(String[] args) {
-        Scanner scanner = new Scanner("2\n" +
-                "3 5\n" +
-                "1 2 3\n" +
-                "1 2 3 4 5\n" +
-                "4 7\n" +
-                "1 5 6 7\n" +
-                "2 2 2 2 3 3 4");
-        g s = new g();
-        int T = scanner.nextInt();
+        InputStream inputStream = System.in;
+        OutputStream outputStream = System.out;
+        PrintWriter out = new PrintWriter(outputStream);
+        InputReader input = new InputReader(inputStream);
+        int T = input.nextInt();
         for (int t = 0; t < T; t++) {
-            int A = scanner.nextInt();
-            int B = scanner.nextInt();
+            int A = input.nextInt();
+            int B = input.nextInt();
             int[] arr_a = new int[A];
             int[] arr_b = new int[B];
             for (int a = 0; a < A; a++) {
-                arr_a[a] = scanner.nextInt();
+                arr_a[a] = input.nextInt();
             }
             for (int b = 0; b < B; b++) {
-                arr_b[b] = scanner.nextInt();
+                arr_b[b] = input.nextInt();
             }
-            Node re_a = s.create(arr_a);
-            Node re_b = s.create(arr_b);
+            Node re_a = create(arr_a);
+            Node re_b = create(arr_b);
             Node p = null;
             if (re_a.data < re_b.data) {
-                s.compare(re_a, re_b);
+                compare(re_a, re_b);
                 p = re_a;
             } else {
-                s.compare(re_b, re_a);
+                compare(re_b, re_a);
                 p = re_b;
             }
             while (p != null) {
                 if (p.next == null)
-                    System.out.print(p.data);
+                    out.print(p.data);
                 else
-                    System.out.print(p.data + " ");
+                    out.print(p.data + " ");
                 p = p.next;
             }
-            System.out.println();
+            out.println();
         }
+        out.flush();
     }
 
-    class Node {
+    static class Node {
         int data;
         Node next;
 
@@ -54,7 +75,7 @@ public class g {
         }
     }
 
-    public Node create(int[] arr) {
+    public static Node create(int[] arr) {
         Node head = new Node(arr[0]);
         Node tail = head;
         for (int p = 1; p < arr.length; p++) {
@@ -67,26 +88,38 @@ public class g {
     }
 
     // 将 b 合并到 a
-    public void compare(Node a, Node b) {
-        if (b == null) return;
-        if (a.next == null) {
-            if (a.data <= b.data) {
-                a.next = b;
-                return;
-            }
-        } else {
-            if (a.data > b.data) {
-                compare(b, a);
-                return;
-            }
-            if (a.data <= b.data && a.next.data >= b.data) {
+    public static void compare(Node a, Node b) {
+        while (true) {
+            if (b == null) return;
+            if (a.next == null) {
+                if (a.data <= b.data) {
+                    a.next = b;
+                    return;
+                }
+            } else if (a.data == b.data) {
                 Node temp_a = a.next;
                 Node temp_b = b.next;
                 a.next = b;
                 b.next = temp_a;
-                compare(a.next, temp_b);
-            } else {
-                compare(a.next, b);
+//                compare(a.next, temp_b);
+                a = a.next;
+                b = temp_b;
+                continue;
+            } else if (a.data < b.data) {
+                if (a.next.data > b.data) {
+                    Node temp_a = a.next;
+                    Node temp_b = b.next;
+                    a.next = b;
+                    b.next = temp_a;
+//                  compare(a.next, temp_b);
+                    a = a.next;
+                    b = temp_b;
+                    continue;
+                } else {
+//                  compare(a.next, b);
+                    a = a.next;
+                    continue;
+                }
             }
         }
     }

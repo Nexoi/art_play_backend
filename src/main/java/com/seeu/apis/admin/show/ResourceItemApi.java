@@ -46,7 +46,7 @@ public class ResourceItemApi {
     @ResponseStatus(HttpStatus.CREATED)
     public ResourceItem addWebPage(@PathVariable Long groupId,
                                    @RequestBody WebPageVO vo) throws ResourceNotFoundException {
-        return resourceItemService.addWebPage(groupId, vo.getTitle(), vo.getCoverImageUrl(), vo.getContentHtml());
+        return resourceItemService.addWebPage(groupId, vo.getTitle(), vo.getAuthor(), vo.getCoverImageUrl(), vo.getIntroduce(), vo.getContentHtml());
     }
 
     @PutMapping("/{itemId}")
