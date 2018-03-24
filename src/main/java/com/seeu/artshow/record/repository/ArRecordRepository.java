@@ -7,13 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
-public interface ArRecordRepository extends JpaRepository<ArRecord,Integer>{
+public interface ArRecordRepository extends JpaRepository<ArRecord, Integer> {
 
     // 记录一次
     @Transactional
     @Modifying
     @Query("update ArRecord r set r.times = r.times + 1 where r.day = :day")
     void record(@Param("day") Integer day);
+
+    List<ArRecord> findAllByDayBetween(@Param("startDay") Integer startDay, @Param("endDay") Integer endDay);
 
 }

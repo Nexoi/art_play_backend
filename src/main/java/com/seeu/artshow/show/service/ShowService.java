@@ -2,6 +2,7 @@ package com.seeu.artshow.show.service;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.show.model.Show;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,15 +20,19 @@ public interface ShowService {
 
     void cancelLikeOnce(Long showId) throws ResourceNotFoundException;
 
+    void audioPlusOne(Long showId) throws ResourceNotFoundException;
+
+    void audioMinusOne(Long showId) throws ResourceNotFoundException;
+
     Page<Show> findAll(Pageable pageable);
 
     Page<Show> searchAll(String title, Pageable pageable);
 
     List<Show> findAll(Collection<Long> showIds);
 
-    Show add(@Validated Show show) throws ActionParameterException;
+    Show add(@Validated Show show, Image image) throws ActionParameterException;
 
-    Show update(@Validated Show show) throws ActionParameterException, ResourceNotFoundException;
+    Show update(@Validated Show show, Image image) throws ActionParameterException, ResourceNotFoundException;
 
     void delete(Long showId);
 

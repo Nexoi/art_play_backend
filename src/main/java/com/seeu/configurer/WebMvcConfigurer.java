@@ -4,6 +4,8 @@ package com.seeu.configurer;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.seeu.artshow.record.model.UserRecordCache;
+import com.seeu.artshow.record.service.RecordService;
 import com.seeu.artshow.userlogin.model.User;
 import com.seeu.artshow.utils.AppAuthFlushService;
 import com.seeu.artshow.utils.jwt.JwtUtil;
@@ -40,6 +42,8 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
     private JwtUtil jwtUtil;
     @Autowired
     private AppAuthFlushService appAuthFlushService;
+    @Autowired
+    private RecordService recordService;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -68,7 +72,11 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new HandlerInterceptorAdapter() {
 
             private void recordUser(String sessionId, boolean isLogin) {
-
+                recordService.recordUser(
+                        sessionId,
+                        isLogin
+                                ? UserRecordCache.TYPE.REGISTED
+                                : UserRecordCache.TYPE.NICK);
             }
 
             @Override

@@ -3,6 +3,7 @@ package com.seeu.apis.app.show;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.footprint.model.FootPrintShow;
 import com.seeu.artshow.footprint.service.FootPrintShowService;
+import com.seeu.artshow.record.service.RecordService;
 import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.service.ResourceGroupService;
@@ -29,6 +30,8 @@ public class ShowApi {
     private ResourceGroupService resourceGroupService;
     @Autowired
     private FootPrintShowService footPrintShowService;
+    @Autowired
+    private RecordService recordService;
 
 
     @ApiOperation("封面展览列表（默认10条）")
@@ -58,6 +61,8 @@ public class ShowApi {
         showService.viewOnce(showId); // 记录一次浏览量
         if (user != null) // 记录足迹
             footPrintShowService.setFootPrint(user.getUid(), show);
+        // 统计信息
+        recordService.recordShow(showId);
         return show;
     }
 

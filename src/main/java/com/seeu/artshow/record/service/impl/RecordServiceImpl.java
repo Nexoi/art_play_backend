@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -78,6 +79,24 @@ public class RecordServiceImpl implements RecordService {
         record.setTimes(1 + record.getTimes());
         qrCodeRecordRepository.save(record);
 
+    }
+
+    @Override
+    public void recordDeviceByType(VISIT_TYPE type) {
+        if (null == type) return;
+        switch (type) {
+            case AR:
+                recordAr();
+                return;
+            case BEACON:
+                recordBeacon();
+                return;
+            case QRCODE:
+                recordQRCode();
+                return;
+            default:
+                return;
+        }
     }
 
     @Override
@@ -151,36 +170,100 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<RecordArrayItem> findAr(Integer startDay, Integer endDay) {
-        return null;
+        List<ArRecord> records = arRecordRepository.findAllByDayBetween(startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (ArRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 
     @Override
     public List<RecordArrayItem> findBeacon(Integer startDay, Integer endDay) {
-        return null;
+        List<BeaconRecord> records = beaconRecordRepository.findAllByDayBetween(startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (BeaconRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 
     @Override
     public List<RecordArrayItem> findQRCode(Integer startDay, Integer endDay) {
-        return null;
+        List<QRCodeRecord> records = qrCodeRecordRepository.findAllByDayBetween(startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (QRCodeRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 
     @Override
     public List<RecordArrayItem> findResourceGroup(Long groupId, Integer startDay, Integer endDay) {
-        return null;
+        List<ResourceGroupRecord> records = resourceGroupRecordRepository.findAllByGroupIdAndDayBetween(groupId, startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (ResourceGroupRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 
     @Override
     public List<RecordArrayItem> findResource(Long resourceId, Integer startDay, Integer endDay) {
-        return null;
+        List<ResourceRecord> records = resourceRecordRepository.findAllByResourceIdAndDayBetween(resourceId, startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (ResourceRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 
     @Override
     public List<RecordArrayItem> findShow(Long showId, Integer startDay, Integer endDay) {
-        return null;
+        List<ShowRecord> records = showRecordRepository.findAllByShowIdAndDayBetween(showId, startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (ShowRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 
     @Override
     public List<RecordArrayItem> findUser(UserRecord.TYPE type, Integer startDay, Integer endDay) {
-        return null;
+        if (null == type) return new ArrayList<>();
+        List<UserRecord> records = userRecordRepository.findAllByTypeAndDayBetween(type, startDay, endDay);
+        if (records.isEmpty()) return new ArrayList<>();
+        List<RecordArrayItem> items = new ArrayList<>();
+        for (UserRecord record : records) {
+            RecordArrayItem item = new RecordArrayItem();
+            item.setDay("" + record.getDay());
+            item.setTimes(record.getTimes());
+            items.add(item);
+        }
+        return items;
     }
 }

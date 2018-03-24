@@ -13,6 +13,8 @@ public interface RecordService {
 
     void recordQRCode();
 
+    void recordDeviceByType(VISIT_TYPE type);
+
     void recordResourceGroup(Long groupId);
 
     void recordResource(Long resourceId);
@@ -39,4 +41,10 @@ public interface RecordService {
     List<RecordArrayItem> findShow(Long showId, Integer startDay, Integer endDay);
 
     List<RecordArrayItem> findUser(UserRecord.TYPE type, Integer startDay, Integer endDay);
+
+    enum VISIT_TYPE {
+        AR,
+        BEACON,
+        QRCODE,
+    }
 }

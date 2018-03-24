@@ -2,7 +2,7 @@ package com.seeu.apis.admin.show;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.material.service.ImageService;
+import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.service.ShowService;
 import com.seeu.core.R;
@@ -22,8 +22,6 @@ import java.util.Date;
 public class ShowApi {
     @Autowired
     private ShowService showService;
-    @Autowired
-    private ImageService imageService;
 
     @GetMapping("/search")
     public Page<Show> list(@RequestParam(required = false) String word,
@@ -40,44 +38,56 @@ public class ShowApi {
         return showService.findOne(showId);
     }
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Show add(String title,
-                    String showHallName,
-                    @DateTimeFormat(pattern="yyyy-MM-dd") Date startTime,
-                    @DateTimeFormat(pattern="yyyy-MM-dd") Date endTime,
-                    Long posterImageId,
-                    String introduceText) throws ResourceNotFoundException, ActionParameterException {
+                    @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
+                    @DateTimeFormat(pattern = "yyyy-MM-dd") Date endTime,
+                    String introduceText,
+                    Integer imageHeight,
+                    Integer imageWidth,
+                    String imageUrl,
+                    String imageThumbUrl) throws ResourceNotFoundException, ActionParameterException {
         Show show = new Show();
         show.setTitle(title);
-        show.setShowHallName(showHallName);
         show.setStartTime(startTime);
         show.setEndTime(endTime);
         show.setIntroduceText(introduceText);
-        if (posterImageId != null)
-            show.setPosterImage(imageService.findOne(posterImageId));
-        return showService.add(show);
+        Image image = new Image();
+        image.setName(title + "海报");
+        image.setUrl(imageUrl);
+        image.setThumbUrl(imageThumbUrl);
+        image.setWidth(imageWidth);
+        image.setHeight(imageHeight);
+        return showService.add(show, image);
     }
 
     @PutMapping("/{showId}")
     public Show update(@PathVariable Long showId,
                        String title,
-                       String showHallName,
-                       @DateTimeFormat(pattern="yyyy-MM-dd") Date startTime,
-                       @DateTimeFormat(pattern="yyyy-MM-dd") Date endTime,
-                       Long posterImageId,
-                       String introduceText) throws ResourceNotFoundException, ActionParameterException {
+                       @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
+                       @DateTimeFormat(pattern = "yyyy-MM-dd") Date endTime,
+                       String introduceText,
+                       Integer imageHeight,
+                       Integer imageWidth,
+                       String imageUrl,
+                       String imageThumbUrl) throws ResourceNotFoundException, ActionParameterException {
         Show show = new Show();
         show.setId(showId);
         show.setTitle(title);
-        show.setShowHallName(showHallName);
         show.setStartTime(startTime);
         show.setEndTime(endTime);
         show.setIntroduceText(introduceText);
-        if (posterImageId != null)
-            show.setPosterImage(imageService.findOne(posterImageId));
-        return showService.update(show);
+        if (0 != imageHeight && 0 != imageWidth) {
+            Image image = new Image();
+            image.setName(title + "海报");
+            image.setUrl(imageUrl);
+            image.setThumbUrl(imageThumbUrl);
+            image.setWidth(imageWidth);
+            image.setHeight(imageHeight);
+            return showService.update(show, image);
+        } else
+            return showService.update(show, null);
     }
 
     @DeleteMapping("/{showId}")

@@ -2,6 +2,7 @@ package com.seeu.apis.app.show;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.record.service.RecordService;
 import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.service.ResourceGroupService;
@@ -27,12 +28,21 @@ public class ResourceApi {
     private ResourceGroupService resourceGroupService;
     @Autowired
     private ResourceItemService resourceItemService;
+    @Autowired
+    private RecordService recordService;
+
 
     @ApiOperation(value = "查看某一资源组详细内容（可将此 url 转化为二维码进行扫码访问）", notes = "具体内容请参见 Model 栏：ResourceGroup")
     @GetMapping("/{groupId}")
-    public ResourceGroup get(@PathVariable Long groupId) throws ResourceNotFoundException {
+    public ResourceGroup get(@PathVariable Long groupId,
+                             @RequestParam(required = false) RecordService.VISIT_TYPE type) throws ResourceNotFoundException {
         ResourceGroup group = resourceGroupService.findOne(groupId);
         resourceGroupService.viewOnce(groupId); // 记录一次浏览量
+        // 统计信息
+        recordService.recordResourceGroup(groupId);
+        if (null != type) {
+            recordService.recordDeviceByType(type);
+        }
         return group;
     }
 
@@ -55,6 +65,8 @@ public class ResourceApi {
     public ResourceItem getItem(@PathVariable Long itemId) throws ResourceNotFoundException {
         ResourceItem item = resourceItemService.findOne(itemId);
         resourceItemService.viewOnce(itemId); // 记录一次浏览量
+        // 统计信息
+        recordService.recordResource(itemId);
         return item;
     }
 

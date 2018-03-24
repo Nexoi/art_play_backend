@@ -36,15 +36,17 @@ public class ShowMapApi {
         return showMapService.findOne(mapId);
     }
 
-    @PostMapping
+    @PostMapping("/{showId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ShowMap add(String name,
+    public ShowMap add(@PathVariable Long showId,
+                       String name,
                        String showHallName,
                        Integer width,
                        Integer height,
                        Long imageId) throws ResourceNotFoundException, ActionParameterException {
         Image image = imageService.findOne(imageId);
         ShowMap map = new ShowMap();
+        map.setShowId(showId);
         map.setImage(image);
         map.setName(name);
         map.setShowHallName(showHallName);

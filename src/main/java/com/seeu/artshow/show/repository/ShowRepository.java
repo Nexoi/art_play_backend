@@ -36,4 +36,17 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
     @Modifying
     @Query("update Show s set s.likeTimes = s.likeTimes - 1 where s.id = :showId")
     void cancelLikeItOnce(@Param("showId") Long showId);
+
+    // 音频数量增加一次
+    @Transactional
+    @Modifying
+    @Query("update Show s set s.audioNum = s.audioNum + 1 where s.id = :showId")
+    void audioPlusOne(@Param("showId") Long showId);
+
+    // 音频数量减少一次
+    @Transactional
+    @Modifying
+    @Query("update Show s set s.audioNum = s.audioNum - 1 where s.id = :showId")
+    void audioMinusOne(@Param("showId") Long showId);
+
 }

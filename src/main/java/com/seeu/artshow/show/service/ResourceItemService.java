@@ -1,6 +1,7 @@
 package com.seeu.artshow.show.service;
 
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.show.model.ResourceItem;
 
 import java.util.Collection;
@@ -28,7 +29,9 @@ public interface ResourceItemService {
     // 只改 resourceItem 名称，不改对应的素材名称（包括网页、视频、音频、图片）
     ResourceItem changeName(Long itemId, String name) throws ResourceNotFoundException;
 
-    void delete(Long itemId);
+    WebPage getWebPage(Long itemId) throws ResourceNotFoundException;
+
+    void delete(Long itemId) throws ResourceNotFoundException;
 
     void delete(Collection<Long> itemIds);
 }

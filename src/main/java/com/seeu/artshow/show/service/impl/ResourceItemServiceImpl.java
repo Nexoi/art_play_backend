@@ -10,9 +10,12 @@ import com.seeu.artshow.material.service.AudioService;
 import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.material.service.VideoService;
 import com.seeu.artshow.material.service.WebPageService;
+import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.repository.ResourceItemRepository;
+import com.seeu.artshow.show.service.ResourceGroupService;
 import com.seeu.artshow.show.service.ResourceItemService;
+import com.seeu.artshow.show.service.ShowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,10 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     private AudioService audioService;
     @Autowired
     private WebPageService webPageService;
+    @Autowired
+    private ResourceGroupService resourceGroupService;
+    @Autowired
+    private ShowService showService;
 
     @Value("${artshow.host.webend}")
     private String HOST;
@@ -101,8 +108,13 @@ public class ResourceItemServiceImpl implements ResourceItemService {
 
     @Override
     public ResourceItem addAudio(Long groupId, Long audioId) throws ResourceNotFoundException {
-        Audio audio = audioService.findOne(audioId);
-        ResourceItem item = new ResourceItem();
+        ResourceGroup group = resourceGroupService.findOne(groupId);
+        Long showId = group.getShowId();
+        if (showId == null)
+            throw new ResourceNotFoundException("show", "groupId=" + groupId);
+        Audio audio = audioService.findOne(audioId); // find audio material
+        showService.audioPlusOne(showId);           // plus record for show audio number
+        ResourceItem item = new ResourceItem();     // start save operation
         item.setResourcesGroupId(groupId);
         item.setId(null);
         item.setLikeTimes(0L);
@@ -153,8 +165,34 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
-    public void delete(Long itemId) {
-        repository.delete(itemId);
+    public WebPage getWebPage(Long itemId) throws ResourceNotFoundException {
+        return webPageService.findOne(itemId);
+    }
+
+    @Override
+    public void delete(Long itemId) throws ResourceNotFoundException {
+        ResourceItem item = findOne(itemId);
+        switch (item.getType()) {
+            case VIDEO:
+                repository.delete(itemId);
+                return;
+            case PICTURE:
+                repository.delete(itemId);
+                return;
+            case AUDIO:
+                // 如果是音频，则需要修改对应的 Show#audioNum 字段记录值
+                ResourceGroup group = resourceGroupService.findOne(item.getResourcesGroupId());
+                showService.audioMinusOne(group.getShowId());
+                repository.delete(itemId);
+                return;
+            case WEB:
+                // 如果是网页，则需要删除对应的页面数据
+                webPageService.delete(itemId);
+                repository.delete(itemId);
+                return;
+            default:
+                repository.delete(itemId);
+        }
     }
 
     @Override

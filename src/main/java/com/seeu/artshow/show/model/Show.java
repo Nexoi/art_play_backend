@@ -1,11 +1,13 @@
 package com.seeu.artshow.show.model;
 
+import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.material.model.Image;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "art_show")
@@ -17,7 +19,9 @@ public class Show {
     @NotNull
     private String title;
 
-    private String showHallName;
+    //    private String showHallName;
+    @Transient
+    private List<String> showHallNames;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime; // 开展时间
@@ -38,6 +42,13 @@ public class Show {
 
     private Long likeTimes;     // 点赞次数
 
+    private Integer audioNum;   // 音频数量
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "show_id")
+    @OrderBy("floor")
+    private List<ShowMap> maps;
+
     public Long getId() {
         return id;
     }
@@ -54,12 +65,12 @@ public class Show {
         this.title = title;
     }
 
-    public String getShowHallName() {
-        return showHallName;
+    public List<String> getShowHallNames() {
+        return showHallNames;
     }
 
-    public void setShowHallName(String showHallName) {
-        this.showHallName = showHallName;
+    public void setShowHallNames(List<String> showHallNames) {
+        this.showHallNames = showHallNames;
     }
 
     public Date getStartTime() {
@@ -116,5 +127,21 @@ public class Show {
 
     public void setIntroduceText(String introduceText) {
         this.introduceText = introduceText;
+    }
+
+    public List<ShowMap> getMaps() {
+        return maps;
+    }
+
+    public void setMaps(List<ShowMap> maps) {
+        this.maps = maps;
+    }
+
+    public Integer getAudioNum() {
+        return audioNum;
+    }
+
+    public void setAudioNum(Integer audioNum) {
+        this.audioNum = audioNum;
     }
 }

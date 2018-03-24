@@ -13,6 +13,11 @@ public class ShowMap {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "show_id")
+    private Long showId;
+
+    private Integer floor; // -2 - 99
+
     @NotNull
     private String name;
 
@@ -82,5 +87,21 @@ public class ShowMap {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getShowId() {
+        return showId;
+    }
+
+    public void setShowId(Long showId) {
+        this.showId = showId;
+    }
+
+    public Integer getFloor() {
+        return floor;
+    }
+
+    public void setFloor(Integer floor) {
+        this.floor = floor;
     }
 }

@@ -1,6 +1,7 @@
 package com.seeu.apis.admin.show;
 
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.material.vo.WebPageVO;
 import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.service.ResourceItemService;
@@ -49,6 +50,11 @@ public class ResourceItemApi {
         return resourceItemService.addWebPage(groupId, vo.getTitle(), vo.getAuthor(), vo.getCoverImageUrl(), vo.getIntroduce(), vo.getContentHtml());
     }
 
+    @GetMapping("/web/{itemId}")
+    public WebPage getWebPage(@PathVariable Long itemId) throws ResourceNotFoundException {
+        return resourceItemService.getWebPage(itemId);
+    }
+
     @PutMapping("/{itemId}")
     public ResourceItem changeName(@PathVariable Long itemId, @RequestParam(required = true) String name) throws ResourceNotFoundException {
         return resourceItemService.changeName(itemId, name);
@@ -56,7 +62,7 @@ public class ResourceItemApi {
     // 网页可编辑修改，单独放在其他 API 类中实现接口，此处不予展开
 
     @DeleteMapping("/{itemId}")
-    public R.ResponseR delete(@PathVariable Long itemId) {
+    public R.ResponseR delete(@PathVariable Long itemId) throws ResourceNotFoundException {
         resourceItemService.delete(itemId);
         return R.deleteSuccess();
     }

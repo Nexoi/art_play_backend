@@ -2,9 +2,15 @@ package com.seeu.artshow.show.service.impl;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.installation.model.ShowMap;
+import com.seeu.artshow.material.model.Folder;
+import com.seeu.artshow.material.model.Image;
+import com.seeu.artshow.material.service.FolderService;
+import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.repository.ShowRepository;
 import com.seeu.artshow.show.service.ShowService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,11 +25,16 @@ import java.util.List;
 public class ShowServiceImpl implements ShowService {
     @Resource
     private ShowRepository repository;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private FolderService folderService;
 
     @Override
     public Show findOne(Long showId) throws ResourceNotFoundException {
         Show show = repository.findOne(showId);
         if (show == null) throw new ResourceNotFoundException("show", "id: " + showId);
+        loadShowHallNames(show);
         return show;
     }
 
@@ -46,46 +57,123 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
+    public void audioPlusOne(Long showId) throws ResourceNotFoundException {
+        Show show = findOne(showId);
+        repository.audioPlusOne(show.getId());
+    }
+
+    @Override
+    public void audioMinusOne(Long showId) throws ResourceNotFoundException {
+        Show show = findOne(showId);
+        repository.audioMinusOne(show.getId());
+    }
+
+    @Override
     public Page<Show> findAll(Pageable pageable) {
-        return repository.findAllByOrderByStartTimeDesc(pageable);
+        Page<Show> page = repository.findAllByOrderByStartTimeDesc(pageable);
+        List<Show> showList = page.getContent();
+        for (Show show : showList) {
+            if (show == null) continue;
+            loadShowHallNames(show);
+        }
+        return page;
     }
 
     @Override
     public Page<Show> searchAll(String title, Pageable pageable) {
-        return repository.findAllByTitleLikeOrderByStartTimeDesc("%" + title + "%", pageable);
+        Page<Show> page = repository.findAllByTitleLikeOrderByStartTimeDesc("%" + title + "%", pageable);
+        List<Show> showList = page.getContent();
+        for (Show show : showList) {
+            if (show == null) continue;
+            loadShowHallNames(show);
+        }
+        return page;
     }
 
     @Override
     public List<Show> findAll(Collection<Long> showIds) {
         if (showIds == null || showIds.isEmpty()) return new ArrayList<>();
-        return repository.findAllByIdIn(showIds);
+        List<Show> showList = repository.findAllByIdIn(showIds);
+        for (Show show : showList) {
+            if (show == null) continue;
+            loadShowHallNames(show);
+        }
+        return showList;
     }
 
     @Override
-    public Show add(Show show) throws ActionParameterException {
+    public Show add(Show show, Image image) throws ActionParameterException {
         if (show == null) throw new ActionParameterException("参数不能为空");
+        Date now = new Date();
         show.setId(null);
         show.setLikeTimes(0L);
         show.setViewTimes(0L);
-        show.setUpdateTime(new Date());
+        show.setUpdateTime(now);
+        // 初始化的时候不允许有值
+        show.setShowHallNames(null);
+        show.setMaps(null);
+        if (null != image) {
+            image.setCreateTime(now);
+            image.setFolderId(null);
+            image.setId(null);
+            show.setPosterImage(imageService.save(image));
+        }
+        // 自动添加素材文件夹
+        String folderName = show.getTitle() == null ? "展览素材" : show.getTitle();
+        Folder folder1 = new Folder();
+        folder1.setCreateTime(now);
+        folder1.setName(folderName);
+        folder1.setType(Folder.TYPE.audio);
+        Folder folder2 = new Folder();
+        folder2.setCreateTime(now);
+        folder2.setName(folderName);
+        folder2.setType(Folder.TYPE.video);
+        Folder folder3 = new Folder();
+        folder3.setCreateTime(now);
+        folder3.setName(folderName);
+        folder3.setType(Folder.TYPE.picture);
+        folderService.add(folder1);
+        folderService.add(folder2);
+        folderService.add(folder3);
         return repository.save(show);
     }
 
     @Override
-    public Show update(Show show) throws ActionParameterException, ResourceNotFoundException {
+    public Show update(Show show, Image image) throws ActionParameterException, ResourceNotFoundException {
         if (show == null || show.getId() == null) throw new ActionParameterException("参数不能为空");
         Show savedShow = findOne(show.getId());
         if (show.getStartTime() != null) savedShow.setStartTime(show.getStartTime());
         if (show.getEndTime() != null) savedShow.setEndTime(show.getEndTime());
         if (show.getTitle() != null) savedShow.setTitle(show.getTitle());
         if (show.getIntroduceText() != null) savedShow.setIntroduceText(show.getIntroduceText());
-        if (show.getShowHallName() != null) savedShow.setShowHallName(show.getShowHallName());
-        if (show.getPosterImage() != null) savedShow.setPosterImage(show.getPosterImage());
+//        if (show.getShowHallName() != null) savedShow.setShowHallName(show.getShowHallName());
+//        if (show.getPosterImage() != null) savedShow.setPosterImage(show.getPosterImage());
+        if (null != image) {
+            image.setCreateTime(new Date());
+            image.setFolderId(null);
+            image.setId(null);
+            savedShow.setPosterImage(imageService.save(image));
+        }
         return repository.save(savedShow);
     }
 
     @Override
     public void delete(Long showId) {
         repository.delete(showId);
+    }
+
+    /**
+     * lack validated
+     */
+    private void loadShowHallNames(Show show) {
+        List<ShowMap> maps = show.getMaps();
+        if (!maps.isEmpty()) {
+            List<String> hallNames = new ArrayList<>();
+            for (ShowMap map : maps) {
+                if (map == null) continue;
+                hallNames.add(map.getShowHallName());
+            }
+            show.setShowHallNames(hallNames);
+        }
     }
 }
