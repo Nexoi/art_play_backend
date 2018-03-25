@@ -17,7 +17,7 @@ import java.util.Map;
 @Api(tags = "文件上传", description = "File")
 @RestController
 @RequestMapping("/api/admin/v1/upload")
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class FileUploadApi {
     @Autowired
     private FileUploadService fileUploadService;
