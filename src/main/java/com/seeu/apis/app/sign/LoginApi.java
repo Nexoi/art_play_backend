@@ -321,23 +321,23 @@ public class LoginApi {
                     if ("USER_ADMINX".equals(auth.getAuthority()))
                         isAdminX = true;
                 }
-                if (isAdminX){
+                if (isAdminX) {
                     Map map = new HashMap();
                     map.put("type", "account");
                     map.put("currentAuthority", "adminx");
                     return ResponseEntity.ok(map);
-                }else{
+                } else {
                     Map map = new HashMap();
                     map.put("type", "account");
                     map.put("currentAuthority", "admin");
                     return ResponseEntity.ok(map);
                 }
             }
-            return ResponseEntity.badRequest().body(R.code(400).message("登录失败，账号／密码错误"));
+            return ResponseEntity.badRequest().body("登录失败，账号／密码错误");
         } catch (NoSuchUserException e) {
-            return ResponseEntity.badRequest().body(R.code(400).message("登录失败，无此用户"));
+            return ResponseEntity.badRequest().body("登录失败，无此用户");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(R.code(400).message("登录失败"));
+            return ResponseEntity.badRequest().body("登录失败");
         }
     }
 }
