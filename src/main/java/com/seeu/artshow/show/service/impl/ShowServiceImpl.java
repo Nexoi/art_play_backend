@@ -114,7 +114,7 @@ public class ShowServiceImpl implements ShowService {
         show.setMaps(null);
         if (null != image) {
             image.setCreateTime(now);
-            image.setFolderId(null);
+            image.setFolderId(-1L);
             image.setId(null);
             show.setPosterImage(imageService.save(image));
         }
@@ -150,7 +150,7 @@ public class ShowServiceImpl implements ShowService {
 //        if (show.getPosterImage() != null) savedShow.setPosterImage(show.getPosterImage());
         if (null != image) {
             image.setCreateTime(new Date());
-            image.setFolderId(null);
+            image.setFolderId(-1L);
             image.setId(null);
             savedShow.setPosterImage(imageService.save(image));
         }
