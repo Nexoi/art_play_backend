@@ -15,6 +15,7 @@ public class UserRecord {
     @Id
     private Integer day; // 20180101
     private Long times;
+    @Id
     @Enumerated
     private TYPE type;
 
