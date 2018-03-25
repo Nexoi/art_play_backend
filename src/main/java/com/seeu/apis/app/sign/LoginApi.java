@@ -20,13 +20,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags = "用户登录", description = "登录/注销", position = 0)
@@ -310,7 +314,24 @@ public class LoginApi {
                 appAuthFlushService.flush(user.getUid());
                 // 写 token
                 writeToken2Cookie(response, getToken(user.getPhone(), user.getUid()));
-                return ResponseEntity.ok(R.code(200).message("登录成功"));
+                // 判断是否是终极管理员
+                boolean isAdminX = false;
+                Collection<SimpleGrantedAuthority> auths = (List<SimpleGrantedAuthority>) user.getAuthorities();
+                for (SimpleGrantedAuthority auth : auths) {
+                    if ("USER_ADMINX".equals(auth.getAuthority()))
+                        isAdminX = true;
+                }
+                if (isAdminX){
+                    Map map = new HashMap();
+                    map.put("type", "account");
+                    map.put("currentAuthority", "adminx");
+                    return ResponseEntity.ok(map);
+                }else{
+                    Map map = new HashMap();
+                    map.put("type", "account");
+                    map.put("currentAuthority", "admin");
+                    return ResponseEntity.ok(map);
+                }
             }
             return ResponseEntity.badRequest().body(R.code(400).message("登录失败，账号／密码错误"));
         } catch (NoSuchUserException e) {
