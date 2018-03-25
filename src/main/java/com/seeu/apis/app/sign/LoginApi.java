@@ -295,4 +295,28 @@ public class LoginApi {
     public ResponseEntity signOutSuccess() {
         return ResponseEntity.ok(R.code(200).message("注销成功").build());
     }
+
+
+    @ApiOperation(value = "", hidden = true)
+    @PostMapping("/signin/admin")
+    public ResponseEntity loginByPasswordForAdmin(String username,
+                                                  String password,
+                                                  HttpServletResponse response) {
+        try {
+            User user = userService.findByNickName(username);
+            if (null != user.getType()
+                    && user.getType() == User.TYPE.ADMIN
+                    && user.getPassword().equals(password)) {
+                appAuthFlushService.flush(user.getUid());
+                // 写 token
+                writeToken2Cookie(response, getToken(user.getPhone(), user.getUid()));
+                return ResponseEntity.ok(R.code(200).message("登录成功"));
+            }
+            return ResponseEntity.badRequest().body(R.code(400).message("登录失败，账号／密码错误"));
+        } catch (NoSuchUserException e) {
+            return ResponseEntity.badRequest().body(R.code(400).message("登录失败，无此用户"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(R.code(400).message("登录失败"));
+        }
+    }
 }

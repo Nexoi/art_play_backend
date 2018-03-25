@@ -1,5 +1,6 @@
 package com.seeu.artshow.userlogin.service.impl;
 
+import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.userlogin.exception.*;
 import com.seeu.artshow.userlogin.model.User;
 import com.seeu.artshow.userlogin.model.UserAuthRole;
@@ -184,6 +185,7 @@ public class UserSignInUpServiceImpl implements UserSignInUpService {
         UserAuthRole userAuthRole = userAuthRoleRepository.findByName("ROLE_USER");
         roles.add(userAuthRole);
         userLogin.setRoles(roles);
+        userLogin.setType(User.TYPE.USER);
         User savedUser = userService.save(userLogin);
         // 更新昵称
         if (nickname == null || nickname.trim().length() <= 1) {
@@ -207,6 +209,41 @@ public class UserSignInUpServiceImpl implements UserSignInUpService {
         User user = userService.findOne(uid);
         user.setMemberStatus(User.USER_STATUS.DISTORY);
         userService.save(user);
+    }
+
+    @Override
+    public User addAdmin(String username, String password) throws ActionParameterException {
+        try {
+            userService.findByNickName(username);
+            throw new ActionParameterException("用户已经存在，请修改 username 再添加");
+        } catch (NoSuchUserException e) {
+            User user = initAdminAccount(username, password);
+            if (user == null) throw new ActionParameterException("请传入正确的用户名／密码");
+            return user;
+        }
+    }
+
+    private User initAdminAccount(String nickname, String credential) {
+        if (nickname == null || credential == null) return null;
+        User userLogin = new User();
+        int length = nickname.length();
+        if (length > 20) length = 20;
+        userLogin.setNickname(nickname.substring(0, length));
+        userLogin.setThirdPartName(null);
+        userLogin.setPhone(null);
+        userLogin.setPassword(md5Service.encode(credential));
+        userLogin.setHeadIconUrl(headIcon);
+        // 直接添加，状态为 1【正常用户】
+        userLogin.setMemberStatus(User.USER_STATUS.OK);
+        // 添加权限
+        List<UserAuthRole> roles = new ArrayList<>();
+        UserAuthRole userAuthRole1 = userAuthRoleRepository.findByName("ROLE_USER");
+        UserAuthRole userAuthRole2 = userAuthRoleRepository.findByName("ROLE_ADMIN");
+        roles.add(userAuthRole1);
+        roles.add(userAuthRole2);
+        userLogin.setRoles(roles);
+        userLogin.setType(User.TYPE.ADMIN);
+        return userService.save(userLogin);
     }
 
 }

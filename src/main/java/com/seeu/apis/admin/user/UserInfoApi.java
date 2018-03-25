@@ -1,5 +1,6 @@
 package com.seeu.apis.admin.user;
 
+import com.seeu.artshow.userlogin.model.User;
 import com.seeu.artshow.userlogin.service.UserService;
 import com.seeu.artshow.userlogin.vo.UserVO;
 import io.swagger.annotations.Api;
@@ -20,6 +21,6 @@ public class UserInfoApi {
     public Page<UserVO> list(@RequestParam(required = false) String word,
                              @RequestParam(defaultValue = "0") Integer page,
                              @RequestParam(defaultValue = "10") Integer size) {
-        return userService.findAll(word, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "lastLoginTime")));
+        return userService.findAll(User.TYPE.USER, word, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "lastLoginTime")));
     }
 }

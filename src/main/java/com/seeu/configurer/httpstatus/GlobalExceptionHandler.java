@@ -2,6 +2,7 @@ package com.seeu.configurer.httpstatus;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
+import com.seeu.artshow.userlogin.exception.NoSuchUserException;
 import com.seeu.file.storage.StorageFileNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -86,4 +87,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleIOException(HttpServletRequest request, IOException exc) {
         return ResponseEntity.status(500).body("服务器文件传输错误");
     }
+
+    @ExceptionHandler(NoSuchUserException.class)
+    public ResponseEntity<?> handleNoSuchUserException(HttpServletRequest request, NoSuchUserException exc) {
+        return ResponseEntity.status(404).body(exc.getMessage());
+    }
+
 }

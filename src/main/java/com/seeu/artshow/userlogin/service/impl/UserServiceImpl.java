@@ -37,6 +37,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByNickName(String nickname) throws NoSuchUserException {
+        User user = repository.findByNickname(nickname);
+        if (user == null)
+            throw new NoSuchUserException(null, "[NickName]" + nickname);
+        return user;
+    }
+
+    @Override
     public User findByThirdPartUserName(String username) throws NoSuchUserException {
         User user = repository.findByThirdPartName(username);
         if (user == null)
@@ -70,6 +78,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void delete(Long uid) throws NoSuchUserException {
+        User user = findOne(uid);
+        repository.delete(user);
+        // TODO 删除用户
+    }
+
+    @Override
     public Page<UserVO> findAll(String word, Pageable pageable) {
         Page page = null;
         if (word == null || word.length() == 0)
@@ -77,6 +92,29 @@ public class UserServiceImpl implements UserService {
         else {
             String w = "%" + word + "%";
             page = repository.findAllByNicknameLikeOrPhoneLike(w, w, pageable);
+        }
+        if (page != null && page.getContent().size() != 0) {
+            List<UserVO> vos = new ArrayList<>();
+            List<User> users = page.getContent();
+            for (User user : users) {
+                if (user == null) continue;
+                UserVO vo = new UserVO();
+                BeanUtils.copyProperties(user, vo);
+                vos.add(vo);
+            }
+            return new PageImpl<UserVO>(vos, pageable, page.getTotalElements());
+        }
+        return new PageImpl<UserVO>(new ArrayList<>());
+    }
+
+    @Override
+    public Page<UserVO> findAll(User.TYPE type, String word, Pageable pageable) {
+        Page page = null;
+        if (word == null || word.length() == 0)
+            page = repository.findAllByType(type, pageable);
+        else {
+            String w = "%" + word + "%";
+            page = repository.findAllByTypeAndNicknameLikeOrPhoneLike(type, w, w, pageable);
         }
         if (page != null && page.getContent().size() != 0) {
             List<UserVO> vos = new ArrayList<>();

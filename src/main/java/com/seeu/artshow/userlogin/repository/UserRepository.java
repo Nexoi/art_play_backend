@@ -12,10 +12,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByThirdPartName(@Param("username") String username);
 
+    User findByNickname(@Param("nickname") String nickname);
+
     Page<User> findAllByUid(@Param("uid") Long uid, Pageable pageable);
 
     Page<User> findAllByPhoneLike(@Param("phone") String phoneLike, Pageable pageable);
 
-    Page<User> findAllByNicknameLikeOrPhoneLike(@Param("username") String username,@Param("phone") String phone, Pageable pageable);
+    Page<User> findAllByNicknameLikeOrPhoneLike(@Param("username") String username, @Param("phone") String phone, Pageable pageable);
+
+    // adminX
+    Page<User> findAllByType(@Param("type") User.TYPE type, Pageable pageable);
+
+    Page<User> findAllByTypeAndNicknameLikeOrPhoneLike(@Param("type") User.TYPE type, @Param("username") String username, @Param("phone") String phone, Pageable pageable);
 
 }

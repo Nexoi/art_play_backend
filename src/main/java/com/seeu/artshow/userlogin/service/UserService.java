@@ -11,6 +11,8 @@ public interface UserService {
 
     User findByPhone(String phone) throws NoSuchUserException;
 
+    User findByNickName(String nickname) throws NoSuchUserException;
+
     User findByThirdPartUserName(String username) throws NoSuchUserException;
 
     User add(User user);
@@ -25,7 +27,11 @@ public interface UserService {
      */
     User insertSelective(User user) throws NoSuchUserException;
 
+    void delete(Long uid) throws NoSuchUserException;
+
     // admin
 
     Page<UserVO> findAll(String word, Pageable pageable);
+
+    Page<UserVO> findAll(User.TYPE type, String word, Pageable pageable);
 }

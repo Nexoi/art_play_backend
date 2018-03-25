@@ -1,5 +1,6 @@
 package com.seeu.artshow.userlogin.service;
 
+import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.userlogin.exception.*;
 import com.seeu.artshow.userlogin.model.User;
 
@@ -60,7 +61,10 @@ public interface UserSignInUpService {
     void writtenOff(Long uid) throws NoSuchUserException;
 
 
-    public class SignUpPhoneResult {
+    User addAdmin(String username, String password) throws ActionParameterException;
+
+
+    class SignUpPhoneResult {
         public enum SIGN_PHONE_SEND {
             success,
             failure

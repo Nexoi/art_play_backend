@@ -16,10 +16,11 @@ import java.util.List;
 @Entity
 @Table(name = "art_user_login", indexes = {
         @Index(name = "USERLOGIN_INDEX1", unique = true, columnList = "uid"),
-        @Index(name = "USERLOGIN_INDEX2", unique = true, columnList = "phone"), // 因为虚拟用户的机制，不再设定为唯一
-        @Index(name = "USERLOGIN_INDEX2", unique = false, columnList = "phone"),
+        @Index(name = "USERLOGIN_INDEX5", unique = false, columnList = "type"),
+//        @Index(name = "USERLOGIN_INDEX2", unique = true, columnList = "phone"), // 因为虚拟用户的机制，不再设定为唯一
+        @Index(name = "USERLOGIN_INDEX2", unique = true, columnList = "phone"),
         @Index(name = "USERLOGIN_INDEX3", unique = true, columnList = "third_part_name"),
-        @Index(name = "USERLOGIN_INDEX3", unique = false, columnList = "nickname"),
+        @Index(name = "USERLOGIN_INDEX4", unique = false, columnList = "nickname"),
 })
 @DynamicUpdate
 public class User implements UserDetails {
@@ -43,6 +44,14 @@ public class User implements UserDetails {
         VIP
     }
 
+    public enum TYPE {
+        USER,
+        ADMIN
+    }
+
+    @Column(name = "type")
+    @Enumerated
+    private TYPE type;
 
     @ApiParam(hidden = true)
     @Id
@@ -102,6 +111,14 @@ public class User implements UserDetails {
      */
     public void setUid(Long uid) {
         this.uid = uid;
+    }
+
+    public TYPE getType() {
+        return type;
+    }
+
+    public void setType(TYPE type) {
+        this.type = type;
     }
 
     public String getPhone() {
