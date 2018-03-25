@@ -9,6 +9,7 @@ import com.seeu.core.R;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Api(tags = "资源", description = "CRUD")
 @RestController("adminResourceItemApi")
 @RequestMapping("/api/admin/v1/show/{showId}/resources-group/{groupId}/item")
+@PreAuthorize("hasRole('ADMIN')")
 public class ResourceItemApi {
     @Autowired
     private ResourceItemService resourceItemService;

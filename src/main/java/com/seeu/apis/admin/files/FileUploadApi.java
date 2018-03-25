@@ -4,6 +4,7 @@ import com.seeu.artshow.material.model.Image;
 import com.seeu.third.filestore.FileUploadService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import java.util.Map;
 @Api(tags = "文件上传", description = "File")
 @RestController
 @RequestMapping("/api/admin/v1/upload")
+@PreAuthorize("hasRole('ADMIN')")
 public class FileUploadApi {
     @Autowired
     private FileUploadService fileUploadService;

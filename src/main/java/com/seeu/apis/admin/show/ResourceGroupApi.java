@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 @Api(tags = "资源组", description = "CRUD")
 @RestController("adminResourceGroupApi")
 @RequestMapping("/api/admin/v1/show/{showId}/resources-group")
+@PreAuthorize("hasRole('ADMIN')")
 public class ResourceGroupApi {
 
     @Autowired

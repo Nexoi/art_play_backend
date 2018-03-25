@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.Date;
 @Api(tags = "素材/Audio")
 @RestController("adminMaterialAudioApi")
 @RequestMapping("/api/admin/v1/material/audio")
+@PreAuthorize("hasRole('ADMIN')")
 public class MaterialAudioApi {
     @Autowired
     private FolderService folderService;

@@ -5,6 +5,7 @@ import com.seeu.artshow.material.service.FolderService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Api(tags = "素材", description = "文件夹")
 @RestController("adminFolderApi")
 @RequestMapping("/api/admin/v1/material/folder")
+@PreAuthorize("hasRole('ADMIN')")
 public class FolderApi {
     @Autowired
     private FolderService folderService;

@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 @Api(tags = "管理员管理", description = "终极管理员操作")
 @RestController("adminUserAdminApi")
 @RequestMapping("/api/admin/v1/admins")
+@PreAuthorize("hasRole('ADMINX')")
 public class UserAdminApi {
     @Autowired
     private UserService userService;

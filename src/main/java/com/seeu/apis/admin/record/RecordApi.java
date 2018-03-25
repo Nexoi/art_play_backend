@@ -7,6 +7,7 @@ import com.seeu.artshow.utils.DateFormatterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.List;
 @Api(tags = "Record", description = "+")
 @RestController("adminRecordApi")
 @RequestMapping("/api/admin/v1/record")
+@PreAuthorize("hasRole('ADMIN')")
 public class RecordApi {
 
     @Autowired

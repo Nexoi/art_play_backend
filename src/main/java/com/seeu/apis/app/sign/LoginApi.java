@@ -301,6 +301,14 @@ public class LoginApi {
     }
 
 
+    /**
+     * 终极管理员／普通管理员 使用
+     *
+     * @param username
+     * @param password
+     * @param response
+     * @return
+     */
     @ApiOperation(value = "", hidden = true)
     @PostMapping("/signin/admin")
     public ResponseEntity loginByPasswordForAdmin(String username,

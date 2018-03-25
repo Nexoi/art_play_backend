@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "用户", description = "list")
 @RestController("adminUserInfoApi")
 @RequestMapping("/api/admin/v1/users")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserInfoApi {
     @Autowired
     private UserService userService;

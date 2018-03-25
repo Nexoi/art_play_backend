@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.Date;
 @Api(tags = "展览", description = "基础信息")
 @RestController("adminShowApi")
 @RequestMapping("/api/admin/v1/show")
+@PreAuthorize("hasRole('ADMIN')")
 public class ShowApi {
     @Autowired
     private ShowService showService;
