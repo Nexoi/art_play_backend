@@ -31,11 +31,8 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public Folder findByName(String name) throws ResourceNotFoundException {
-        Folder folder = repository.findByName(name);
-        if (folder == null)
-            throw new ResourceNotFoundException("folder", name);
-        return folder;
+    public List<Folder> findAllByName(String name) {
+        return repository.findAllByName(name);
     }
 
     @Override
@@ -59,6 +56,11 @@ public class FolderServiceImpl implements FolderService {
         if (name == null) return folder;
         folder.setName(name);
         return repository.save(folder);
+    }
+
+    @Override
+    public List<Folder> updateAll(List<Folder> folders) {
+        return repository.save(folders);
     }
 
     @Override

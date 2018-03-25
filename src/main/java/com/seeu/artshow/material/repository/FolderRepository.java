@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface FolderRepository extends JpaRepository<Folder, Long> {
-    Folder findByName(@Param("name") String name);
+    List<Folder> findAllByName(@Param("name") String name);
 
     Folder findFirstByType(@Param("type") Folder.TYPE type);
 

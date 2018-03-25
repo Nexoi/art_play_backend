@@ -154,7 +154,23 @@ public class ShowServiceImpl implements ShowService {
             image.setId(null);
             savedShow.setPosterImage(imageService.save(image));
         }
+        if (show.getTitle() != null) {
+            if (!savedShow.getTitle().equals(show.getTitle())) {
+                // 修改文件夹名称
+                changeNameForFolder(show.getTitle());
+            }
+        }
         return repository.save(savedShow);
+    }
+
+    // 修改文件夹名称
+    private List<Folder> changeNameForFolder(String folderName) {
+        List<Folder> folders = folderService.findAllByName(folderName);
+        if (null == folders || folders.isEmpty()) return new ArrayList<>();
+        for (Folder folder : folders) {
+            folder.setName(folderName);
+        }
+        return folderService.updateAll(folders);
     }
 
     @Override

@@ -13,13 +13,15 @@ public interface FolderService {
 
     Folder findOne(Long id) throws ResourceNotFoundException;
 
-    Folder findByName(String name) throws ResourceNotFoundException;
+    List<Folder> findAllByName(String name);
 
     List<Folder> findAllByType(Folder.TYPE type);
 
     Folder add(Folder folder) throws ActionParameterException;
 
     Folder changeName(Long id, String name) throws ResourceNotFoundException;
+
+    List<Folder> updateAll(List<Folder> folders);
 
     void delete(Long id);
 
