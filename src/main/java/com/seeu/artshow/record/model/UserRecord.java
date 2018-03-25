@@ -1,12 +1,10 @@
 package com.seeu.artshow.record.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "art_record_user")
+@IdClass(UserRecordPKeys.class)
 public class UserRecord {
     public enum TYPE{
         NICK,
