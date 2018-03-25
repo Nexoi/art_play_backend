@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 public class UserRecordPKeys implements Serializable {
     private Integer day;
-    private Long uid;
+    private Integer type;
 
     public UserRecordPKeys() {
     }
 
-    public UserRecordPKeys(Integer day, Long uid) {
+    public UserRecordPKeys(Integer day, Integer type) {
         this.day = day;
-        this.uid = uid;
+        this.type = type;
     }
 
     public Integer getDay() {
@@ -22,12 +22,12 @@ public class UserRecordPKeys implements Serializable {
         this.day = day;
     }
 
-    public Long getUid() {
-        return uid;
+    public Integer getType() {
+        return type;
     }
 
-    public void setUid(Long uid) {
-        this.uid = uid;
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class UserRecordPKeys implements Serializable {
         final int PRIME = 31;
         int result = 1;
         result = PRIME * result + ((day == null) ? 0 : day.hashCode());
-        result = PRIME * result + ((uid == null) ? 0 : uid.hashCode());
+        result = PRIME * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 
@@ -59,11 +59,11 @@ public class UserRecordPKeys implements Serializable {
         } else if (!day.equals(other.day)) {
             return false;
         }
-        if (uid == null) {
-            if (other.uid != null) {
+        if (type == null) {
+            if (other.type != null) {
                 return false;
             }
-        } else if (!uid.equals(other.uid)) {
+        } else if (!type.equals(other.type)) {
             return false;
         }
         return true;
