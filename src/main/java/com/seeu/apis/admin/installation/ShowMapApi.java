@@ -45,12 +45,14 @@ public class ShowMapApi {
     public ShowMap add(@PathVariable Long showId,
                        String name,
                        String showHallName,
+                       Integer floor,
                        Integer width,
                        Integer height,
                        Long imageId) throws ResourceNotFoundException, ActionParameterException {
         Image image = imageService.findOne(imageId);
         ShowMap map = new ShowMap();
         map.setShowId(showId);
+        map.setFloor(floor);
         map.setImage(image);
         map.setName(name);
         map.setShowHallName(showHallName);
@@ -62,6 +64,7 @@ public class ShowMapApi {
     @PutMapping("/{mapId}")
     public ShowMap update(@PathVariable Long showId,
                           @PathVariable Long mapId,
+                          @RequestParam(required = false) Integer floor,
                           @RequestParam(required = false) String name,
                           @RequestParam(required = false) String showHallName,
                           @RequestParam(required = false) Integer width,
@@ -70,6 +73,7 @@ public class ShowMapApi {
         ShowMap map = new ShowMap();
         map.setShowId(showId);
         map.setId(mapId);
+        map.setFloor(floor);
         map.setName(name);
         map.setShowHallName(showHallName);
         map.setWidth(width);

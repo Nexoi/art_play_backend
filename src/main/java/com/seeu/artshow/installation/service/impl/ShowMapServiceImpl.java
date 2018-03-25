@@ -51,6 +51,8 @@ public class ShowMapServiceImpl implements ShowMapService {
     public ShowMap update(ShowMap map) throws ResourceNotFoundException, ActionParameterException {
         if (map == null || map.getId() == null) throw new ActionParameterException("参数传入不完整【ShowMap】");
         ShowMap savedMap = findOne(map.getId());
+        // showId 不可修改
+        if (map.getFloor() != null) savedMap.setFloor(map.getFloor());
         if (map.getHeight() != null) savedMap.setHeight(map.getHeight());
         if (map.getWidth() != null) savedMap.setWidth(map.getWidth());
         if (map.getImage() != null) savedMap.setImage(map.getImage());
