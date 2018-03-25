@@ -49,54 +49,60 @@ public class RecordApi {
     }
 
     @GetMapping("/shows")
-    public Map shows(@RequestParam Long[] showIds,
+    public List<Map> shows(@RequestParam Long[] showIds,
                      @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date start,
                      @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date end) throws ResourceNotFoundException {
         String startStr = dateFormatterService.getyyyyMMdd().format(start);
         String endStr = dateFormatterService.getyyyyMMdd().format(end);
         List<Long> ids = Arrays.asList(showIds);
-        Map map = new HashMap();
+        List<Map> list = new ArrayList<>();
         for (Long id : ids) {
+            Map map = new HashMap();
             Show show = showService.findOne(id);
             map.put("title", show.getTitle());
             map.put("showId", show.getId());
             map.put("records", recordService.findShow(id, Integer.parseInt(startStr), Integer.parseInt(endStr)));
+            list.add(map);
         }
-        return map;
+        return list;
     }
 
     @GetMapping("/resource-groups")
-    public Map resourcegroups(@RequestParam Long[] groupIds,
+    public List<Map> resourcegroups(@RequestParam Long[] groupIds,
                               @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date start,
                               @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date end) throws ResourceNotFoundException {
         String startStr = dateFormatterService.getyyyyMMdd().format(start);
         String endStr = dateFormatterService.getyyyyMMdd().format(end);
         List<Long> ids = Arrays.asList(groupIds);
-        Map map = new HashMap();
+        List<Map> list = new ArrayList<>();
         for (Long id : ids) {
+            Map map = new HashMap();
             ResourceGroup group = resourceGroupService.findOne(id);
             map.put("name", group.getName());
             map.put("groupId", group.getId());
             map.put("records", recordService.findResourceGroup(id, Integer.parseInt(startStr), Integer.parseInt(endStr)));
+            list.add(map);
         }
-        return map;
+        return list;
     }
 
     @GetMapping("/resource-items")
-    public Map resources(@RequestParam Long[] itemIds,
+    public List<Map> resources(@RequestParam Long[] itemIds,
                          @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date start,
                          @RequestParam(required = true) @DateTimeFormat(pattern = "yyyyMMdd") Date end) throws ResourceNotFoundException {
         String startStr = dateFormatterService.getyyyyMMdd().format(start);
         String endStr = dateFormatterService.getyyyyMMdd().format(end);
         List<Long> ids = Arrays.asList(itemIds);
-        Map map = new HashMap();
+        List<Map> list = new ArrayList<>();
         for (Long id : ids) {
+            Map map = new HashMap();
             ResourceItem item = resourceItemService.findOne(id);
             map.put("name", item.getName());
             map.put("itemId", item.getId());
             map.put("records", recordService.findResource(id, Integer.parseInt(startStr), Integer.parseInt(endStr)));
+            list.add(map);
         }
-        return map;
+        return list;
     }
 
     @GetMapping("/users")
