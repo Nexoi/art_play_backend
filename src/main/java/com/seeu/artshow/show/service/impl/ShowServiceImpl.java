@@ -158,8 +158,12 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public void delete(Long showId) {
-        repository.delete(showId);
+    public void delete(Long showId) throws ResourceNotFoundException {
+        Show show = findOne(showId);
+        String folderName = show.getTitle();
+        repository.delete(show.getId());
+        // 删除对应的素材文件夹
+        folderService.deleteByName(folderName);
     }
 
     /**

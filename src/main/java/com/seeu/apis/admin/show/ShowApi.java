@@ -93,7 +93,7 @@ public class ShowApi {
     }
 
     @DeleteMapping("/{showId}")
-    public R.ResponseR delete(@PathVariable Long showId) {
+    public R.ResponseR delete(@PathVariable Long showId) throws ResourceNotFoundException {
         showService.delete(showId);
         return R.deleteSuccess();
     }

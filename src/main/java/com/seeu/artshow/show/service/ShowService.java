@@ -34,6 +34,6 @@ public interface ShowService {
 
     Show update(@Validated Show show, Image image) throws ActionParameterException, ResourceNotFoundException;
 
-    void delete(Long showId);
+    void delete(Long showId) throws ResourceNotFoundException;
 
 }
