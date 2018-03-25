@@ -318,7 +318,7 @@ public class LoginApi {
                 boolean isAdminX = false;
                 Collection<SimpleGrantedAuthority> auths = (List<SimpleGrantedAuthority>) user.getAuthorities();
                 for (SimpleGrantedAuthority auth : auths) {
-                    if ("USER_ADMINX".equals(auth.getAuthority()))
+                    if ("ROLE_ADMINX".equals(auth.getAuthority()))
                         isAdminX = true;
                 }
                 if (isAdminX) {
