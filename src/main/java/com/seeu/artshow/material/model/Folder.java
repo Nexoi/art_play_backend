@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "art_material_folder", indexes = {
-        @Index(name = "material_folder_name", columnList = "name", unique = true)
+        @Index(name = "material_folder_name", columnList = "name", unique = false)
 })
 public class Folder {
     public enum TYPE{
