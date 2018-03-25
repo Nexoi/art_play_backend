@@ -35,6 +35,11 @@ public class ShowMapServiceImpl implements ShowMapService {
     }
 
     @Override
+    public Page<ShowMap> findAll(Long showId, Pageable pageable) {
+        return repository.findAllByShowId(showId, pageable);
+    }
+
+    @Override
     public ShowMap add(ShowMap map) throws ActionParameterException {
         if (map == null) throw new ActionParameterException("参数传入不完整【ShowMap】");
         map.setId(null);

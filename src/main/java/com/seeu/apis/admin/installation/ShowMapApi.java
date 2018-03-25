@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "地图", description = "CRUD")
 @RestController("adminShowMapApi")
-@RequestMapping("/api/admin/v1/show/maps")
+@RequestMapping("/api/admin/v1/show/{showId}/maps")
 @PreAuthorize("hasRole('ADMIN')")
 public class ShowMapApi {
 
@@ -28,17 +28,19 @@ public class ShowMapApi {
     private ImageService imageService;
 
     @GetMapping
-    public Page<ShowMap> list(@RequestParam(defaultValue = "0") Integer page,
+    public Page<ShowMap> list(@PathVariable Long showId,
+                              @RequestParam(defaultValue = "0") Integer page,
                               @RequestParam(defaultValue = "10") Integer size) {
-        return showMapService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
+        return showMapService.findAll(showId, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
     }
 
     @GetMapping("/{mapId}")
-    public ShowMap get(@PathVariable Long mapId) throws ResourceNotFoundException {
+    public ShowMap get(@PathVariable Long showId,
+                       @PathVariable Long mapId) throws ResourceNotFoundException {
         return showMapService.findOne(mapId);
     }
 
-    @PostMapping("/{showId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ShowMap add(@PathVariable Long showId,
                        String name,
@@ -58,13 +60,15 @@ public class ShowMapApi {
     }
 
     @PutMapping("/{mapId}")
-    public ShowMap update(@PathVariable Long mapId,
+    public ShowMap update(@PathVariable Long showId,
+                          @PathVariable Long mapId,
                           @RequestParam(required = false) String name,
                           @RequestParam(required = false) String showHallName,
                           @RequestParam(required = false) Integer width,
                           @RequestParam(required = false) Integer height,
                           @RequestParam(required = false) Long imageId) throws ResourceNotFoundException, ActionParameterException {
         ShowMap map = new ShowMap();
+        map.setShowId(showId);
         map.setId(mapId);
         map.setName(name);
         map.setShowHallName(showHallName);

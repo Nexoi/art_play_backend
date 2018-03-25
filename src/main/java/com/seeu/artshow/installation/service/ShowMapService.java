@@ -12,6 +12,8 @@ public interface ShowMapService {
 
     Page<ShowMap> findAll(Pageable pageable);
 
+    Page<ShowMap> findAll(Long showId, Pageable pageable);
+
     ShowMap add(ShowMap map) throws ActionParameterException;
 
     ShowMap update(ShowMap map) throws ResourceNotFoundException, ActionParameterException;
