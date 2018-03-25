@@ -5,6 +5,7 @@ import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.material.repository.WebPageRepository;
 import com.seeu.artshow.material.service.WebPageService;
+import com.seeu.artshow.material.vo.WebPageVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,10 +38,12 @@ public class WebPageServiceImpl implements WebPageService {
     }
 
     @Override
-    public WebPage update(WebPage webPage) throws ActionParameterException, ResourceNotFoundException {
-        if (webPage == null || webPage.getResourceItemId() == null)
-            throw new ActionParameterException("webpage resourcesItemId 不能为空");
-        WebPage page = findOne(webPage.getResourceItemId());
+    public WebPage update(Long itemId, WebPageVO webPage) throws ResourceNotFoundException {
+//        if (webPage == null || webPage.getResourceItemId() == null)
+//            throw new ActionParameterException("webpage resourcesItemId 不能为空");
+        WebPage page = findOne(itemId);
+        if (webPage.getAuthor() != null) page.setAuthor(webPage.getAuthor());
+        if (webPage.getIntroduce() != null) page.setIntroduce(webPage.getIntroduce());
         if (webPage.getContentHtml() != null) page.setContentHtml(webPage.getContentHtml());
         if (webPage.getCoverImageUrl() != null) page.setCoverImageUrl(webPage.getCoverImageUrl());
         if (webPage.getTitle() != null) page.setTitle(webPage.getTitle());
