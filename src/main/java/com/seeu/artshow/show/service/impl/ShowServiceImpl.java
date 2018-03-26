@@ -102,6 +102,11 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
+    public List<Show> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
     public Show add(Show show, Image image) throws ActionParameterException {
         if (show == null) throw new ActionParameterException("参数不能为空");
         Date now = new Date();

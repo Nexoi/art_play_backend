@@ -30,6 +30,8 @@ public interface ShowService {
 
     List<Show> findAll(Collection<Long> showIds);
 
+    List<Show> findAll(); // 以后会加上管理员 id 判断来过滤资源
+
     Show add(@Validated Show show, Image image) throws ActionParameterException;
 
     Show update(@Validated Show show, Image image) throws ActionParameterException, ResourceNotFoundException;
