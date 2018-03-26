@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public class UserRecordPKeys implements Serializable {
     private Integer day;
-    private Integer type;
+    private UserRecord.TYPE type;
 
     public UserRecordPKeys() {
     }
 
-    public UserRecordPKeys(Integer day, Integer type) {
+    public UserRecordPKeys(Integer day, UserRecord.TYPE type) {
         this.day = day;
         this.type = type;
     }
@@ -22,11 +22,11 @@ public class UserRecordPKeys implements Serializable {
         this.day = day;
     }
 
-    public Integer getType() {
+    public UserRecord.TYPE getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(UserRecord.TYPE type) {
         this.type = type;
     }
 
