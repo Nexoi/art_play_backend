@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.*;
 
 @Service
 public class RecordServiceImpl implements RecordService {
@@ -179,7 +179,7 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
     }
 
     @Override
@@ -235,7 +235,7 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
     }
 
     @Override
@@ -264,6 +264,49 @@ public class RecordServiceImpl implements RecordService {
             item.setTimes(record.getTimes());
             items.add(item);
         }
-        return items;
+        return fillEmptyData(startDay, endDay, items);
+    }
+
+    private List<RecordArrayItem> fillEmptyData(Integer startDay, Integer endDay, List<RecordArrayItem> srcData) {
+        try {
+            DateFormat dateFormat = dateFormatterService.getyyyyMMdd();
+            DateFormat dateFormatX = dateFormatterService.getyyyyMMdd_X();
+            Date start = dateFormat.parse("" + startDay);
+            Date end = dateFormat.parse("" + endDay);
+            if (start.after(end)) {
+                return srcData; // 不做处理
+            }
+            // 原数据
+            Map<String, RecordArrayItem> srcMap = new HashMap<>();
+            for (RecordArrayItem item : srcData) {
+                srcMap.put(item.getDay(), item);
+            }
+            // 常用变量
+            long oneDay = 24 * 60 * 60 * 1000;
+            long startTime = start.getTime();
+            long endTime = end.getTime();
+            //
+            List<RecordArrayItem> newData = new ArrayList<>();
+            long currentTime = startTime;
+            while (currentTime <= endTime) {
+                Date current = new Date(currentTime);
+                String currentStr = dateFormat.format(current);
+                RecordArrayItem item = srcMap.get(currentStr);
+                if (null == item) {
+                    // 增添新数据
+                    item = new RecordArrayItem();
+                    item.setDay(dateFormatX.format(current));
+                    item.setTimes(0L);
+                } else {
+                    // 提取数据，修改时间格式
+                    item.setDay(dateFormatX.format(current));
+                }
+                newData.add(item);
+                currentTime += oneDay;
+            }
+            return newData;
+        } catch (ParseException e) {
+        }
+        return new ArrayList<>();
     }
 }

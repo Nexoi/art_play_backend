@@ -10,6 +10,7 @@ public class DateFormatterService {
 
     private SimpleDateFormat yyyyMMddHHmmssS;
     private SimpleDateFormat yyyyMMddHHmmss;
+    private SimpleDateFormat yyyyMMdd_X;
     private SimpleDateFormat yyyyMMdd;
 
     public SimpleDateFormat getyyyyMMddHHmmssS() {
@@ -18,6 +19,11 @@ public class DateFormatterService {
         return yyyyMMddHHmmssS;
     }
 
+    public SimpleDateFormat getyyyyMMdd_X() {
+        if (yyyyMMdd_X == null)
+            yyyyMMdd_X = new SimpleDateFormat("yyyy-MM-dd");
+        return yyyyMMdd_X;
+    }
 
     public SimpleDateFormat getyyyyMMddHHmmss() {
         if (yyyyMMddHHmmss == null)
