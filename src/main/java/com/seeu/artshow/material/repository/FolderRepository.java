@@ -13,5 +13,5 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     List<Folder> findAllByType(@Param("type") Folder.TYPE type);
 
-    void deleteByName(@Param("name") String name);
+    void deleteAllByName(@Param("name") String name);
 }
