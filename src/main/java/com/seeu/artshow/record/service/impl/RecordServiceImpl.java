@@ -171,7 +171,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordArrayItem> findAr(Integer startDay, Integer endDay) {
         List<ArRecord> records = arRecordRepository.findAllByDayBetween(startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (ArRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -185,7 +185,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordArrayItem> findBeacon(Integer startDay, Integer endDay) {
         List<BeaconRecord> records = beaconRecordRepository.findAllByDayBetween(startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (BeaconRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -199,7 +199,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordArrayItem> findQRCode(Integer startDay, Integer endDay) {
         List<QRCodeRecord> records = qrCodeRecordRepository.findAllByDayBetween(startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (QRCodeRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -213,7 +213,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordArrayItem> findResourceGroup(Long groupId, Integer startDay, Integer endDay) {
         List<ResourceGroupRecord> records = resourceGroupRecordRepository.findAllByGroupIdAndDayBetween(groupId, startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (ResourceGroupRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -227,7 +227,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordArrayItem> findResource(Long resourceId, Integer startDay, Integer endDay) {
         List<ResourceRecord> records = resourceRecordRepository.findAllByResourceIdAndDayBetween(resourceId, startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (ResourceRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -241,7 +241,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<RecordArrayItem> findShow(Long showId, Integer startDay, Integer endDay) {
         List<ShowRecord> records = showRecordRepository.findAllByShowIdAndDayBetween(showId, startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (ShowRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -256,7 +256,7 @@ public class RecordServiceImpl implements RecordService {
     public List<RecordArrayItem> findUser(UserRecord.TYPE type, Integer startDay, Integer endDay) {
         if (null == type) return new ArrayList<>();
         List<UserRecord> records = userRecordRepository.findAllByTypeAndDayBetween(type, startDay, endDay);
-        if (records.isEmpty()) return new ArrayList<>();
+        if (records.isEmpty()) return fillEmptyData(startDay, endDay, new ArrayList<>());
         List<RecordArrayItem> items = new ArrayList<>();
         for (UserRecord record : records) {
             RecordArrayItem item = new RecordArrayItem();
@@ -278,9 +278,10 @@ public class RecordServiceImpl implements RecordService {
             }
             // 原数据
             Map<String, RecordArrayItem> srcMap = new HashMap<>();
-            for (RecordArrayItem item : srcData) {
-                srcMap.put(item.getDay(), item);
-            }
+            if (!srcData.isEmpty())
+                for (RecordArrayItem item : srcData) {
+                    srcMap.put(item.getDay(), item);
+                }
             // 常用变量
             long oneDay = 24 * 60 * 60 * 1000;
             long startTime = start.getTime();
