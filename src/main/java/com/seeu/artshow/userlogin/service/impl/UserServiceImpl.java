@@ -9,10 +9,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -128,5 +130,29 @@ public class UserServiceImpl implements UserService {
             return new PageImpl<UserVO>(vos, pageable, page.getTotalElements());
         }
         return new PageImpl<UserVO>(new ArrayList<>());
+    }
+
+    @Override
+    public boolean isAdminX(Long uid) throws NoSuchUserException {
+        User user = findOne(uid);
+        boolean isAdminX = false;
+        Collection<SimpleGrantedAuthority> auths = (List<SimpleGrantedAuthority>) user.getAuthorities();
+        for (SimpleGrantedAuthority auth : auths) {
+            if ("ROLE_ADMINX".equals(auth.getAuthority()))
+                isAdminX = true;
+        }
+        return isAdminX;
+    }
+
+    @Override
+    public boolean isAdmin(Long uid) throws NoSuchUserException {
+        User user = findOne(uid);
+        boolean isAdminX = false;
+        Collection<SimpleGrantedAuthority> auths = (List<SimpleGrantedAuthority>) user.getAuthorities();
+        for (SimpleGrantedAuthority auth : auths) {
+            if ("ROLE_ADMIN".equals(auth.getAuthority()))
+                isAdminX = true;
+        }
+        return isAdminX;
     }
 }

@@ -28,11 +28,18 @@ public class ShowAuthServiceImpl implements ShowAuthService {
     private UserService userService;
 
     @Override
-    public List<Show> listAllShowForAdmin(Long uid) {
-        List<ShowAuth> showAuths = repository.findAllByUid(uid);
-        if (showAuths.isEmpty()) return new ArrayList<>();
-        List<Long> showIds = showAuths.parallelStream().map(ShowAuth::getShowId).collect(Collectors.toList());
-        List<Show> shows = showService.findAll(showIds);
+    public List<Show> listAllShowForAdmin(Long uid) throws NoSuchUserException {
+        List<Show> shows = null;
+        if (userService.isAdminX(uid)) {
+            shows = showService.findAll();
+        } else {
+            List<ShowAuth> showAuths = repository.findAllByUid(uid);
+            if (showAuths.isEmpty()) return new ArrayList<>();
+            List<Long> showIds = showAuths.parallelStream().map(ShowAuth::getShowId).collect(Collectors.toList());
+            shows = showService.findAll(showIds);
+        }
+        if (null == shows || shows.isEmpty())
+            return new ArrayList<>();
         for (Show show : shows) {
             show.setMaps(null);
             show.setShowHallNames(null);

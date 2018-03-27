@@ -34,4 +34,8 @@ public interface UserService {
     Page<UserVO> findAll(String word, Pageable pageable);
 
     Page<UserVO> findAll(User.TYPE type, String word, Pageable pageable);
+
+    boolean isAdminX(Long uid) throws NoSuchUserException;
+
+    boolean isAdmin(Long uid) throws NoSuchUserException;
 }

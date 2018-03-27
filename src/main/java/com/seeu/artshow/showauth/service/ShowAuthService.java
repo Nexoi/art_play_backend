@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ShowAuthService {
 
-    List<Show> listAllShowForAdmin(Long uid); // 这个 Show 只包含 showId, title 信息
+    List<Show> listAllShowForAdmin(Long uid) throws NoSuchUserException; // 这个 Show 只包含 showId, title 信息
 
     void addShowAuthForAdmin(Long uid, Long showId) throws ResourceNotFoundException, NoSuchUserException;
 

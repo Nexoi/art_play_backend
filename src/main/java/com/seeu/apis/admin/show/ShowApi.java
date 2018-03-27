@@ -25,6 +25,7 @@ public class ShowApi {
     @Autowired
     private ShowService showService;
 
+    // 过滤展览信息 by 管理员权限
     @GetMapping("/search")
     public Page<Show> list(@RequestParam(required = false) String word,
                            @RequestParam(defaultValue = "0") Integer page,
@@ -40,6 +41,7 @@ public class ShowApi {
         return showService.findOne(showId);
     }
 
+    // 将创建展览的管理员加入权限清单
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Show add(String title,
