@@ -23,6 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // adminX
     Page<User> findAllByType(@Param("type") User.TYPE type, Pageable pageable);
 
-    Page<User> findAllByTypeAndNicknameLikeOrPhoneLike(@Param("type") User.TYPE type, @Param("username") String username, @Param("phone") String phone, Pageable pageable);
+//    Page<User> findAllByTypeAndNicknameLikeOrPhoneLike(@Param("type") User.TYPE type, @Param("username") String username, @Param("phone") String phone, Pageable pageable);
+
+    Page<User> findAllByTypeAndNicknameLikeOrTypeAndPhoneLike(@Param("type") User.TYPE type, @Param("username") String username, @Param("type2") User.TYPE type2, @Param("phone") String phone, Pageable pageable);
 
 }
