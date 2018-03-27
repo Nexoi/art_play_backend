@@ -212,25 +212,26 @@ public class UserSignInUpServiceImpl implements UserSignInUpService {
     }
 
     @Override
-    public User addAdmin(String username, String password) throws ActionParameterException {
+    public User addAdmin(String username, String password, String phone, User.GENDER gender) throws ActionParameterException {
         try {
             userService.findByNickName(username);
             throw new ActionParameterException("用户已经存在，请修改 username 再添加");
         } catch (NoSuchUserException e) {
-            User user = initAdminAccount(username, password);
+            User user = initAdminAccount(username, password, phone, gender);
             if (user == null) throw new ActionParameterException("请传入正确的用户名／密码");
             return user;
         }
     }
 
-    private User initAdminAccount(String nickname, String credential) {
+    private User initAdminAccount(String nickname, String credential, String phone, User.GENDER gender) {
         if (nickname == null || credential == null) return null;
         User userLogin = new User();
         int length = nickname.length();
         if (length > 20) length = 20;
         userLogin.setNickname(nickname.substring(0, length));
         userLogin.setThirdPartName(null);
-        userLogin.setPhone(null);
+        userLogin.setPhone(phone);
+        userLogin.setGender(gender);
         userLogin.setPassword(md5Service.encode(credential));
         userLogin.setHeadIconUrl(headIcon);
         // 直接添加，状态为 1【正常用户】

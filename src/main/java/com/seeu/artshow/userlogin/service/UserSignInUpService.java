@@ -61,7 +61,7 @@ public interface UserSignInUpService {
     void writtenOff(Long uid) throws NoSuchUserException;
 
 
-    User addAdmin(String username, String password) throws ActionParameterException;
+    User addAdmin(String username, String password, String phone, User.GENDER gender) throws ActionParameterException;
 
 
     class SignUpPhoneResult {

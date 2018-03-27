@@ -46,8 +46,9 @@ public class UserAdminApi {
     }
 
     @PostMapping
-    public UserVO add(String username, String password) throws ActionParameterException {
-        User user = userSignInUpService.addAdmin(username, password);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserVO add(String username, String password, String phone, User.GENDER gender) throws ActionParameterException {
+        User user = userSignInUpService.addAdmin(username, password, phone, gender);
         UserVO vo = new UserVO();
         BeanUtils.copyProperties(user, vo);
         return vo;
