@@ -66,12 +66,11 @@ public class UserAdminApi {
         return showAuthService.listAllShowForAdmin(uid);
     }
 
-    @PostMapping("/{uid}/shows")
-    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{uid}/shows")
     public R.ResponseR addShow(@PathVariable Long uid,
                                @RequestParam Long[] showIds) throws ResourceNotFoundException, NoSuchUserException {
         showAuthService.updateShowAuthForAdmin(uid, Arrays.asList(showIds));
-        return R.code(201).message("权限修改成功");
+        return R.code(200).message("权限修改成功");
     }
 
 //    @DeleteMapping("/{uid}/shows")
