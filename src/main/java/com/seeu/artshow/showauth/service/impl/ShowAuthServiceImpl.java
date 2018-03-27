@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,17 +49,28 @@ public class ShowAuthServiceImpl implements ShowAuthService {
         return shows;
     }
 
+    @Transactional
     @Override
-    public void addShowAuthForAdmin(Long uid, Long showId) throws ResourceNotFoundException, NoSuchUserException {
+    public void updateShowAuthForAdmin(Long uid, Collection<Long> showIds) throws ResourceNotFoundException, NoSuchUserException {
         User user = userService.findOne(uid);
-        Show show = showService.findOne(showId);
-        ShowAuth auth = new ShowAuth();
-        auth.setShowId(show.getId());
-        auth.setUid(user.getUid());
-        auth.setUpdateTime(new Date());
-        repository.save(auth);
+        List<Show> shows = showService.findAll(showIds);
+        if (shows.isEmpty())return;
+        // delete all
+        repository.deleteAllByUid(user.getUid());
+        // add
+        List<ShowAuth> auths = new ArrayList<>();
+        for(Show show : shows){
+            ShowAuth auth = new ShowAuth();
+            auth.setShowId(show.getId());
+            auth.setUid(user.getUid());
+            auth.setUpdateTime(new Date());
+            auths.add(auth);
+        }
+        repository.save(auths);
     }
 
+    // 作废
+    @Deprecated
     @Override
     public void deleteShowAuth(Long uid, Long showId) {
         ShowAuth auth = new ShowAuth();

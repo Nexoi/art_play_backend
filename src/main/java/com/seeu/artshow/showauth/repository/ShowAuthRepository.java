@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface ShowAuthRepository extends JpaRepository<ShowAuth, ShowAuthPKeys> {
     List<ShowAuth> findAllByUid(@Param("uid") Long uid);
+
+    void deleteAllByUid(@Param("uid") Long uid);
 }

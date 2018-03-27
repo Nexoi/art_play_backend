@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,23 +61,23 @@ public class UserAdminApi {
         return R.deleteSuccess();
     }
 
-    @GetMapping("/shows/{uid}/list}")
+    @GetMapping("/{uid}/shows/list}")
     public List<Show> listShows(@PathVariable Long uid) throws NoSuchUserException {
         return showAuthService.listAllShowForAdmin(uid);
     }
 
-    @PostMapping("/shows")
-    @ResponseStatus(HttpStatus.CREATED)
-    public R.ResponseR addShow(@RequestParam Long uid,
-                               @RequestParam Long showId) throws ResourceNotFoundException, NoSuchUserException {
-        showAuthService.addShowAuthForAdmin(uid, showId);
-        return R.code(201).message("添加权限成功");
+    @PostMapping("/{uid}/shows")
+    @ResponseStatus(HttpStatus.OK)
+    public R.ResponseR addShow(@PathVariable Long uid,
+                               @RequestParam Long[] showIds) throws ResourceNotFoundException, NoSuchUserException {
+        showAuthService.updateShowAuthForAdmin(uid, Arrays.asList(showIds));
+        return R.code(201).message("权限修改成功");
     }
 
-    @DeleteMapping("/shows")
-    public R.ResponseR deleteShow(@RequestParam Long uid,
-                                  @RequestParam Long showId) {
-        showAuthService.deleteShowAuth(uid, showId);
-        return R.deleteSuccess();
-    }
+//    @DeleteMapping("/{uid}/shows")
+//    public R.ResponseR deleteShow(@PathVariable Long uid,
+//                                  @RequestParam Long showId) {
+//        showAuthService.deleteShowAuth(uid, showId);
+//        return R.deleteSuccess();
+//    }
 }
