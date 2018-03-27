@@ -60,7 +60,7 @@ public class UserAdminApi {
     }
 
     @GetMapping("/shows/{uid}/list}")
-    public List<Show> listShows(@PathVariable Long uid) {
+    public List<Show> listShows(@PathVariable Long uid) throws NoSuchUserException {
         return showAuthService.listAllShowForAdmin(uid);
     }
 
