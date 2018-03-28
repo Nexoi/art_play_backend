@@ -61,7 +61,7 @@ public class UserAdminApi {
         return R.deleteSuccess();
     }
 
-    @GetMapping("/{uid}/shows/list}")
+    @GetMapping("/{uid}/shows")
     public List<Show> listShows(@PathVariable Long uid) throws NoSuchUserException {
         return showAuthService.listAllShowForAdmin(uid);
     }
