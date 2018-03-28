@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -49,17 +48,16 @@ public class ShowAuthServiceImpl implements ShowAuthService {
         return shows;
     }
 
-    @Transactional
     @Override
     public void updateShowAuthForAdmin(Long uid, Collection<Long> showIds) throws ResourceNotFoundException, NoSuchUserException {
         User user = userService.findOne(uid);
         List<Show> shows = showService.findAll(showIds);
-        if (shows.isEmpty())return;
+        if (shows.isEmpty()) return;
         // delete all
-        repository.deleteAllByUid(user.getUid());
+        repository.deleteAuths(user.getUid());
         // add
         List<ShowAuth> auths = new ArrayList<>();
-        for(Show show : shows){
+        for (Show show : shows) {
             ShowAuth auth = new ShowAuth();
             auth.setShowId(show.getId());
             auth.setUid(user.getUid());
@@ -72,6 +70,7 @@ public class ShowAuthServiceImpl implements ShowAuthService {
     @Override
     public void deleteAllShowAuth(Long uid) throws NoSuchUserException {
         User user = userService.findOne(uid);
-        repository.deleteAllByUid(user.getUid());
+        repository.deleteAuths(user.getUid());
+        repository.flush();
     }
 }
