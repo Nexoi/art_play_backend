@@ -6,6 +6,8 @@ import com.seeu.artshow.userlogin.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface UserService {
     User findOne(Long uid) throws NoSuchUserException;
 
@@ -30,6 +32,8 @@ public interface UserService {
     void delete(Long uid) throws NoSuchUserException;
 
     // admin
+
+    List<User> findAll(User.TYPE type);
 
     Page<UserVO> findAll(String word, Pageable pageable);
 

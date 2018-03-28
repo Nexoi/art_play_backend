@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByPhone(@Param("phone") String phone);
@@ -22,6 +24,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // adminX
     Page<User> findAllByType(@Param("type") User.TYPE type, Pageable pageable);
+
+    List<User> findAllByType(@Param("type") User.TYPE type);
 
 //    Page<User> findAllByTypeAndNicknameLikeOrPhoneLike(@Param("type") User.TYPE type, @Param("username") String username, @Param("phone") String phone, Pageable pageable);
 

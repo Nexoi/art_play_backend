@@ -87,6 +87,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> findAll(User.TYPE type) {
+        return repository.findAllByType(type);
+    }
+
+    @Override
     public Page<UserVO> findAll(String word, Pageable pageable) {
         Page page = null;
         if (word == null || word.length() == 0)
