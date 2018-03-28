@@ -62,15 +62,21 @@ public class UserAdminApi {
     }
 
     @GetMapping("/{uid}/shows")
-    public List<Show> listShows(@PathVariable Long uid) throws NoSuchUserException {
+    public List<Show> listShowAuths(@PathVariable Long uid) throws NoSuchUserException {
         return showAuthService.listAllShowForAdmin(uid);
     }
 
     @PutMapping("/{uid}/shows")
-    public R.ResponseR addShow(@PathVariable Long uid,
-                               @RequestParam Long[] showIds) throws ResourceNotFoundException, NoSuchUserException {
+    public R.ResponseR addAuths(@PathVariable Long uid,
+                                @RequestParam Long[] showIds) throws ResourceNotFoundException, NoSuchUserException {
         showAuthService.updateShowAuthForAdmin(uid, Arrays.asList(showIds));
         return R.code(200).message("权限修改成功");
+    }
+
+    @DeleteMapping("/{uid}/shows")
+    public R.ResponseR deleteAuths(@PathVariable Long uid) throws ResourceNotFoundException, NoSuchUserException {
+        showAuthService.deleteAllShowAuth(uid);
+        return R.code(200).message("权限清除成功");
     }
 
 //    @DeleteMapping("/{uid}/shows")

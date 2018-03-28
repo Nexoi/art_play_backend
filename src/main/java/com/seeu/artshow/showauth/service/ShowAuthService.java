@@ -14,8 +14,7 @@ public interface ShowAuthService {
     // 会清空之前的所有数据再更新
     void updateShowAuthForAdmin(Long uid, Collection<Long> showIds) throws ResourceNotFoundException, NoSuchUserException;
 
-    @Deprecated
-    void deleteShowAuth(Long uid, Long showId);
+    void deleteAllShowAuth(Long uid) throws NoSuchUserException;
 
 
 }

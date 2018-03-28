@@ -69,14 +69,9 @@ public class ShowAuthServiceImpl implements ShowAuthService {
         repository.save(auths);
     }
 
-    // 作废
-    @Deprecated
     @Override
-    public void deleteShowAuth(Long uid, Long showId) {
-        ShowAuth auth = new ShowAuth();
-        auth.setShowId(showId);
-        auth.setUid(uid);
-        auth.setUpdateTime(new Date());
-        repository.delete(auth);
+    public void deleteAllShowAuth(Long uid) throws NoSuchUserException {
+        User user = userService.findOne(uid);
+        repository.deleteAllByUid(user.getUid());
     }
 }
