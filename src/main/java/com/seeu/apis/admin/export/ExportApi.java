@@ -20,7 +20,6 @@ public class ExportApi {
     @Autowired
     private UserService userService;
 
-
     @RequestMapping("/users.txt")
     public void exportUsers(HttpServletResponse response) throws IOException {
         List<User> users = userService.findAll(User.TYPE.USER);
