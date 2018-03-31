@@ -70,14 +70,18 @@ public class Application extends SpringBootServletInitializer {
     private String APP_ID;
     @Value("${wx.app_secret}")
     private String APP_SECRET;
+    @Value("${wx.token}")
+    private String TOKEN;
+    @Value("${wx.aes_key}")
+    private String AES_KEY;
+
     @Bean
     public WxMpService wxMpService() {
         WxMpInMemoryConfigStorage config = new WxMpInMemoryConfigStorage();
         config.setAppId(APP_ID); // 设置微信公众号的appid
         config.setSecret(APP_SECRET); // 设置微信公众号的app corpSecret
-//        config.setToken("..."); // 设置微信公众号的token
-//        config.setAesKey("..."); // 设置微信公众号的EncodingAESKey
-//        config.setAccessToken("8_Vr8MaTSgiqh5g2NKaY4v5CJXPruRbVzIAWthvhOYQ2cz_ddI0pJjqzPrX-oCP9Obf7SLN8Obid3kI9hosNobzNcZrHoqVl8cR5OfNwCDAtcFcca28C055rqSLOyecYJQESU3879iI0wUMJGcPNZiAHASQC");
+        config.setToken(TOKEN); // 设置微信公众号的token
+        config.setAesKey(AES_KEY); // 设置微信公众号的EncodingAESKey
         WxMpService service = new WxMpServiceImpl();
         service.setWxMpConfigStorage(config);
         return service;

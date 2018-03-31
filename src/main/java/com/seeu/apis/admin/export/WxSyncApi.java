@@ -5,14 +5,28 @@ import com.seeu.artshow.material.model.WxSyncMedia;
 import com.seeu.artshow.material.service.WxSyncMediaService;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin/v1/wx")
+@RequestMapping
 public class WxSyncApi {
 
     @Autowired
     private WxSyncMediaService wxSyncMediaService;
+
+
+    @Value("${wx.token}")
+    private String token;
+
+    @GetMapping("/wx")
+    public String valiatedWx(String signature, String timestamp, String nonce, String echostr) {
+        if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
+            return echostr;
+        } else {
+            return null;
+        }
+    }
 
     @GetMapping
     public String sync(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
@@ -20,12 +34,12 @@ public class WxSyncApi {
         return "doing";
     }
 
-    @GetMapping("/token")
+    @GetMapping("/api/admin/v1/wx/token")
     public String token() throws ActionParameterException {
         return wxSyncMediaService.getToken();
     }
 
-    @PostMapping("/test")
+    @PostMapping("/api/admin/v1/wx/test")
     public String syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String originalSrcUrl,
                            String contentHtml) throws ActionParameterException, WxErrorException {
         return wxSyncMediaService.syncHtml(title, coverImageUrl, author, description, showCoverImg, contentHtml, originalSrcUrl);
