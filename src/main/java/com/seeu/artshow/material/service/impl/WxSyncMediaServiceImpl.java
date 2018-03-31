@@ -190,7 +190,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
             media.setArtUrl(artUrl);
             media.setWxUrl(result.getUrl());
             media.setCreateTime(new Date());
-            return media;
+            return repository.save(media);
         } catch (IOException e) {
             throw new ActionParameterException("文件同步异常：[IOException]" + artUrl);
         } catch (WxErrorException e) {
