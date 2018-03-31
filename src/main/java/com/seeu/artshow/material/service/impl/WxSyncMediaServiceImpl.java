@@ -142,7 +142,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
             while (inputStream.read(temp) > 0) {
                 outputStream.write(temp);
             }
-            Path path = Files.createTempFile("tempfileName" + new Date().toString(), ".seeu");
+            Path path = Files.createTempFile("tempfileName" + new Date().toString(), ".png");
             Files.write(path, outputStream.toByteArray());
             File file = path.toFile();
             return new FileSystemResource(file);
