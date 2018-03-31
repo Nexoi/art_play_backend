@@ -83,6 +83,11 @@ public class ArtShowResponseBodyAdvice implements ResponseBodyAdvice {
     public Object beforeBodyWrite(Object returnValue, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
 //        if (methodParameter.getMethod().getName().equals("error")) // 这是 error 错误页面，建议以后单独再封装一次 error
 //            return returnValue;
+        if (mediaType==MediaType.APPLICATION_XML){
+            // 不做处理
+            return returnValue;
+        }
+
         serverHttpResponse.getHeaders().setContentType(MediaType.APPLICATION_JSON); // 全部格成 JSON
 
         if (!serverHttpResponse.getHeaders().containsKey("NOT_TRANSFORM_BODY")) {  //有些错误已经格式化为指定的返回类型
