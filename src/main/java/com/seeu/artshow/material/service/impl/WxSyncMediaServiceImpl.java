@@ -7,6 +7,8 @@ import com.seeu.artshow.material.repository.WxSyncMediaRepository;
 import com.seeu.artshow.material.service.WxSyncMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
@@ -15,18 +17,20 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class WxSyncMediaServiceImpl implements WxSyncMediaService {
-    @Resource
+    @javax.annotation.Resource
     private WxSyncMediaRepository repository;
     @Autowired
     private RestTemplate restTemplate;
@@ -73,7 +77,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
 
     private WxSyncMedia sync2Wx(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
         if (null == type || null == artUrl) return null;
-        org.springframework.core.io.Resource file = getFile(artUrl); // 如果文件有问题，下载不下来，会抛出 Action 异常
+        Resource file = getFile(artUrl); // 如果文件有问题，下载不下来，会抛出 Action 异常
         String uploadApiUrl = type == WxSyncMedia.TYPE.IMAGE ? uploadImgApi : uploadMediaApi;
         uploadApiUrl += "?access_token=" + getAccessToken();
         MultiValueMap<String, Object> bodyMap = new LinkedMultiValueMap<>();
@@ -121,13 +125,26 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         return null;
     }
 
-    private org.springframework.core.io.Resource getFile(String url) throws ActionParameterException {
-        return resourceLoader.getResource(url);
+    private Resource getFile(String url) throws ActionParameterException {
+        try {
+            UrlResource urlResource = new UrlResource(url);
+            InputStream inputStream = urlResource.getInputStream();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            byte[] temp = new byte[2048];
+            while (inputStream.read(temp) > 0) {
+                outputStream.write(temp);
+            }
+            Path path = Files.createTempFile("tempfileName" + new Date().toString(), ".seeu");
+            Files.write(path, outputStream.toByteArray());
+            File file = path.toFile();
+            return new FileSystemResource(file);
+        } catch (IOException e) {
+            throw new ActionParameterException("URL对应文件不存在：" + url);
+        }
 //        try {
 //            UrlResource urlResource = new UrlResource(url);
 //            return urlResource.getInputStream();
 //        } catch (Exception e) {
-//            throw new ActionParameterException("URL对应文件不存在：" + url);
 //        }
     }
 
