@@ -89,7 +89,8 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
             String type2 = type == WxSyncMedia.TYPE.VIDEO
                     ? "video" : type == WxSyncMedia.TYPE.AUDIO
                     ? "voice" : "image";
-            bodyMap.add("type", type2);
+//            bodyMap.add("type", type2); // 放在 query 内，不能置于表单中
+            uploadApiUrl += "&type=" + type2;
         }
         if (type == WxSyncMedia.TYPE.VIDEO) { // 如果是视频，需要新增加一个字段
             JSONObject jo = new JSONObject();
@@ -103,7 +104,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         ResponseEntity<String> response = restTemplate.exchange(uploadApiUrl, HttpMethod.POST, requestEntity, String.class);
         String body = response.getBody();
         JSONObject jo = JSONObject.parseObject(body);
-        this.body = jo;
+        this.body = jo; // sup
         String wxUrl = jo.getString("url");
         String mediaId = jo.getString("media_id");
         Integer errorCode = jo.getInteger("errcode");
