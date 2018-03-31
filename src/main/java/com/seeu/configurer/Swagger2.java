@@ -54,7 +54,7 @@ public class Swagger2 {
                 .title("广东美术馆 Api Document")
                 .description("广东美术馆 API 文档")
                 .version("1.0")
-                .termsOfServiceUrl("http://art.seeuio.com/api/")
+//                .termsOfServiceUrl("http://art.seeuio.com/api/")
                 .build();
     }
 
