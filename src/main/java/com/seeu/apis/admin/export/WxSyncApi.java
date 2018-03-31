@@ -6,9 +6,10 @@ import com.seeu.artshow.material.service.WxSyncMediaService;
 import me.chanjar.weixin.common.exception.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +26,7 @@ public class WxSyncApi {
 
     @GetMapping("/wx")
     public String valiatedWx(String signature, String timestamp, String nonce, String echostr, HttpServletResponse response) {
-        response.setContentType("application/xml");
+        response.addHeader("NOT_TRANSFORM_BODY","true");
         if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
             return echostr;
         } else {
