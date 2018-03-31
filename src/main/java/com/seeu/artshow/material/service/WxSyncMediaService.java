@@ -8,6 +8,8 @@ import java.util.Map;
 
 public interface WxSyncMediaService {
 
+    String getToken() throws ActionParameterException;
+
     Map testAll(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException;
 
     WxSyncMedia getMedia(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException;

@@ -51,6 +51,11 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
 
 
     @Override
+    public String getToken() throws ActionParameterException {
+        return getAccessToken();
+    }
+
+    @Override
     public Map testAll(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
         WxSyncMedia media = getMedia(artUrl, type, videoTitle);
         String access_token = getAccessToken();

@@ -19,6 +19,11 @@ public class WxSyncApi {
         return "doing";
     }
 
+    @GetMapping("/token")
+    public String token() throws ActionParameterException {
+        return wxSyncMediaService.getToken();
+    }
+
     @PostMapping("/test")
     public WxSyncMediaService.SyncHtmlResult syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String originalSrcUrl,
                                                       String contentHtml) throws ActionParameterException {
