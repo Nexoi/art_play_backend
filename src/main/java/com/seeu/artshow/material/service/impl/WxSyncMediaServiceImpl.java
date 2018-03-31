@@ -49,6 +49,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     private static int repeatCount = 0;
 
     // sup
+    private String requestUrl;
     private JSONObject body;
 
     @Override
@@ -58,6 +59,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         Map map = new HashMap();
         map.put("media", media);
         map.put("access_token", access_token);
+        map.put("requestUrl",requestUrl);
         map.put("jsonBody", body);
         return map;
     }
@@ -104,6 +106,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         ResponseEntity<String> response = restTemplate.exchange(uploadApiUrl, HttpMethod.POST, requestEntity, String.class);
         String body = response.getBody();
         JSONObject jo = JSONObject.parseObject(body);
+        this.requestUrl = uploadApiUrl;
         this.body = jo; // sup
         String wxUrl = jo.getString("url");
         String mediaId = jo.getString("media_id");
