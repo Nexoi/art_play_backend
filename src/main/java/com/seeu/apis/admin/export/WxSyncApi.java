@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/admin/v1/wx")
 public class WxSyncApi {
@@ -16,7 +18,7 @@ public class WxSyncApi {
     private WxSyncMediaService wxSyncMediaService;
 
     @GetMapping
-    public WxSyncMedia sync(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
-        return wxSyncMediaService.getMedia(artUrl, type, videoTitle);
+    public Map sync(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
+        return wxSyncMediaService.testAll(artUrl, type, videoTitle);
     }
 }

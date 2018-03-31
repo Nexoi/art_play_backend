@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class WxSyncMediaServiceImpl implements WxSyncMediaService {
@@ -41,6 +43,17 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     private final String accessTokenApi = "https://api.weixin.qq.com/cgi-bin/token";
     private static String accessToken = null;
     private static int repeatCount = 0;
+
+
+    @Override
+    public Map testAll(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
+        WxSyncMedia media = getMedia(artUrl, type, videoTitle);
+        String access_token = getAccessToken();
+        Map map = new HashMap();
+        map.put("media", media);
+        map.put("access_token", access_token);
+        return map;
+    }
 
     @Override
     public WxSyncMedia getMedia(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
