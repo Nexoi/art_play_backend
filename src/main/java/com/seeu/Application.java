@@ -1,5 +1,9 @@
 package com.seeu;
 
+import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -60,6 +64,23 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Value("${wx.app_id}")
+    private String APP_ID;
+    @Value("${wx.app_secret}")
+    private String APP_SECRET;
+    @Bean
+    public WxMpService wxMpService() {
+        WxMpInMemoryConfigStorage config = new WxMpInMemoryConfigStorage();
+        config.setAppId(APP_ID); // 设置微信公众号的appid
+        config.setSecret(APP_SECRET); // 设置微信公众号的app corpSecret
+//        config.setToken("..."); // 设置微信公众号的token
+//        config.setAesKey("..."); // 设置微信公众号的EncodingAESKey
+//        config.setAccessToken("8_Vr8MaTSgiqh5g2NKaY4v5CJXPruRbVzIAWthvhOYQ2cz_ddI0pJjqzPrX-oCP9Obf7SLN8Obid3kI9hosNobzNcZrHoqVl8cR5OfNwCDAtcFcca28C055rqSLOyecYJQESU3879iI0wUMJGcPNZiAHASQC");
+        WxMpService service = new WxMpServiceImpl();
+        service.setWxMpConfigStorage(config);
+        return service;
     }
 }
 

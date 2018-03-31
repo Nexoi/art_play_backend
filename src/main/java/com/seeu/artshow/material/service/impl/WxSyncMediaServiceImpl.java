@@ -6,13 +6,22 @@ import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.material.model.WxSyncMedia;
 import com.seeu.artshow.material.repository.WxSyncMediaRepository;
 import com.seeu.artshow.material.service.WxSyncMediaService;
+import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.fs.FileUtils;
+import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -28,12 +37,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+
 @Service
 public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     @javax.annotation.Resource
     private WxSyncMediaRepository repository;
-    //    @Autowired
-//    private WxMpService wxService;
+    @Autowired
+    private WxMpService wxService;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -66,43 +76,29 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     }
 
     @Override
-    public SyncHtmlResult syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException {
+    public String syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException, WxErrorException {
         WxSyncMedia coverImage = null;
         try {
-            coverImage = getMedia(coverImageUrl, WxSyncMedia.TYPE.IMAGE, null);
+            coverImage = getMedia(coverImageUrl, WxSyncMedia.TYPE.THUMB, null);
         } catch (ActionParameterException e) {
             throw new ActionParameterException("封面图片同步失败，请确认图片格式正确"); // 封面都传不上去，直接抛了
         }
-        List<String> errorMessagesCollector = new ArrayList<>();
-        JSONObject article = new JSONObject();
-        article.put("title", title);
-        article.put("thumb_media_id", coverImage.getMediaId());
-        article.put("author", author);
-        article.put("digest", description);
-        article.put("show_cover_pic", showCoverImg ? "1" : '0');
-        article.put("content", contentHtml);
-        article.put("content_source_url", transferHtml2Wx(originalSrcUrl, errorMessagesCollector));
-        JSONArray articleArray = new JSONArray();
-        articleArray.add(article);
-        JSONObject body = new JSONObject();
-        body.put("articles", articleArray);
-        String postUrl = addNewArticle + "?access_token=" + getAccessToken();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        headers.add("Connection", "Keep-Alive");
-        headers.add("Charset", "UTF-8");
-        HttpEntity<String> requestEntity = new HttpEntity<String>(body.toJSONString(), headers);
-        ResponseEntity<String> response = restTemplate.exchange(postUrl, HttpMethod.POST, requestEntity, String.class);
-        String responseBody = response.getBody();
-        JSONObject jo = JSONObject.parseObject(responseBody);
-        String mediaId = jo.getString("media_id");
-        SyncHtmlResult result = new SyncHtmlResult();
-        result.setMediaId(mediaId);
-        result.setErrorMessages(errorMessagesCollector);
-        return result;
+        // 单图文消息
+        WxMpMaterialNews wxMpMaterialNewsSingle = new WxMpMaterialNews();
+        WxMpMaterialNews.WxMpMaterialNewsArticle article = new WxMpMaterialNews.WxMpMaterialNewsArticle();
+        article.setAuthor(author);
+        article.setThumbMediaId(coverImage.getMediaId());
+        article.setTitle(title);
+        article.setContent(transferHtml2Wx(contentHtml));
+        article.setContentSourceUrl(originalSrcUrl);
+        article.setShowCoverPic(showCoverImg);
+        article.setDigest(description);
+        wxMpMaterialNewsSingle.addArticle(article);
+        WxMpMaterialUploadResult resSingle = this.wxService.getMaterialService().materialNewsUpload(wxMpMaterialNewsSingle);
+        return resSingle.getMediaId();
     }
 
-    private String transferHtml2Wx(String originalHtml, List<String> errorMessagesCollector) {
+    private String transferHtml2Wx(String originalHtml) {
         // 解析 html 文档
         Document document = Jsoup.parse(originalHtml);
         Element body = document.body();
@@ -116,7 +112,6 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
                 }
             } catch (ActionParameterException e) {
                 e.printStackTrace();
-                errorMessagesCollector.add(e.getMessage());
             }
         }
         Elements videos = body.getElementsByTag("video");
@@ -129,7 +124,6 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
                 }
             } catch (ActionParameterException e) {
                 e.printStackTrace();
-                errorMessagesCollector.add(e.getMessage());
             }
         }
         Elements audios = body.getElementsByTag("audio");
@@ -142,7 +136,6 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
                 }
             } catch (ActionParameterException e) {
                 e.printStackTrace();
-                errorMessagesCollector.add(e.getMessage());
             }
         }
         return body.html();
@@ -167,79 +160,41 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
 
     private WxSyncMedia sync2Wx(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
         if (null == type || null == artUrl) return null;
-        Resource file = getFile(artUrl, type); // 如果文件有问题，下载不下来，会抛出 Action 异常
-        String uploadApiUrl = uploadMediaApi;
-        uploadApiUrl += "?access_token=" + getAccessToken();
-        String type2 = type == WxSyncMedia.TYPE.VIDEO
-                ? "video" : type == WxSyncMedia.TYPE.AUDIO
-                ? "voice" : "image";
-//            bodyMap.add("type", type2); // 放在 query 内，不能置于表单中
-        uploadApiUrl += "&type=" + type2;
-
-        MultiValueMap<String, Object> bodyMap = new LinkedMultiValueMap<>();
-        bodyMap.add("media", file);
-        if (type == WxSyncMedia.TYPE.VIDEO) { // 如果是视频，需要新增加一个字段
-            JSONObject jo = new JSONObject();
-            jo.put("title", videoTitle);
-            jo.put("introduction", videoTitle);
-            bodyMap.add("description", jo.toJSONString());
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.add("Connection", "Keep-Alive");
-        headers.add("Charset", "UTF-8");
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(bodyMap, headers);
-        ResponseEntity<String> response = restTemplate.exchange(uploadApiUrl, HttpMethod.POST, requestEntity, String.class);
-        String body = response.getBody();
-        JSONObject jo = JSONObject.parseObject(body);
-        String wxUrl = jo.getString("url");
-        String mediaId = jo.getString("media_id");
-        Integer errorCode = jo.getInteger("errcode");
-        if (null != wxUrl) {
-            repeatCount = 0; // 归零，标记 access_token 可用
-            WxSyncMedia media = new WxSyncMedia();
-            media.setMediaId(mediaId);
-            media.setArtUrl(artUrl);
-            media.setType(type);
-            media.setWxUrl(wxUrl);
-            media.setCreateTime(new Date());
-            return repository.save(media);
-        }
-        if (null != errorCode) {
-            if (errorCode.equals(40014) || errorCode.equals(42001)) {
-                // token 不合法
-                accessToken = null;
-                repeatCount += 1;
-                if (repeatCount < 2) // 避免重复执行次数过多
-                    return sync2Wx(artUrl, type, videoTitle); // 重新再执行该方法
-            }
-            if (errorCode.equals(45007)) {
-                // 音频超出长度
-                throw new ActionParameterException("音频超出限制，最大时间长度不能超过：60s");
-            }
-        }
-        return null;
-    }
-
-    private Resource getFile(String url, WxSyncMedia.TYPE type) throws ActionParameterException {
         try {
-            UrlResource urlResource = new UrlResource(url);
+            UrlResource urlResource = new UrlResource(artUrl);
             InputStream inputStream = urlResource.getInputStream();
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            byte[] temp = WxSyncMedia.TYPE.VIDEO == type ? new byte[1024 * 10000] : new byte[2048 * 1000];
-            while (inputStream.read(temp) != -1) {
-                outputStream.write(temp);
+            String fileType = "";
+            String mediaType = "";
+            switch (type) {
+                case VIDEO:
+                    fileType = "mp4";
+                    mediaType = "video";
+                    break;
+                case AUDIO:
+                    fileType = "mp3";
+                    mediaType = "voice";
+                    break;
+                case IMAGE:
+                    fileType = "jpeg";
+                    mediaType = "image";
+                    break;
+                case THUMB:
+                    fileType = "jpeg";
+                    mediaType = "thumb";
+                    break;
             }
-            String suffix = type == WxSyncMedia.TYPE.VIDEO
-                    ? "mp4" : type == WxSyncMedia.TYPE.AUDIO
-                    ? "mp3" : "png";
-            File file = FileUtils.createTmpFile(inputStream, UUID.randomUUID().toString(), suffix);
-            // close
-            inputStream.close();
-            outputStream.close();
-            return new FileSystemResource(file);
+            WxMpMaterialUploadResult result = uploadMaterial(mediaType, fileType, inputStream);
+            WxSyncMedia media = new WxSyncMedia();
+            media.setMediaId(result.getMediaId());
+            media.setType(type);
+            media.setArtUrl(artUrl);
+            media.setWxUrl(result.getUrl());
+            media.setCreateTime(new Date());
+            return media;
         } catch (IOException e) {
-            throw new ActionParameterException("URL对应文件不存在：" + url);
+            throw new ActionParameterException("文件同步异常：[IOException]" + artUrl);
+        } catch (WxErrorException e) {
+            throw new ActionParameterException("文件同步异常：[微信异常]" + artUrl);
         }
     }
 
@@ -262,39 +217,39 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         return accessToken;
     }
 
-//    public WxMpMaterialUploadResult testUploadMaterial(String mediaType, String fileType, InputStream inputStream) throws WxErrorException, IOException {
-//
-//        File tempFile = FileUtils.createTmpFile(inputStream,
-//                UUID.randomUUID().toString(), fileType);
-//        WxMpMaterial wxMaterial = new WxMpMaterial();
-//        wxMaterial.setFile(tempFile);
-//        wxMaterial.setName(fileName);
-//        if (WxConsts.MediaFileType.VIDEO.equals(mediaType)) {
-//            wxMaterial.setVideoTitle("广东美术馆收录视频");
-//            wxMaterial.setVideoIntroduction("广东美术馆收录视频");
-//        }
-//
-//        WxMpMaterialUploadResult res = this.wxService.getMaterialService()
-//                .materialFileUpload(mediaType, wxMaterial);
+    public WxMpMaterialUploadResult uploadMaterial(String mediaType, String fileType, InputStream inputStream) throws WxErrorException, IOException {
+        File tempFile = FileUtils.createTmpFile(inputStream,
+                UUID.randomUUID().toString(), fileType);
+        WxMpMaterial wxMaterial = new WxMpMaterial();
+        wxMaterial.setFile(tempFile);
+        wxMaterial.setName(tempFile.getName());
+        if (WxConsts.MediaFileType.VIDEO.equals(mediaType)) {
+            wxMaterial.setVideoTitle("广东美术馆收录视频");
+            wxMaterial.setVideoIntroduction("广东美术馆收录视频");
+        }
+
+        WxMpMaterialUploadResult res = this.wxService.getMaterialService()
+                .materialFileUpload(mediaType, wxMaterial);
 //        assertNotNull(res.getMediaId());
-//
-//        if (WxConsts.MediaFileType.IMAGE.equals(mediaType)
-//                || WxConsts.MediaFileType.THUMB.equals(mediaType)) {
+
+        if (WxConsts.MediaFileType.IMAGE.equals(mediaType)
+                || WxConsts.MediaFileType.THUMB.equals(mediaType)) {
 //            assertNotNull(res.getUrl());
-//        }
-//
-//        if (WxConsts.MediaFileType.THUMB.equals(mediaType)) {
+        }
+
+        if (WxConsts.MediaFileType.THUMB.equals(mediaType)) {
 //            this.thumbMediaId = res.getMediaId();
-//        }
-//
+        }
+
 //        Map<String, Object> materialInfo = new HashMap<>();
 //        materialInfo.put("media_id", res.getMediaId());
 //        materialInfo.put("length", tempFile.length());
 //        materialInfo.put("filename", tempFile.getName());
 //        this.mediaIds.put(res.getMediaId(), materialInfo);
-//
+
 //        System.out.println(res);
-//        return res;
-//
-//    }
+        return res;
+
+    }
+
 }

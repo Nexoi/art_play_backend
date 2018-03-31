@@ -3,6 +3,7 @@ package com.seeu.apis.admin.export;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.material.model.WxSyncMedia;
 import com.seeu.artshow.material.service.WxSyncMediaService;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,8 @@ public class WxSyncApi {
     }
 
     @PostMapping("/test")
-    public WxSyncMediaService.SyncHtmlResult syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String originalSrcUrl,
-                                                      String contentHtml) throws ActionParameterException {
+    public String syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String originalSrcUrl,
+                           String contentHtml) throws ActionParameterException, WxErrorException {
         return wxSyncMediaService.syncHtml(title, coverImageUrl, author, description, showCoverImg, contentHtml, originalSrcUrl);
     }
 }

@@ -13,6 +13,7 @@ public class WxSyncMedia {
         IMAGE,
         AUDIO,
         VIDEO,
+        THUMB,
     }
 
     @Id

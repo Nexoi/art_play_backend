@@ -2,6 +2,7 @@ package com.seeu.artshow.material.service;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.material.model.WxSyncMedia;
+import me.chanjar.weixin.common.exception.WxErrorException;
 
 import java.util.List;
 import java.util.Map;
@@ -26,26 +27,26 @@ public interface WxSyncMediaService {
      * @param originalSrcUrl
      * @return error message list
      */
-    SyncHtmlResult syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException;
+    String syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException, WxErrorException;
 
-    class SyncHtmlResult {
-        private String mediaId;
-        private List<String> errorMessages;
-
-        public String getMediaId() {
-            return mediaId;
-        }
-
-        public void setMediaId(String mediaId) {
-            this.mediaId = mediaId;
-        }
-
-        public List<String> getErrorMessages() {
-            return errorMessages;
-        }
-
-        public void setErrorMessages(List<String> errorMessages) {
-            this.errorMessages = errorMessages;
-        }
-    }
+//    class SyncHtmlResult {
+//        private String mediaId;
+//        private List<String> errorMessages;
+//
+//        public String getMediaId() {
+//            return mediaId;
+//        }
+//
+//        public void setMediaId(String mediaId) {
+//            this.mediaId = mediaId;
+//        }
+//
+//        public List<String> getErrorMessages() {
+//            return errorMessages;
+//        }
+//
+//        public void setErrorMessages(List<String> errorMessages) {
+//            this.errorMessages = errorMessages;
+//        }
+//    }
 }
