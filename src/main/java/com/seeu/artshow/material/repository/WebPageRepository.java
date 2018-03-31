@@ -8,8 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.List;
 
 public interface WebPageRepository extends JpaRepository<WebPage, Long> {
+
+    List<WebPage> findAllByResourceItemIdIn(@Param("itemIds") Collection<Long> itemIds);
 
     // 浏览一次
     @Transactional

@@ -18,9 +18,11 @@ public class WebPage {
     private Long resourceItemId; // ResourceItem 必须是 WEB 类型
 
     @Column(name = "wechat_async")
-    private WECHAT_ASYNC wechatAsync;
+    private WECHAT_ASYNC wechatAsync; // 微信字段
 
-    private String wechatUrl;
+    private String mediaId; // 微信字段
+
+    private String artUrl;
 
     private String title;
 
@@ -115,12 +117,12 @@ public class WebPage {
         this.likeTimes = likeTimes;
     }
 
-    public String getWechatUrl() {
-        return wechatUrl;
+    public String getMediaId() {
+        return mediaId;
     }
 
-    public void setWechatUrl(String wechatUrl) {
-        this.wechatUrl = wechatUrl;
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
     }
 
     public String getAuthor() {
@@ -137,5 +139,13 @@ public class WebPage {
 
     public void setIntroduce(String introduce) {
         this.introduce = introduce;
+    }
+
+    public String getArtUrl() {
+        return artUrl;
+    }
+
+    public void setArtUrl(String artUrl) {
+        this.artUrl = artUrl;
     }
 }

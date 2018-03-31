@@ -52,6 +52,11 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
+    public List<ResourceItem> findAll(Collection<Long> groupIds) {
+        return repository.findAllByResourcesGroupIdIn(groupIds);
+    }
+
+    @Override
     public ResourceItem findOne(Long itemId) throws ResourceNotFoundException {
         ResourceItem item = repository.findOne(itemId);
         if (item == null) throw new ResourceNotFoundException("resource_item", "id: " + itemId);
@@ -139,7 +144,8 @@ public class ResourceItemServiceImpl implements ResourceItemService {
         item.setName(title);
         // item.setUrl(HOST + "/web/001");
         item = repository.save(item); // 持久1，拿到 id
-        item.setUrl(HOST + "/web/" + item.getId() + ".html");
+        String artUrl = HOST + "/web/" + item.getId() + ".html";
+        item.setUrl(artUrl);
         item = repository.save(item); // 持久2，更新 url
         // 将 id 赋值至 webpage，再持久化 webpage
         WebPage webPage = new WebPage();
@@ -149,6 +155,7 @@ public class ResourceItemServiceImpl implements ResourceItemService {
         webPage.setIntroduce(introduce);
         webPage.setCoverImageUrl(coverImageUrl);
         webPage.setContentHtml(contentHtml);
+        webPage.setArtUrl(artUrl);
         try {
             webPageService.save(webPage);
         } catch (ActionParameterException e) {

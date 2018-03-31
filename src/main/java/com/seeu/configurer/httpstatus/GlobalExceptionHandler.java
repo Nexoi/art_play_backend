@@ -3,7 +3,9 @@ package com.seeu.configurer.httpstatus;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.userlogin.exception.NoSuchUserException;
+import com.seeu.core.R;
 import com.seeu.file.storage.StorageFileNotFoundException;
+import me.chanjar.weixin.common.exception.WxErrorException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -75,7 +77,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(HttpServletRequest request, ResourceNotFoundException exc) {
-        return ResponseEntity.status(404).body("无此资源");
+        return ResponseEntity.status(404).body("无此资源：" + exc.getMessage());
     }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
@@ -93,4 +95,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(exc.getMessage());
     }
 
+    @ExceptionHandler(WxErrorException.class)
+    public ResponseEntity<?> handleWxErrorException(HttpServletRequest request, WxErrorException exc) {
+        return ResponseEntity.status(400).body(R.code(400).message("微信异常，错误信息：" + exc.getMessage()));
+    }
 }

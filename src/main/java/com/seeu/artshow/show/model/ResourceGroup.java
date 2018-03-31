@@ -61,7 +61,7 @@ public class ResourceGroup {
 
     // 包含信息
     @ApiParam(name = "该组下包含的所有资源信息")
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "resources_group_id")
     private List<ResourceItem> resourceItems;
 

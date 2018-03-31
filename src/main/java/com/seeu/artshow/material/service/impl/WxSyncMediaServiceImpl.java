@@ -10,6 +10,7 @@ import me.chanjar.weixin.common.exception.WxErrorException;
 import me.chanjar.weixin.common.util.fs.FileUtils;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialArticleUpdate;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
 import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import org.jsoup.Jsoup;
@@ -38,36 +39,6 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     private WxSyncMediaRepository repository;
     @Autowired
     private WxMpService wxService;
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Value("${wx.app_id}")
-    private String APP_ID;
-    @Value("${wx.app_secret}")
-    private String APP_SECRET;
-
-    private final String addNewArticle = "https://api.weixin.qq.com/cgi-bin/material/add_news";
-    //    private final String uploadImgApi = "https://api.weixin.qq.com/cgi-bin/media/uploadimg";
-    private final String uploadMediaApi = "https://api.weixin.qq.com/cgi-bin/material/add_material";
-    private final String accessTokenApi = "https://api.weixin.qq.com/cgi-bin/token";
-    private static String accessToken = null;
-    private static int repeatCount = 0;
-
-
-    @Override
-    public String getToken() throws ActionParameterException {
-        return getAccessToken();
-    }
-
-    @Override
-    public Map testAll(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
-        WxSyncMedia media = getMedia(artUrl, type, videoTitle);
-        String access_token = getAccessToken();
-        Map map = new HashMap();
-        map.put("media", media);
-        map.put("access_token", access_token);
-        return map;
-    }
 
     @Override
     public String syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException, WxErrorException {
@@ -75,7 +46,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         try {
             coverImage = getMedia(coverImageUrl, WxSyncMedia.TYPE.THUMB, null);
         } catch (ActionParameterException e) {
-            throw new ActionParameterException("封面图片同步失败，请确认图片格式正确"); // 封面都传不上去，直接抛了
+            throw new ActionParameterException("封面图片同步失败 | " + e.getMessage()); // 封面都传不上去，直接抛了
         }
         // 单图文消息
         WxMpMaterialNews wxMpMaterialNewsSingle = new WxMpMaterialNews();
@@ -90,6 +61,35 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         wxMpMaterialNewsSingle.addArticle(article);
         WxMpMaterialUploadResult resSingle = this.wxService.getMaterialService().materialNewsUpload(wxMpMaterialNewsSingle);
         return resSingle.getMediaId();
+    }
+
+    @Override
+    public boolean syncUpdateHtml(String mediaId, String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException, WxErrorException {
+        WxMpMaterialNews wxMpMaterialNewsSingle = this.wxService
+                .getMaterialService().materialNewsInfo(mediaId);
+//        assertNotNull(wxMpMaterialNewsSingle);
+        WxMpMaterialArticleUpdate wxMpMaterialArticleUpdateSingle = new WxMpMaterialArticleUpdate();
+        WxMpMaterialNews.WxMpMaterialNewsArticle article = wxMpMaterialNewsSingle.getArticles().get(0);
+        WxSyncMedia coverImage = null;
+        try {
+            coverImage = getMedia(coverImageUrl, WxSyncMedia.TYPE.THUMB, null);
+        } catch (ActionParameterException e) {
+            throw new ActionParameterException("封面图片同步失败 | " + e.getMessage()); // 封面都传不上去，直接抛了
+        }
+        article.setAuthor(author);
+        article.setThumbMediaId(coverImage.getMediaId());
+        article.setTitle(title);
+        article.setContent(transferHtml2Wx(contentHtml));
+        article.setContentSourceUrl(originalSrcUrl);
+        article.setShowCoverPic(showCoverImg);
+        article.setDigest(description);
+        // 最终 json
+        wxMpMaterialArticleUpdateSingle.setMediaId(mediaId);
+        wxMpMaterialArticleUpdateSingle.setArticles(article);
+        wxMpMaterialArticleUpdateSingle.setIndex(0);
+        boolean resultSingle = this.wxService.getMaterialService().materialNewsUpdate(wxMpMaterialArticleUpdateSingle);
+//        assertTrue(resultSingle);
+        return resultSingle;
     }
 
     private String transferHtml2Wx(String originalHtml) {
@@ -133,6 +133,11 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
             }
         }
         return body.html();
+    }
+
+    @Override
+    public String getToken() throws ActionParameterException, WxErrorException {
+        return wxService.getAccessToken();
     }
 
     @Override
@@ -188,27 +193,8 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         } catch (IOException e) {
             throw new ActionParameterException("文件同步异常：[IOException]" + artUrl);
         } catch (WxErrorException e) {
-            throw new ActionParameterException("文件同步异常：[微信异常]" + artUrl);
+            throw new ActionParameterException("文件同步异常：[微信异常]" + e.getMessage());
         }
-    }
-
-    private String getAccessToken() throws ActionParameterException {
-//        return "8_eX89Qtixyh5VSCfcvB0IQUhptbcX5TeJ1ZLyAwjyueIkL31d8xQIcDhwyPJb3CAZcyrjlYsNZjdErZJMyW36fVtNoxvUJpjaeuekRjGH4BVKhx965ok6uJAU3UYIIQhACAPPX";
-        if (null == accessToken) {
-            //
-            String url = accessTokenApi + "?grant_type=client_credential&appid=" + APP_ID + "&secret=" + APP_SECRET;
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            String body = response.getBody();
-            JSONObject jo = JSONObject.parseObject(body);
-            String access_token = jo.getString("access_token");
-            if (null != access_token) {
-                accessToken = access_token;
-            } else {
-                // 抛出去
-                throw new ActionParameterException("微信 Access Token 获取失败，请检查服务器微信相关配置");
-            }
-        }
-        return accessToken;
     }
 
     public WxMpMaterialUploadResult uploadMaterial(String mediaType, String fileType, InputStream inputStream) throws WxErrorException, IOException {

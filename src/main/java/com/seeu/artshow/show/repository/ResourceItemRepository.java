@@ -14,6 +14,8 @@ public interface ResourceItemRepository extends JpaRepository<ResourceItem, Long
 
     List<ResourceItem> findAllByResourcesGroupId(@Param("resourcesGroupId") Long groupId);
 
+    List<ResourceItem> findAllByResourcesGroupIdIn(@Param("resourcesGroupIds") Collection<Long> groupIds);
+
     // 浏览一次
     @Transactional
     @Modifying

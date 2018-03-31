@@ -9,7 +9,9 @@ import com.seeu.artshow.material.vo.WebPageVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class WebPageServiceImpl implements WebPageService {
@@ -17,10 +19,20 @@ public class WebPageServiceImpl implements WebPageService {
     private WebPageRepository repository;
 
     @Override
+    public List<WebPage> findAll(Collection<Long> itemIds) {
+        return repository.findAllByResourceItemIdIn(itemIds);
+    }
+
+    @Override
     public WebPage findOne(Long resourceItemId) throws ResourceNotFoundException {
         WebPage page = repository.findOne(resourceItemId);
         if (page == null) throw new ResourceNotFoundException("webpage", "id: " + resourceItemId);
         return page;
+    }
+
+    @Override
+    public WebPage saveWithoutValid(WebPage webPage) {
+        return repository.save(webPage);
     }
 
     @Override
@@ -31,7 +43,7 @@ public class WebPageServiceImpl implements WebPageService {
         webPage.setCreateTime(date);
         webPage.setUpdateTime(date);
         webPage.setWechatAsync(WebPage.WECHAT_ASYNC.no);
-        webPage.setWechatUrl(null);
+        webPage.setMediaId(null);
         webPage.setViewTimes(0L);
         webPage.setLikeTimes(0L);
         return repository.save(webPage);

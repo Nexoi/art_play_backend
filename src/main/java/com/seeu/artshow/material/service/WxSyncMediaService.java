@@ -9,9 +9,7 @@ import java.util.Map;
 
 public interface WxSyncMediaService {
 
-    String getToken() throws ActionParameterException;
-
-    Map testAll(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException;
+    String getToken() throws ActionParameterException, WxErrorException;
 
     WxSyncMedia getMedia(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException;
 
@@ -29,24 +27,6 @@ public interface WxSyncMediaService {
      */
     String syncHtml(String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException, WxErrorException;
 
-//    class SyncHtmlResult {
-//        private String mediaId;
-//        private List<String> errorMessages;
-//
-//        public String getMediaId() {
-//            return mediaId;
-//        }
-//
-//        public void setMediaId(String mediaId) {
-//            this.mediaId = mediaId;
-//        }
-//
-//        public List<String> getErrorMessages() {
-//            return errorMessages;
-//        }
-//
-//        public void setErrorMessages(List<String> errorMessages) {
-//            this.errorMessages = errorMessages;
-//        }
-//    }
+    boolean syncUpdateHtml(String mediaId, String title, String coverImageUrl, String author, String description, boolean showCoverImg, String contentHtml, String originalSrcUrl) throws ActionParameterException, WxErrorException;
+
 }

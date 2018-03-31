@@ -10,6 +10,8 @@ import java.util.List;
 public interface ResourceItemService {
     List<ResourceItem> findAll(Long groupId);
 
+    List<ResourceItem> findAll(Collection<Long> groupIds);
+
     ResourceItem findOne(Long itemId) throws ResourceNotFoundException;
 
     void viewOnce(Long itemId) throws ResourceNotFoundException;
