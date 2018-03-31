@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @RestController
 @RequestMapping
@@ -25,12 +27,25 @@ public class WxSyncApi {
     private String token;
 
     @GetMapping("/wx")
-    public String valiatedWx(String signature, String timestamp, String nonce, String echostr, HttpServletResponse response) {
-        response.addHeader("NOT_TRANSFORM_BODY","true");
-        if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
-            return echostr;
-        } else {
-            return echostr; // 全部通过
+    public void valiatedWx(String signature, String timestamp, String nonce, String echostr, HttpServletResponse response) {
+        response.addHeader("NOT_TRANSFORM_BODY", "true");
+//        if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
+//            return echostr;
+//        } else {
+//            return echostr; // 全部通过
+//        }
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            out.print(echostr);
+            // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，否则接入失败
+//            if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
+//                out.print(echostr);
+//            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            out.close();
         }
     }
 

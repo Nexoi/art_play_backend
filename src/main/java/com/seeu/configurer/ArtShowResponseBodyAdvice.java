@@ -125,7 +125,11 @@ public class ArtShowResponseBodyAdvice implements ResponseBodyAdvice {
 //            else
 //                return JSONObject.toJSON(map).toString(); // 根据 mediaType 的不同，Spring 会在 AbstractMessageConverterMethodProcessor#writeWithMessageConverters() 中产生不同的结果，如果 type 为 plain text 则会无法 convert json 文本
         } else {
-            return returnValue;
+            String rv = returnValue.toString();
+            if (rv.startsWith("\"") && rv.endsWith("\"")) {
+                rv = rv.substring(1, rv.length() - 1);
+            }
+            return rv;
         }
     }
 }
