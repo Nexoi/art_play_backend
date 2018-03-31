@@ -30,7 +30,7 @@ public class WxSyncApi {
         if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
             return echostr;
         } else {
-            return null;
+            return echostr; // 全部通过
         }
     }
 
