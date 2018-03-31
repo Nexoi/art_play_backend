@@ -24,8 +24,8 @@ public class WxSyncApi {
     private String token;
 
     @GetMapping("/wx")
-    public String valiatedWx(String signature, String timestamp, String nonce, String echostr, ServerHttpResponse response) {
-        response.getHeaders().setContentType(MediaType.APPLICATION_XML);
+    public String valiatedWx(String signature, String timestamp, String nonce, String echostr, HttpServletResponse response) {
+        response.setContentType("application/xml");
         if (SignUtil.checkSignature(token, signature, timestamp, nonce)) {
             return echostr;
         } else {
