@@ -48,6 +48,8 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     private static String accessToken = null;
     private static int repeatCount = 0;
 
+    // sup
+    private JSONObject body;
 
     @Override
     public Map testAll(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
@@ -56,6 +58,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         Map map = new HashMap();
         map.put("media", media);
         map.put("access_token", access_token);
+        map.put("jsonBody", body);
         return map;
     }
 
@@ -100,6 +103,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         ResponseEntity<String> response = restTemplate.exchange(uploadApiUrl, HttpMethod.POST, requestEntity, String.class);
         String body = response.getBody();
         JSONObject jo = JSONObject.parseObject(body);
+        this.body = jo;
         String wxUrl = jo.getString("url");
         String mediaId = jo.getString("media_id");
         Integer errorCode = jo.getInteger("errcode");
