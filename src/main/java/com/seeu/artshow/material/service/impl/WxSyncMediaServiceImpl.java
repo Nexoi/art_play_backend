@@ -56,8 +56,7 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
 
     private WxSyncMedia sync2Wx(String artUrl, WxSyncMedia.TYPE type, String videoTitle) throws ActionParameterException {
         if (null == type || null == artUrl) return null;
-        File file = getFile(artUrl);
-        if (file == null) return null; // 说明这个文件有问题，下载不下来
+        File file = getFile(artUrl); // 如果文件有问题，下载不下来，会抛出 Action 异常
         String uploadApiUrl = type == WxSyncMedia.TYPE.IMAGE ? uploadImgApi : uploadMediaApi;
         uploadApiUrl += "?access_token=" + getAccessToken();
         MultiValueMap<String, Object> bodyMap = new LinkedMultiValueMap<>();
@@ -105,16 +104,13 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         return null;
     }
 
-    private File getFile(String url) {
+    private File getFile(String url) throws ActionParameterException {
         try {
             UrlResource urlResource = new UrlResource(url);
             return urlResource.getFile();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ActionParameterException("URL对应文件不存在：" + url);
         }
-        return null;
     }
 
     private String getAccessToken() throws ActionParameterException {
