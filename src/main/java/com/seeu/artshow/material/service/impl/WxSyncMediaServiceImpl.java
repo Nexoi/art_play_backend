@@ -6,6 +6,7 @@ import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.material.model.WxSyncMedia;
 import com.seeu.artshow.material.repository.WxSyncMediaRepository;
 import com.seeu.artshow.material.service.WxSyncMediaService;
+import me.chanjar.weixin.common.util.fs.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,14 +26,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 @Service
 public class WxSyncMediaServiceImpl implements WxSyncMediaService {
     @javax.annotation.Resource
     private WxSyncMediaRepository repository;
+    //    @Autowired
+//    private WxMpService wxService;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -225,11 +226,9 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
                 outputStream.write(temp);
             }
             String suffix = type == WxSyncMedia.TYPE.VIDEO
-                    ? ".mp4" : type == WxSyncMedia.TYPE.AUDIO
-                    ? ".mp3" : ".png";
-            Path path = Files.createTempFile(null, suffix);
-            Files.write(path, outputStream.toByteArray());
-            File file = path.toFile();
+                    ? "mp4" : type == WxSyncMedia.TYPE.AUDIO
+                    ? "mp3" : "png";
+            File file = FileUtils.createTmpFile(inputStream, UUID.randomUUID().toString(), suffix);
             // close
             inputStream.close();
             outputStream.close();
@@ -257,4 +256,40 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         }
         return accessToken;
     }
+
+//    public WxMpMaterialUploadResult testUploadMaterial(String mediaType, String fileType, InputStream inputStream) throws WxErrorException, IOException {
+//
+//        File tempFile = FileUtils.createTmpFile(inputStream,
+//                UUID.randomUUID().toString(), fileType);
+//        WxMpMaterial wxMaterial = new WxMpMaterial();
+//        wxMaterial.setFile(tempFile);
+//        wxMaterial.setName(fileName);
+//        if (WxConsts.MediaFileType.VIDEO.equals(mediaType)) {
+//            wxMaterial.setVideoTitle("广东美术馆收录视频");
+//            wxMaterial.setVideoIntroduction("广东美术馆收录视频");
+//        }
+//
+//        WxMpMaterialUploadResult res = this.wxService.getMaterialService()
+//                .materialFileUpload(mediaType, wxMaterial);
+//        assertNotNull(res.getMediaId());
+//
+//        if (WxConsts.MediaFileType.IMAGE.equals(mediaType)
+//                || WxConsts.MediaFileType.THUMB.equals(mediaType)) {
+//            assertNotNull(res.getUrl());
+//        }
+//
+//        if (WxConsts.MediaFileType.THUMB.equals(mediaType)) {
+//            this.thumbMediaId = res.getMediaId();
+//        }
+//
+//        Map<String, Object> materialInfo = new HashMap<>();
+//        materialInfo.put("media_id", res.getMediaId());
+//        materialInfo.put("length", tempFile.length());
+//        materialInfo.put("filename", tempFile.getName());
+//        this.mediaIds.put(res.getMediaId(), materialInfo);
+//
+//        System.out.println(res);
+//        return res;
+//
+//    }
 }
