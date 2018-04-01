@@ -1,6 +1,5 @@
 package com.seeu.artshow.material.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.material.model.WxSyncMedia;
 import com.seeu.artshow.material.repository.WxSyncMediaRepository;
@@ -18,18 +17,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.UrlResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 

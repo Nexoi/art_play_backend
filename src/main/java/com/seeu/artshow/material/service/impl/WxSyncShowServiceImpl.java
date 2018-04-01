@@ -160,7 +160,8 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
                 );
                 if (null != mediaId) {
                     page.setMediaId(mediaId);
-                    webPageService.saveWithoutValid(page);
+                    page.setWechatAsync(WebPage.WECHAT_ASYNC.yes);
+                    webPageService.saveWithoutValid(page); // 持久化
                     wxSyncItem.setMessage("文章增添成功");
                 } else {
                     wxSyncItem.setMessage("文章增添失败");
@@ -190,6 +191,9 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
             wxSyncItem.setStatus(WxSyncItem.STATUS.FINISH);
             wxSyncItem.setMessage(e.getMessage());
         } catch (WxErrorException e) {
+            wxSyncItem.setStatus(WxSyncItem.STATUS.FINISH);
+            wxSyncItem.setMessage(e.getMessage());
+        } catch (Exception e){
             wxSyncItem.setStatus(WxSyncItem.STATUS.FINISH);
             wxSyncItem.setMessage(e.getMessage());
         }
