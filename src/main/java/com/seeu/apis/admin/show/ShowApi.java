@@ -5,6 +5,8 @@ import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.service.ShowService;
+import com.seeu.artshow.userlogin.exception.NoSuchUserException;
+import com.seeu.artshow.userlogin.model.User;
 import com.seeu.core.R;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -29,13 +32,14 @@ public class ShowApi {
     // 过滤展览信息 by 管理员权限
     // endTime 逆序
     @GetMapping("/search")
-    public Page<Show> list(@RequestParam(required = false) String word,
+    public Page<Show> list(@AuthenticationPrincipal User user,
+                           @RequestParam(required = false) String word,
                            @RequestParam(defaultValue = "0") Integer page,
-                           @RequestParam(defaultValue = "10") Integer size) {
+                           @RequestParam(defaultValue = "10") Integer size) throws NoSuchUserException {
         if (word == null || word.isEmpty())
-            return showService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endTime")));
+            return showService.findAll(user.getUid(), new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endTime")));
         else
-            return showService.searchAll(word, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endTime")));
+            return showService.searchAll(user.getUid(), word, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endTime")));
     }
 
     @GetMapping("/{showId}")

@@ -100,6 +100,31 @@ public class ShowServiceImpl implements ShowService {
 
     // 筛选权限
     @Override
+    public Page<Show> findAll(Long adminUid, Pageable pageable) throws NoSuchUserException {
+        if (userService.isAdminX(adminUid)) {
+            // 终极管理员，不用过滤
+            Page<Show> page = repository.findAll(pageable);
+            List<Show> showList = page.getContent();
+            for (Show show : showList) {
+                if (show == null) continue;
+                loadShowHallNames(show);
+            }
+            return page;
+        } else {
+            List<Long> showIds = showAuthService.listAllShowIdForAdmin(adminUid);
+            if (null == showIds || showIds.isEmpty()) return new PageImpl<Show>(new ArrayList<>(), pageable, 0);
+            Page<Show> page = repository.findAllByIdIn(showIds, pageable);
+            List<Show> showList = page.getContent();
+            for (Show show : showList) {
+                if (show == null) continue;
+                loadShowHallNames(show);
+            }
+            return page;
+        }
+    }
+
+    // 筛选权限
+    @Override
     public Page<Show> searchAll(Long adminUid, String title, Pageable pageable) throws NoSuchUserException {
         if (userService.isAdminX(adminUid)) {
             // 终极管理员，不用过滤

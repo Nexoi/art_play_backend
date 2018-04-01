@@ -29,6 +29,8 @@ public interface ShowService {
 
     Page<Show> searchAll(String title, Pageable pageable);
 
+    Page<Show> findAll(Long adminUid, Pageable pageable) throws NoSuchUserException;
+
     Page<Show> searchAll(Long adminUid, String title, Pageable pageable) throws NoSuchUserException;
 
     List<Show> findAll(Collection<Long> showIds);
