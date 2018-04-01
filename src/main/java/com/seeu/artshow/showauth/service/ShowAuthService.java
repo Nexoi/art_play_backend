@@ -12,6 +12,8 @@ public interface ShowAuthService {
 
     List<Show> listAllShowForAdmin(Long uid) throws NoSuchUserException; // 这个 Show 只包含 showId, title 信息
 
+    List<Long> listAllShowIdForAdmin(Long uid);
+
     // 会清空之前的所有数据再更新
     @Transactional
     void updateShowAuthForAdmin(Long uid, Collection<Long> showIds) throws ResourceNotFoundException, NoSuchUserException;

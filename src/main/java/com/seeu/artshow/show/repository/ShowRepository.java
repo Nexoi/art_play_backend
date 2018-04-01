@@ -13,11 +13,18 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ShowRepository extends JpaRepository<Show, Long> {
-    Page<Show> findAllByTitleLikeOrderByStartTimeDesc(@Param("title") String title, Pageable pageable);
+    Page<Show> findAllByTitleLikeOrderByEndTimeDesc(@Param("title") String title, Pageable pageable);
 
-    Page<Show> findAllByOrderByStartTimeDesc(Pageable pageable);
+    Page<Show> findAllByOrderByEndTimeDesc(Pageable pageable);
+
+    Page<Show> findAllByTitleLike(@Param("title") String title, Pageable pageable);
 
     List<Show> findAllByIdIn(@Param("id") Collection<Long> ids);
+
+    // 管理员权限筛选
+    Page<Show> findAllByIdIn(@Param("id") Collection<Long> ids, Pageable pageable);
+
+    Page<Show> findAllByIdInAndTitleLike(@Param("id") Collection<Long> ids, @Param("title") String title, Pageable pageable);
 
     // 浏览一次
     @Transactional

@@ -4,6 +4,7 @@ import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.show.model.Show;
+import com.seeu.artshow.userlogin.exception.NoSuchUserException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,8 @@ public interface ShowService {
     Page<Show> findAll(Pageable pageable);
 
     Page<Show> searchAll(String title, Pageable pageable);
+
+    Page<Show> searchAll(Long adminUid, String title, Pageable pageable) throws NoSuchUserException;
 
     List<Show> findAll(Collection<Long> showIds);
 

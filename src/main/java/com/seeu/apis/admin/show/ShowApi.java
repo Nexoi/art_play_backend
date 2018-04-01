@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,14 +27,15 @@ public class ShowApi {
     private ShowService showService;
 
     // 过滤展览信息 by 管理员权限
+    // endTime 逆序
     @GetMapping("/search")
     public Page<Show> list(@RequestParam(required = false) String word,
                            @RequestParam(defaultValue = "0") Integer page,
                            @RequestParam(defaultValue = "10") Integer size) {
         if (word == null || word.isEmpty())
-            return showService.findAll(new PageRequest(page, size));
+            return showService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endTime")));
         else
-            return showService.searchAll(word, new PageRequest(page, size));
+            return showService.searchAll(word, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "endTime")));
     }
 
     @GetMapping("/{showId}")

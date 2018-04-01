@@ -10,8 +10,12 @@ import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.repository.ShowRepository;
 import com.seeu.artshow.show.service.ShowService;
+import com.seeu.artshow.showauth.service.ShowAuthService;
+import com.seeu.artshow.userlogin.exception.NoSuchUserException;
+import com.seeu.artshow.userlogin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +33,10 @@ public class ShowServiceImpl implements ShowService {
     private ImageService imageService;
     @Autowired
     private FolderService folderService;
+    @Autowired
+    private ShowAuthService showAuthService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public Show findOne(Long showId) throws ResourceNotFoundException {
@@ -70,7 +78,7 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     public Page<Show> findAll(Pageable pageable) {
-        Page<Show> page = repository.findAllByOrderByStartTimeDesc(pageable);
+        Page<Show> page = repository.findAllByOrderByEndTimeDesc(pageable);
         List<Show> showList = page.getContent();
         for (Show show : showList) {
             if (show == null) continue;
@@ -81,13 +89,38 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     public Page<Show> searchAll(String title, Pageable pageable) {
-        Page<Show> page = repository.findAllByTitleLikeOrderByStartTimeDesc("%" + title + "%", pageable);
+        Page<Show> page = repository.findAllByTitleLikeOrderByEndTimeDesc("%" + title + "%", pageable);
         List<Show> showList = page.getContent();
         for (Show show : showList) {
             if (show == null) continue;
             loadShowHallNames(show);
         }
         return page;
+    }
+
+    // 筛选权限
+    @Override
+    public Page<Show> searchAll(Long adminUid, String title, Pageable pageable) throws NoSuchUserException {
+        if (userService.isAdminX(adminUid)) {
+            // 终极管理员，不用过滤
+            Page<Show> page = repository.findAllByTitleLike("%" + title + "%", pageable);
+            List<Show> showList = page.getContent();
+            for (Show show : showList) {
+                if (show == null) continue;
+                loadShowHallNames(show);
+            }
+            return page;
+        } else {
+            List<Long> showIds = showAuthService.listAllShowIdForAdmin(adminUid);
+            if (null == showIds || showIds.isEmpty()) return new PageImpl<Show>(new ArrayList<>(), pageable, 0);
+            Page<Show> page = repository.findAllByIdInAndTitleLike(showIds, "%" + title + "%", pageable);
+            List<Show> showList = page.getContent();
+            for (Show show : showList) {
+                if (show == null) continue;
+                loadShowHallNames(show);
+            }
+            return page;
+        }
     }
 
     @Override
@@ -183,7 +216,7 @@ public class ShowServiceImpl implements ShowService {
         Show show = findOne(showId);
         String folderName = show.getTitle();
         repository.delete(show.getId());
-        // 删除对应的素材文件夹
+        // 删除对应的素材文件夹即可，内容就算了。。。
         folderService.deleteByName(folderName);
     }
 

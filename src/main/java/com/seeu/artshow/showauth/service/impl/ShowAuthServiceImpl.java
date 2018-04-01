@@ -49,6 +49,14 @@ public class ShowAuthServiceImpl implements ShowAuthService {
     }
 
     @Override
+    public List<Long> listAllShowIdForAdmin(Long uid) {
+        List<ShowAuth> showAuths = repository.findAllByUid(uid);
+        if (showAuths.isEmpty()) return new ArrayList<>();
+        List<Long> showIds = showAuths.parallelStream().map(ShowAuth::getShowId).collect(Collectors.toList());
+        return showIds;
+    }
+
+    @Override
     public void updateShowAuthForAdmin(Long uid, Collection<Long> showIds) throws ResourceNotFoundException, NoSuchUserException {
         User user = userService.findOne(uid);
         List<Show> shows = showService.findAll(showIds);

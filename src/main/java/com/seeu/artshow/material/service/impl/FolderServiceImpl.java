@@ -70,7 +70,10 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public void deleteByName(String name) {
-        repository.deleteAllByName(name);
+//        repository.deleteAllByName(name);
+//        repository.flush();
+        if (null == name) return;
+        repository.deleteWithFolderName(name);
     }
 
     private boolean isValidFileName(String fileName) {
