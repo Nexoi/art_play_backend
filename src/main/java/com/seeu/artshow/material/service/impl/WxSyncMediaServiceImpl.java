@@ -93,9 +93,12 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         Elements images = body.getElementsByTag("img");
         for (Element el : images) {
             String imgUrl = el.attr("src");
+            if (imgUrl.contains("qpic.cn/")) {
+                continue; // 腾讯自己的，说明该资源已经同步过了
+            }
             try {
                 WxSyncMedia media = getMedia(imgUrl, WxSyncMedia.TYPE.IMAGE, null);
-                if (el.attr("src") != null) {
+                if (media.getWxUrl() != null) {
                     el.attr("src", media.getWxUrl());
                 }
             } catch (ActionParameterException e) {
@@ -105,9 +108,12 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         Elements videos = body.getElementsByTag("video");
         for (Element el : videos) {
             String videoUrl = el.attr("src");
+            if (videoUrl.contains("qpic.cn/")) {
+                continue; // 腾讯自己的，说明该资源已经同步过了
+            }
             try {
                 WxSyncMedia media = getMedia(videoUrl, WxSyncMedia.TYPE.VIDEO, null);
-                if (el.attr("src") != null) {
+                if (media.getWxUrl() != null) {
                     el.attr("src", media.getWxUrl());
                 }
             } catch (ActionParameterException e) {
@@ -117,9 +123,12 @@ public class WxSyncMediaServiceImpl implements WxSyncMediaService {
         Elements audios = body.getElementsByTag("audio");
         for (Element el : audios) {
             String audioUrl = el.attr("src");
+            if (audioUrl.contains("qpic.cn/")) {
+                continue; // 腾讯自己的，说明该资源已经同步过了
+            }
             try {
                 WxSyncMedia media = getMedia(audioUrl, WxSyncMedia.TYPE.AUDIO, null);
-                if (el.attr("src") != null) {
+                if (media.getWxUrl() != null) {
                     el.attr("src", media.getWxUrl());
                 }
             } catch (ActionParameterException e) {
