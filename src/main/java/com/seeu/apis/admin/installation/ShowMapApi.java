@@ -31,6 +31,10 @@ public class ShowMapApi {
     public Page<ShowMap> list(@PathVariable Long showId,
                               @RequestParam(defaultValue = "0") Integer page,
                               @RequestParam(defaultValue = "10") Integer size) {
+        if (showId <= 0){
+            // 返回所有的地图信息
+            return showMapService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
+        }
         return showMapService.findAll(showId, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
     }
 
