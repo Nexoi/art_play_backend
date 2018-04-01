@@ -145,6 +145,7 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
     public void asyncShowResourceItem(Long showId, Long webItemId, WxSyncItem wxSyncItem) {
         //... 同步
         try {
+            wxSyncItem.setStatus(WxSyncItem.STATUS.FINISH); // MDZZ!!!! 所有入队列开始同步的，因为都设为 FINISH！总有异常抓不住！
             WebPage page = webPageService.findOne(webItemId);
             WebPage.WECHAT_ASYNC async = page.getWechatAsync();
             if (null == async || WebPage.WECHAT_ASYNC.no == async || null == page.getMediaId()) {
