@@ -40,7 +40,7 @@ public interface ResourceGroupService {
 
     ResourceGroup changeName(Long groupId, String name) throws ActionParameterException, ResourceNotFoundException;
 
-    ResourceGroup bindBeacons(Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException;
+    ResourceGroup bindBeacons(Long showId, Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException;
 
     ResourceGroup cleanBeacons(Long groupId) throws ResourceNotFoundException;
 

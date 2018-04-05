@@ -137,11 +137,11 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
-    public ResourceGroup bindBeacons(Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException {
+    public ResourceGroup bindBeacons(Long showId, Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException {
         if (uuids == null || uuids.isEmpty())
             throw new ActionParameterException("传入参数 [beacon:uuids] 不能为空");
         ResourceGroup group = findOne(groupId);
-        List<Beacon> beacons = beaconService.findAll(0L, uuids); // TODO
+        List<Beacon> beacons = beaconService.findAll(showId, uuids); // TODO
         if (beacons == null || beacons.isEmpty())
             throw new ActionParameterException("传入参数 [beacon:uuids] 有误，无此 beacon 信息");
         group.setBeacons(beacons);

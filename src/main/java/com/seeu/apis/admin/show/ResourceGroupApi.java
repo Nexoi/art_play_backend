@@ -47,8 +47,8 @@ public class ResourceGroupApi {
 
     @GetMapping("/list/by-beacon") // TODO update 17:20 04-05
     public Page<ResourceGroup> listByBeacon(@PathVariable Long showId,
-                                     @RequestParam(defaultValue = "0") Integer page,
-                                     @RequestParam(defaultValue = "10") Integer size) {
+                                            @RequestParam(defaultValue = "0") Integer page,
+                                            @RequestParam(defaultValue = "10") Integer size) {
         return resourceGroupService.findAllByBeacon(showId, new PageRequest(page, size));
     }
 
@@ -81,11 +81,12 @@ public class ResourceGroupApi {
     }
 
     @PutMapping("/{groupId}/bind-beacons")
-    public ResourceGroup bindBeacons(@PathVariable Long groupId,
+    public ResourceGroup bindBeacons(@PathVariable Long showId,
+                                     @PathVariable Long groupId,
                                      @RequestParam(required = true) String[] uuids) throws ResourceNotFoundException, ActionParameterException {
         if (null == uuids || uuids.length == 0)
             return resourceGroupService.cleanBeacons(groupId); // 清空绑定信息
-        return resourceGroupService.bindBeacons(groupId, Arrays.asList(uuids));
+        return resourceGroupService.bindBeacons(showId, groupId, Arrays.asList(uuids));
     }
 
     @PutMapping("/{groupId}/bind-ar")
