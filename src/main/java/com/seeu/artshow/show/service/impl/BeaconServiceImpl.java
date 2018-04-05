@@ -90,7 +90,7 @@ public class BeaconServiceImpl implements BeaconService {
         if (null != beacon.getShowMap()) savedBeacon.setShowMap(beacon.getShowMap());
         if (null != beacon.getStatus()) savedBeacon.setStatus(beacon.getStatus());
         savedBeacon.setUpdateTime(new Date());
-        return repository.save(beacon);
+        return repository.save(savedBeacon);
     }
 
     @Override
