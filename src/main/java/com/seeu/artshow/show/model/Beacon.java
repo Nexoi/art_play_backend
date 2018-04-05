@@ -40,7 +40,7 @@ public class Beacon {
     @Enumerated
     private STATUS status;
 
-    @NotNull
+//    @NotNull
     private String name;
 
     @OneToOne(targetEntity = ShowMap.class)
