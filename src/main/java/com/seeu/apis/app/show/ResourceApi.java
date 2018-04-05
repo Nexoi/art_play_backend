@@ -21,7 +21,7 @@ import java.util.List;
 
 @Api(tags = "展览资源信息", description = "展览资源／通过BeaconUUID访问资源组／通过二维码URL访问资源组等")
 @RestController
-@RequestMapping("/api/v1/show/resources")
+@RequestMapping("/api/v1/show/{showId}/resources")
 public class ResourceApi {
 
     @Autowired
@@ -48,8 +48,9 @@ public class ResourceApi {
 
     @ApiOperation(value = "通过 Beacon UUID 查找某一资源组内容（31 位 UUID，含分隔符）", notes = "具体内容请参见 Model 栏：ResourceGroup")
     @GetMapping("/use-beacon/{uuid}")
-    public ResourceGroup getByBeaconUUID(@PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
-        ResourceGroup group = resourceGroupService.findOneByBeaconUUID(uuid);
+    public ResourceGroup getByBeaconUUID(@PathVariable Long showId,
+                                         @PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
+        ResourceGroup group = resourceGroupService.findOneByBeaconUUID(showId, uuid);
         resourceGroupService.viewOnce(group.getId()); // 记录一次浏览量
         return group;
     }
