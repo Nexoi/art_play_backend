@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 public class BeaconServiceImpl implements BeaconService {
     @Resource
     private BeaconRepository repository;
-    @Autowired
-    private ResourceGroupService resourceGroupService;
+//    @Autowired
+//    private ResourceGroupService resourceGroupService;
 
     @Override
     public Beacon findOne(Long showId, String uuid) throws ResourceNotFoundException {
@@ -51,19 +51,19 @@ public class BeaconServiceImpl implements BeaconService {
     }
 
     @Override
-    public Page<ResourceGroup> findAll(Long showId, Pageable pageable) {
-        Page<Beacon> beaconPage = repository.findAllByShowId(showId, pageable); //
-        List<Beacon> beaconList = beaconPage.getContent();
-        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
-        List<ResourceGroup> groups = resourceGroupService.findAll(groupIds);
-        return new PageImpl<ResourceGroup>(groups, pageable, beaconPage.getTotalElements());
+    public Page<Beacon> findAllMustBeaconed(Long showId, Pageable pageable) {
+        return repository.findAllByShowIdAndResourcesGroupIdNotNull(showId, pageable); //
+//        List<Beacon> beaconList = beaconPage.getContent();
+//        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+//        List<ResourceGroup> groups = resourceGroupService.findAll(groupIds);
+//        return new PageImpl<ResourceGroup>(groups, pageable, beaconPage.getTotalElements());
     }
 
     @Override
-    public List<ResourceGroup> findAll(Long showId) {
-        List<Beacon> beaconList = repository.findAllByShowId(showId); //
-        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
-        return resourceGroupService.findAll(groupIds);
+    public List<Beacon> findAllMustBeaconed(Long showId) {
+        return repository.findAllByShowIdAndResourcesGroupIdNotNull(showId); //
+//        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+//        return resourceGroupService.findAll(groupIds);
     }
 
     @Override

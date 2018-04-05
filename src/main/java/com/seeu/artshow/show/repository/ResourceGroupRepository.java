@@ -32,6 +32,10 @@ public interface ResourceGroupRepository extends JpaRepository<ResourceGroup, Lo
 //
 //    List<ResourceGroup> findAllByShowMap(@Param("showMap") ShowMap showMap);
 
+    List<ResourceGroup> findAllByShowIdAndBeaconsNotNull(@Param("showId") Long showId);
+
+    Page<ResourceGroup> findAllByShowIdAndBeaconsNotNull(@Param("showId") Long showId, Pageable pageable);
+
     // 浏览一次
     @Transactional
     @Modifying

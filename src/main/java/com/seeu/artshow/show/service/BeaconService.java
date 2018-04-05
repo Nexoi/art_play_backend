@@ -23,9 +23,9 @@ public interface BeaconService {
 
     Page<Beacon> findAllWithEmptyBeacons(Long showId, Pageable pageable);
 
-    Page<ResourceGroup> findAll(Long showId, Pageable pageable);
+    Page<Beacon> findAllMustBeaconed(Long showId, Pageable pageable);
 
-    List<ResourceGroup> findAll(Long showId);
+    List<Beacon> findAllMustBeaconed(Long showId);
 
     List<Beacon> findAll(Long showId, Long showMapId);
 

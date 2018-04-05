@@ -77,7 +77,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
 
     @Override
     public List<ResourceGroup> findAllByBeacon(Long showId) {
-        return beaconService.findAll(showId);
+        return repository.findAllByShowIdAndBeaconsNotNull(showId);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         // 查询参数
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
-        return beaconService.findAll(showId, request);
+        return repository.findAllByShowIdAndBeaconsNotNull(showId, request);
     }
 
     @Override
