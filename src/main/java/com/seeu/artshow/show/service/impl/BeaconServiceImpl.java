@@ -135,6 +135,7 @@ public class BeaconServiceImpl implements BeaconService {
         for (InstallBeacon beacon : beacons) {
             Beacon bc = savedBeaconMap.get(beacon.getId());
             if (null == bc) bc = new Beacon();
+            bc.setShowId(showId);
             bc.setBasicInfo(beacon);
             bc.setUpdateTime(date);
             beaconList.add(bc);
