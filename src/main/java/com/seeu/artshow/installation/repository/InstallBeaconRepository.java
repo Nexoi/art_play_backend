@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.List;
 
 public interface InstallBeaconRepository extends JpaRepository<InstallBeacon, Long> {
+    InstallBeacon findByUuid(@Param("uuid") String uuid);
+
     List<InstallBeacon> findAllByIdIn(@Param("ids") Collection<Long> ids);
 
     Page<InstallBeacon> findAllByIdNotIn(@Param("ids") Collection<Long> ids, Pageable pageable);

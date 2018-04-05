@@ -1,5 +1,7 @@
 package com.seeu.artshow.installation.service;
 
+import com.seeu.artshow.exception.ActionParameterException;
+import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.InstallBeacon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +12,9 @@ import java.util.Collection;
 public interface InstallBeaconService {
     Page<InstallBeacon> findAll(Pageable pageable);
 
-    InstallBeacon add(@Validated InstallBeacon beacon);
+    InstallBeacon add(@Validated InstallBeacon beacon) throws ActionParameterException;
 
-    InstallBeacon update(Long id, @Validated InstallBeacon beacon);
+    InstallBeacon update(Long id, @Validated InstallBeacon beacon) throws ResourceNotFoundException;
 
     void delete(Long id);
 

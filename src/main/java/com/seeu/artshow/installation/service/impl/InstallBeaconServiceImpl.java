@@ -1,5 +1,7 @@
 package com.seeu.artshow.installation.service.impl;
 
+import com.seeu.artshow.exception.ActionParameterException;
+import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.InstallBeacon;
 import com.seeu.artshow.installation.repository.InstallBeaconRepository;
 import com.seeu.artshow.installation.service.InstallBeaconService;
@@ -30,16 +32,33 @@ public class InstallBeaconServiceImpl implements InstallBeaconService {
         return repository.findAll(pageable);
     }
 
+    InstallBeacon findOne(Long id) throws ResourceNotFoundException {
+        InstallBeacon installBeacon = repository.findOne(id);
+        if (null == installBeacon) throw new ResourceNotFoundException("install-beacon", "id:" + id);
+        return installBeacon;
+    }
+
+    InstallBeacon findOne(String uuid) throws ResourceNotFoundException {
+        InstallBeacon installBeacon = repository.findByUuid(uuid);
+        if (null == installBeacon) throw new ResourceNotFoundException("install-beacon", "uuid:" + uuid);
+        return installBeacon;
+    }
+
     @Override
-    public InstallBeacon add(InstallBeacon beacon) {
+    public InstallBeacon add(InstallBeacon beacon) throws ActionParameterException {
+        InstallBeacon installBeacon = repository.findByUuid(beacon.getUuid());
+        if (null != installBeacon) throw new ActionParameterException("已存在该 Beacon UUID，请勿重复添加");
         beacon.setId(null);
         return repository.save(beacon);
     }
 
     @Override
-    public InstallBeacon update(Long id, InstallBeacon beacon) {
-        beacon.setId(id);
-        return repository.save(beacon);
+    public InstallBeacon update(Long id, InstallBeacon beacon) throws ResourceNotFoundException {
+        InstallBeacon installBeacon = findOne(id);
+        if (null != beacon.getMajorValue()) installBeacon.setMajorValue(beacon.getMajorValue());
+        if (null != beacon.getMinorValue()) installBeacon.setMinorValue(beacon.getMinorValue());
+        if (null != beacon.getUuid()) installBeacon.setUuid(beacon.getUuid());
+        return repository.save(installBeacon);
     }
 
     @Override

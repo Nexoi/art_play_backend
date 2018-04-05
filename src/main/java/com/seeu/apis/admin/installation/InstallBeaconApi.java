@@ -1,5 +1,7 @@
 package com.seeu.apis.admin.installation;
 
+import com.seeu.artshow.exception.ActionParameterException;
+import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.InstallBeacon;
 import com.seeu.artshow.installation.service.InstallBeaconService;
 import com.seeu.core.R;
@@ -31,7 +33,7 @@ public class InstallBeaconApi {
     @PostMapping
     public InstallBeacon add(String uuid,
                              Integer majorValue,
-                             Integer minorValue) {
+                             Integer minorValue) throws ActionParameterException {
         InstallBeacon beacon = new InstallBeacon();
         beacon.setUuid(uuid);
         beacon.setMajorValue("" + majorValue);
@@ -43,7 +45,7 @@ public class InstallBeaconApi {
     public InstallBeacon update(@PathVariable Long id,
                                 String uuid,
                                 Integer majorValue,
-                                Integer minorValue) {
+                                Integer minorValue) throws ResourceNotFoundException {
         InstallBeacon beacon = new InstallBeacon();
         beacon.setId(id);
         beacon.setUuid(uuid);
