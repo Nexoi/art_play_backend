@@ -12,10 +12,7 @@ import com.seeu.artshow.show.repository.ResourceGroupRepository;
 import com.seeu.artshow.show.service.BeaconService;
 import com.seeu.artshow.show.service.ResourceGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ResourceGroupServiceImpl implements ResourceGroupService {
@@ -32,8 +30,6 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     private BeaconService beaconService;
     @Autowired
     private ImageService imageService;
-    @Autowired
-    private ShowMapService showMapService;
 
     @Override
     public Page<ResourceGroup> findAll(Long showId, Pageable pageable) {
@@ -48,17 +44,30 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
+    public List<ResourceGroup> findAll(Collection<Long> showIds) {
+        return repository.findAllByShowIdIn(showIds);
+    }
+
+    // 根据 mapId 找的 必须要有 beacon 信息
+    @Override
     public Page<ResourceGroup> findAll(Long showId, Long mapId, Pageable pageable) throws ResourceNotFoundException {
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
-        ShowMap map = showMapService.findOne(mapId);
-        return repository.findAllByShowMap(map, request);
+        Page<Beacon> page = beaconService.findAll(showId, mapId, request);
+        List<Beacon> beaconList = page.getContent();
+        if (beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
+        List<Long> showIds = beaconList.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        return new PageImpl<ResourceGroup>(groups, request, page.getTotalElements());
     }
 
+    // 根据 mapId 找的 必须要有 beacon 信息
     @Override
     public List<ResourceGroup> findAll(Long showId, Long mapId) throws ResourceNotFoundException {
-        ShowMap map = showMapService.findOne(mapId);
-        return repository.findAllByShowMap(map);
+        List<Beacon> beaconList = beaconService.findAll(showId, mapId);
+        if (beaconList.isEmpty()) return new ArrayList<>();
+        List<Long> showIds = beaconList.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
+        return repository.findAllByShowIdIn(showIds);
     }
 
     @Override
@@ -67,7 +76,12 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
-    public Page<Beacon> findAllByBeacon(Long showId, Pageable pageable) {
+    public List<ResourceGroup> findAllByBeacon(Long showId) {
+        return beaconService.findAll(showId);
+    }
+
+    @Override
+    public Page<ResourceGroup> findAllByBeacon(Long showId, Pageable pageable) {
         // 查询参数
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);

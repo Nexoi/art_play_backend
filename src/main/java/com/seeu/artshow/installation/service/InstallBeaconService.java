@@ -22,4 +22,8 @@ public interface InstallBeaconService {
 
     void remove(Long showId, Long beaconId);
 
+    Page<InstallBeacon> findAll(Long showId, Pageable pageable); // 查找该展览下的 beacon
+
+    Page<InstallBeacon> findAllReverse(Long showId, Pageable pageable); // 查找没有分配给展览的 beacon
+
 }

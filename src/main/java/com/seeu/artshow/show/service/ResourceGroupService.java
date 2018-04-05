@@ -16,13 +16,17 @@ public interface ResourceGroupService {
 
     List<ResourceGroup> findAll(Long showId);
 
+    List<ResourceGroup> findAll(Collection<Long> showIds);
+
     Page<ResourceGroup> findAll(Long showId, Long mapId, Pageable pageable) throws ResourceNotFoundException;
 
     List<ResourceGroup> findAll(Long showId, Long mapId) throws ResourceNotFoundException;
 
     Page<ResourceGroup> searchAll(Long showId, String name, Pageable pageable);
 
-    Page<Beacon> findAllByBeacon(Long showId, Pageable pageable);
+    List<ResourceGroup> findAllByBeacon(Long showId);
+
+    Page<ResourceGroup> findAllByBeacon(Long showId, Pageable pageable);
 
     Page<ResourceGroup> findAllByAR(Long showId, Pageable pageable);
 

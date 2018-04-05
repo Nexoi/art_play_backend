@@ -52,8 +52,8 @@ public class Beacon {
     private Integer positionHeight;
 
     // 绑定信息
-    @OneToOne(targetEntity =ResourceGroup.class)
-    @JoinColumn(name = "resources_group_id")
+//    @OneToOne(targetEntity =ResourceGroup.class)
+//    @JoinColumn(name = "resources_group_id")
     @Column(name = "resources_group_id")
     private Long resourcesGroupId;
 

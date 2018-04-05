@@ -27,4 +27,9 @@ public interface BeaconRepository extends JpaRepository<Beacon, Long> {
     Beacon findByShowIdAndBasicInfo_Id(@Param("showId") Long showId, @Param("infoId") Long infoId);
 
     List<Beacon> findByShowIdAndBasicInfo_IdIn(@Param("showId") Long showId, @Param("infoIds") Collection<Long> infoIds);
+
+    List<Beacon> findAllByShowIdAndShowMap_Id(@Param("showId") Long showId, @Param("showMapId") Long showMapId);
+
+    Page<Beacon> findAllByShowIdAndShowMap_Id(@Param("showId") Long showId, @Param("showMapId") Long showMapId, Pageable pageable);
+
 }

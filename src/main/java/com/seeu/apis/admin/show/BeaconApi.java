@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Api(tags = "Beacon", description = "CRUD Admin OneToMany")
 @RestController("adminBeaconApi")
-@RequestMapping("/api/admin/v1/show/{showId}/beacons/{uuid}")
+@RequestMapping("/api/admin/v1/show/{showId}/beacons")
 @PreAuthorize("hasRole('ADMIN')")
 public class BeaconApi {
     @Autowired
@@ -33,10 +33,10 @@ public class BeaconApi {
     public Page<Beacon> list(@PathVariable Long showId,
                              @RequestParam(defaultValue = "0") Integer page,
                              @RequestParam(defaultValue = "10") Integer size) {
-        return beaconService.findAll(showId, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
+        return beaconService.findAllWithEmptyBeacons(showId, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
     }
 
-    @GetMapping
+    @GetMapping("/{uuid}")
     public Beacon get(@PathVariable Long showId,
                       @PathVariable String uuid) throws ResourceNotFoundException {
         return beaconService.findOne(showId, uuid); //TODO by showId and UUID
@@ -65,7 +65,7 @@ public class BeaconApi {
 //        return beaconService.add(beacon);
 //    }
 
-    @PutMapping
+    @PutMapping("/{uuid}")
     public Beacon update(@PathVariable Long showId,
                          @PathVariable String uuid,
                          @RequestParam(required = false) String name,
@@ -89,14 +89,14 @@ public class BeaconApi {
         return beaconService.update(showId, uuid, beacon);
     }
 
-    @PutMapping("/change-status")
+    @PutMapping("/{uuid}/change-status")
     public Beacon changeStatus(@PathVariable Long showId,
                                @PathVariable String uuid) throws ResourceNotFoundException {
         return beaconService.changeStatus(showId, uuid);
     }
 
     // 把某一个 beacon 的绑定信息移除
-    @DeleteMapping("/remove-beacon")
+    @DeleteMapping("/{uuid}/remove-beacon")
     public Beacon unbindBeacons(@PathVariable Long showId,
                                 @PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
         return beaconService.removeBindInfo(showId, uuid);

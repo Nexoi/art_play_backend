@@ -4,6 +4,7 @@ import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.InstallBeacon;
 import com.seeu.artshow.show.model.Beacon;
+import com.seeu.artshow.show.model.ResourceGroup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,7 +19,17 @@ public interface BeaconService {
 
     List<Beacon> findAll(Long showId, Collection<String> uuids);
 
-    Page<Beacon> findAll(Long showId, Pageable pageable);
+    List<Beacon> findAllWithEmptyBeacons(Long showId);
+
+    Page<Beacon> findAllWithEmptyBeacons(Long showId, Pageable pageable);
+
+    Page<ResourceGroup> findAll(Long showId, Pageable pageable);
+
+    List<ResourceGroup> findAll(Long showId);
+
+    List<Beacon> findAll(Long showId, Long showMapId);
+
+    Page<Beacon> findAll(Long showId, Long showMapId, Pageable pageable);
 
     Beacon update(Long showId, String uuid, Beacon beacon) throws ActionParameterException, ResourceNotFoundException;
 

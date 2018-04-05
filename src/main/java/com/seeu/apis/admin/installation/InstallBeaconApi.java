@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 
 
-@Api(tags = "BeaconInstall", description = "CRUD AdminX OneToMany")
+@Api(tags = "BeaconInstall", description = "CRUD AdminX OneToOne")
 @RestController("adminInstallBeaconApi")
 @RequestMapping("/api/admin/v1/install-beacons")
 @PreAuthorize("hasRole('ADMINX')")
@@ -72,5 +72,20 @@ public class InstallBeaconApi {
                               @RequestParam(required = true) Long beaconId) {
         installBeaconService.remove(showId, beaconId);
         return R.code(200).message("移除成功");
+    }
+
+    @GetMapping("/list/{showId}")
+    public Page<InstallBeacon> listShowsBeacon(@PathVariable Long showId,
+                                               @RequestParam(defaultValue = "0") Integer page,
+                                               @RequestParam(defaultValue = "10") Integer size) {
+        return installBeaconService.findAll(showId, new PageRequest(page, size));
+    }
+
+    // 列出该展览没有的 beacon
+    @GetMapping("/list-reverse/{showId}")
+    public Page<InstallBeacon> listShowsBeaconReverse(@PathVariable Long showId,
+                                                      @RequestParam(defaultValue = "0") Integer page,
+                                                      @RequestParam(defaultValue = "10") Integer size) {
+        return installBeaconService.findAllReverse(showId, new PageRequest(page, size));
     }
 }

@@ -4,20 +4,27 @@ import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.InstallBeacon;
 import com.seeu.artshow.show.model.Beacon;
+import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.repository.BeaconRepository;
 import com.seeu.artshow.show.service.BeaconService;
+import com.seeu.artshow.show.service.ResourceGroupService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
 public class BeaconServiceImpl implements BeaconService {
     @Resource
     private BeaconRepository repository;
+    @Autowired
+    private ResourceGroupService resourceGroupService;
 
     @Override
     public Beacon findOne(Long showId, String uuid) throws ResourceNotFoundException {
@@ -34,8 +41,39 @@ public class BeaconServiceImpl implements BeaconService {
     }
 
     @Override
-    public Page<Beacon> findAll(Long showId, Pageable pageable) {
+    public List<Beacon> findAllWithEmptyBeacons(Long showId) {
+        return repository.findAllByShowId(showId);
+    }
+
+    @Override
+    public Page<Beacon> findAllWithEmptyBeacons(Long showId, Pageable pageable) {
         return repository.findAllByShowId(showId, pageable);
+    }
+
+    @Override
+    public Page<ResourceGroup> findAll(Long showId, Pageable pageable) {
+        Page<Beacon> beaconPage = repository.findAllByShowId(showId, pageable); //
+        List<Beacon> beaconList = beaconPage.getContent();
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<ResourceGroup> groups = resourceGroupService.findAll(groupIds);
+        return new PageImpl<ResourceGroup>(groups, pageable, beaconPage.getTotalElements());
+    }
+
+    @Override
+    public List<ResourceGroup> findAll(Long showId) {
+        List<Beacon> beaconList = repository.findAllByShowId(showId); //
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        return resourceGroupService.findAll(groupIds);
+    }
+
+    @Override
+    public List<Beacon> findAll(Long showId, Long showMapId) {
+        return repository.findAllByShowIdAndShowMap_Id(showId, showMapId);
+    }
+
+    @Override
+    public Page<Beacon> findAll(Long showId, Long showMapId, Pageable pageable) {
+        return repository.findAllByShowIdAndShowMap_Id(showId, showMapId, pageable);
     }
 
     // 只能修改 admin 可操作的基本信息

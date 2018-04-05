@@ -3,15 +3,20 @@ package com.seeu.artshow.installation.service.impl;
 import com.seeu.artshow.installation.model.InstallBeacon;
 import com.seeu.artshow.installation.repository.InstallBeaconRepository;
 import com.seeu.artshow.installation.service.InstallBeaconService;
+import com.seeu.artshow.show.model.Beacon;
+import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.service.BeaconService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InstallBeaconServiceImpl implements InstallBeaconService {
@@ -54,5 +59,25 @@ public class InstallBeaconServiceImpl implements InstallBeaconService {
         InstallBeacon beacon = repository.findOne(beaconId);
         if (null == beacon) return;
         beaconService.remove(showId, beacon);
+    }
+
+    @Override
+    public Page<InstallBeacon> findAll(Long showId, Pageable pageable) {
+        Page<Beacon> beaconPage = beaconService.findAllWithEmptyBeacons(showId, pageable);
+        List<Beacon> beaconList = beaconPage.getContent();
+        if (beaconList.isEmpty()) return new PageImpl<InstallBeacon>(new ArrayList<>());
+        List<InstallBeacon> installBeacons = beaconList.parallelStream().map(Beacon::getBasicInfo).collect(Collectors.toList());
+        return new PageImpl<InstallBeacon>(installBeacons, pageable, beaconPage.getTotalElements());
+    }
+
+    @Override
+    public Page<InstallBeacon> findAllReverse(Long showId, Pageable pageable) {
+        List<Beacon> beaconList = beaconService.findAllWithEmptyBeacons(showId);
+        if (beaconList.isEmpty()) return new PageImpl<InstallBeacon>(new ArrayList<>());
+        List<InstallBeacon> installBeacons = beaconList.parallelStream().map(Beacon::getBasicInfo).collect(Collectors.toList());
+        List<Long> installBeaconIds = installBeacons.parallelStream().map(InstallBeacon::getId).collect(Collectors.toList());
+        if (installBeaconIds.isEmpty())
+            return repository.findAll(pageable);
+        return repository.findAllByIdNotIn(installBeaconIds, pageable);
     }
 }

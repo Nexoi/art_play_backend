@@ -45,8 +45,8 @@ public class ResourceGroupApi {
         return resourceGroupService.findAll(showId, new PageRequest(page, size));
     }
 
-    @GetMapping("/list/by-beacon")
-    public Page<Beacon> listByBeacon(@PathVariable Long showId,
+    @GetMapping("/list/by-beacon") // TODO update 17:20 04-05
+    public Page<ResourceGroup> listByBeacon(@PathVariable Long showId,
                                      @RequestParam(defaultValue = "0") Integer page,
                                      @RequestParam(defaultValue = "10") Integer size) {
         return resourceGroupService.findAllByBeacon(showId, new PageRequest(page, size));

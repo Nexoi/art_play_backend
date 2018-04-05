@@ -3,7 +3,9 @@ package com.seeu.apis.app.show;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.footprint.model.FootPrintShow;
 import com.seeu.artshow.footprint.service.FootPrintShowService;
+import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.record.service.RecordService;
+import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.service.ResourceGroupService;
@@ -66,6 +68,19 @@ public class ShowApi {
         return show;
     }
 
+    @ApiOperation("查看某一个展览的地图信息")
+    @GetMapping("/{showId}/maps")
+    public List<ShowMap> getMaps(@AuthenticationPrincipal User user,
+                        @PathVariable Long showId) throws ResourceNotFoundException {
+        Show show = showService.findOne(showId);
+        showService.viewOnce(showId); // 记录一次浏览量
+        if (user != null) // 记录足迹
+            footPrintShowService.setFootPrint(user.getUid(), show);
+        // 统计信息
+        recordService.recordShow(showId);
+        return show.getMaps();
+    }
+
     @ApiOperation("查看某一个展览下的所有资源组【分页】")
     @GetMapping("/{showId}/resources")
     public Page<ResourceGroup> getGroup(@PathVariable Long showId,
@@ -80,7 +95,23 @@ public class ShowApi {
         return resourceGroupService.findAll(showId);
     }
 
-    @ApiOperation("查看某一个展览下某张地图下的所有资源组【分页】")
+
+    @ApiOperation("查看某一个展览下的所有绑定了 Beacon 的资源组【分页】")
+    @GetMapping("/{showId}/resources-beacon")
+    public Page<ResourceGroup> getBeacon(@PathVariable Long showId,
+                                         @RequestParam(defaultValue = "0") Integer page,
+                                         @RequestParam(defaultValue = "10") Integer size) {
+        return resourceGroupService.findAllByBeacon(showId, new PageRequest(page, size));
+    }
+
+    @ApiOperation("查看某一个展览下的所有绑定了 Beacon 的资源组【全部】")
+    @GetMapping("/{showId}/resources-beacon/all")
+    public List<ResourceGroup> getAllBeacons(@PathVariable Long showId) {
+        return resourceGroupService.findAllByBeacon(showId);
+    }
+
+
+    @ApiOperation("查看某一个展览下某张地图下的所有资源组（必然是绑定了 Beacon 的）【分页】")
     @GetMapping("/{showId}/{mapId}/resources")
     public Page<ResourceGroup> getGroupByMap(@PathVariable Long showId,
                                              @PathVariable Long mapId,
@@ -89,7 +120,7 @@ public class ShowApi {
         return resourceGroupService.findAll(showId, mapId, new PageRequest(page, size));
     }
 
-    @ApiOperation("查看某一个展览下某张地图下的所有资源组【全部】")
+    @ApiOperation("查看某一个展览下某张地图下的所有资源组（必然是绑定了 Beacon 的）【全部】")
     @GetMapping("/{showId}/{mapId}/resources/all")
     public List<ResourceGroup> getAllGroupByMap(@PathVariable Long showId,
                                                 @PathVariable Long mapId) throws ResourceNotFoundException {
@@ -109,4 +140,6 @@ public class ShowApi {
         showService.cancelLikeOnce(showId);
         return R.noCodeMessage("取消点赞成功");
     }
+
+
 }
