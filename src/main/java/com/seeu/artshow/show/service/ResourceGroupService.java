@@ -2,7 +2,7 @@ package com.seeu.artshow.show.service;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.installation.model.Beacon;
+import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.show.model.ResourceGroup;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ public interface ResourceGroupService {
 
     ResourceGroup findOne(Long groupId) throws ResourceNotFoundException; // 会把 items 自动带上
 
-    ResourceGroup findOneByBeaconUUID(String uuid) throws ResourceNotFoundException, ActionParameterException;
+    ResourceGroup findOneByBeaconUUID(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException;
 
     ResourceGroup add(ResourceGroup group) throws ActionParameterException; // 需验证 showId
 
@@ -38,13 +38,11 @@ public interface ResourceGroupService {
 
     ResourceGroup bindBeacons(Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException;
 
+    ResourceGroup cleanBeacons(Long groupId) throws ResourceNotFoundException;
+
     ResourceGroup bindAR(Long groupId, Long imageId) throws ResourceNotFoundException;
 
-    ResourceGroup cancelBindBeacon(Long groupId, String uuid) throws ResourceNotFoundException, ActionParameterException;
-
     ResourceGroup cancelBindAR(Long groupId) throws ResourceNotFoundException;
-
-    ResourceGroup bindMapInfo(Long groupId, Integer width, Integer height, ShowMap map) throws ResourceNotFoundException;
 
     void delete(Long groupId);
 

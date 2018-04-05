@@ -1,5 +1,7 @@
-package com.seeu.artshow.installation.model;
+package com.seeu.artshow.show.model;
 
+import com.seeu.artshow.installation.model.InstallBeacon;
+import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.show.model.ResourceGroup;
 
 import javax.persistence.*;
@@ -7,7 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Table(name = "art_beacons")
+@Table(name = "art_beacons", indexes = {
+        @Index(name = "beacons_index_showId", columnList = "show_id", unique = false)
+})
 public class Beacon {
     public enum RANGE {
         one,
@@ -19,16 +23,16 @@ public class Beacon {
         off
     }
 
-
     @Id
-    @Column(length = 40)
-    private String uuid;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;    // 外界请不要使用该 id 操作数据
 
-    @NotNull
-    private String majorValue;
+    @Column(name = "show_id")
+    private Long showId;
 
-    @NotNull
-    private String minorValue;
+    @OneToOne(targetEntity = InstallBeacon.class)
+    @JoinColumn(name = "info_id")
+    private InstallBeacon basicInfo;
 
     @Enumerated
     private RANGE availableRange;
@@ -48,13 +52,13 @@ public class Beacon {
     private Integer positionHeight;
 
     // 绑定信息
-//    @OneToOne(targetEntity =ResourceGroup.class)
-//    @JoinColumn(name = "resources_group_id")
+    @OneToOne(targetEntity =ResourceGroup.class)
+    @JoinColumn(name = "resources_group_id")
     @Column(name = "resources_group_id")
     private Long resourcesGroupId;
 
     @Transient
-    private ResourceGroup resourceGroup;
+    private ResourceGroup resourceGroup; // 建议：获取到 beacon 信息后需要将此数据清空
 
     private Date updateTime;
 
@@ -64,30 +68,6 @@ public class Beacon {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getMajorValue() {
-        return majorValue;
-    }
-
-    public void setMajorValue(String majorValue) {
-        this.majorValue = majorValue;
-    }
-
-    public String getMinorValue() {
-        return minorValue;
-    }
-
-    public void setMinorValue(String minorValue) {
-        this.minorValue = minorValue;
     }
 
     public RANGE getAvailableRange() {
@@ -152,5 +132,29 @@ public class Beacon {
 
     public void setResourceGroup(ResourceGroup resourceGroup) {
         this.resourceGroup = resourceGroup;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getShowId() {
+        return showId;
+    }
+
+    public void setShowId(Long showId) {
+        this.showId = showId;
+    }
+
+    public InstallBeacon getBasicInfo() {
+        return basicInfo;
+    }
+
+    public void setBasicInfo(InstallBeacon basicInfo) {
+        this.basicInfo = basicInfo;
     }
 }

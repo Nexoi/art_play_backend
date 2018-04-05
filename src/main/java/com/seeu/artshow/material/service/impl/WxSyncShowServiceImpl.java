@@ -155,7 +155,7 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
                         page.getCoverImageUrl(),
                         page.getAuthor(),
                         page.getIntroduce(),
-                        true,
+                        false,
                         page.getContentHtml(),
                         page.getArtUrl()
                 );
@@ -175,7 +175,7 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
                         page.getCoverImageUrl(),
                         page.getAuthor(),
                         page.getIntroduce(),
-                        true,
+                        false,
                         page.getContentHtml(),
                         page.getArtUrl()
                 );

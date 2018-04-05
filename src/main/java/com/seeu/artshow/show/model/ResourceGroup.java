@@ -1,6 +1,5 @@
 package com.seeu.artshow.show.model;
 
-import com.seeu.artshow.installation.model.Beacon;
 import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.material.model.Image;
 import io.swagger.annotations.ApiParam;
@@ -27,16 +26,16 @@ public class ResourceGroup {
     @NotNull
     private String name;
 
-    @ApiParam(name = "地图信息，包含地图的长宽")
-    @OneToOne(targetEntity = ShowMap.class)
-    @JoinColumn(name = "map_id")
-    private ShowMap showMap;  // 地图信息
-
-    @ApiParam(name = "地理信息")
-    private Integer positionWidth;
-
-    @ApiParam(name = "地理信息")
-    private Integer positionHeight;
+//    @ApiParam(name = "地图信息，包含地图的长宽")
+//    @OneToOne(targetEntity = ShowMap.class)
+//    @JoinColumn(name = "map_id")
+//    private ShowMap showMap;  // 地图信息
+//
+//    @ApiParam(name = "地理信息")
+//    private Integer positionWidth;
+//
+//    @ApiParam(name = "地理信息")
+//    private Integer positionHeight;
 
     private Date updateTime;
 
@@ -80,30 +79,6 @@ public class ResourceGroup {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public ShowMap getShowMap() {
-        return showMap;
-    }
-
-    public void setShowMap(ShowMap showMap) {
-        this.showMap = showMap;
-    }
-
-    public Integer getPositionWidth() {
-        return positionWidth;
-    }
-
-    public void setPositionWidth(Integer positionWidth) {
-        this.positionWidth = positionWidth;
-    }
-
-    public Integer getPositionHeight() {
-        return positionHeight;
-    }
-
-    public void setPositionHeight(Integer positionHeight) {
-        this.positionHeight = positionHeight;
     }
 
     public Date getUpdateTime() {

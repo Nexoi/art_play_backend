@@ -3,7 +3,7 @@ package com.seeu.apis.admin.show;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.installation.model.Beacon;
+import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.service.ResourceGroupService;
 import com.seeu.core.R;
@@ -83,6 +83,8 @@ public class ResourceGroupApi {
     @PutMapping("/{groupId}/bind-beacons")
     public ResourceGroup bindBeacons(@PathVariable Long groupId,
                                      @RequestParam(required = true) String[] uuids) throws ResourceNotFoundException, ActionParameterException {
+        if (null == uuids || uuids.length == 0)
+            return resourceGroupService.cleanBeacons(groupId); // 清空绑定信息
         return resourceGroupService.bindBeacons(groupId, Arrays.asList(uuids));
     }
 
@@ -90,12 +92,6 @@ public class ResourceGroupApi {
     public ResourceGroup bindBeacons(@PathVariable Long groupId,
                                      @RequestParam(required = true) Long imageId) throws ResourceNotFoundException {
         return resourceGroupService.bindAR(groupId, imageId);
-    }
-
-    @DeleteMapping("/{groupId}/remove-beacons")
-    public ResourceGroup unbindBeacons(@PathVariable Long groupId,
-                                       @RequestParam(required = true) String uuid) throws ResourceNotFoundException, ActionParameterException {
-        return resourceGroupService.cancelBindBeacon(groupId, uuid);
     }
 
     @DeleteMapping("/{groupId}/remove-ar")

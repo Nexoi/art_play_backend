@@ -2,9 +2,9 @@ package com.seeu.artshow.show.service.impl;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.installation.model.Beacon;
+import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.installation.model.ShowMap;
-import com.seeu.artshow.installation.service.BeaconService;
+import com.seeu.artshow.show.service.BeaconService;
 import com.seeu.artshow.installation.service.ShowMapService;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.material.service.ImageService;
@@ -63,28 +63,10 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
 
     @Override
     public Page<Beacon> findAllByBeacon(Long showId, Pageable pageable) {
-        List<ResourceGroup> showFolders = repository.findAllByShowId(showId);
-        if (showFolders.isEmpty()) return new PageImpl<Beacon>(new ArrayList<>());
-        // 提取 ids
-        List<Long> showFolderIds = showFolders.parallelStream().map(ResourceGroup::getId).collect(Collectors.toList());
         // 查询参数
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
-        Page beaconPage = beaconService.findAllByResourceGroupIds(showFolderIds, request);
-        // 填充 ResourceGroup 数据进入 Beacon
-        List<Beacon> beaconList = beaconPage.getContent();
-        Map<Long, ResourceGroup> groups = new HashMap<>();
-        for (ResourceGroup group : showFolders) {
-            if (group == null) continue;
-            group.setBeacons(null); // !IMPORTANT
-            groups.put(group.getId(), group);
-        }
-        for (Beacon beacon : beaconList) {
-            if (beacon == null) continue;
-            if (beacon.getResourcesGroupId() == null) continue;
-            beacon.setResourceGroup(groups.get(beacon.getResourcesGroupId()));
-        }
-        return beaconPage;
+        return beaconService.findAll(showId, request);
     }
 
     @Override
@@ -102,10 +84,10 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
-    public ResourceGroup findOneByBeaconUUID(String uuid) throws ResourceNotFoundException, ActionParameterException {
-        Beacon beacon = beaconService.findOne(uuid);
-        if (null == beacon.getResourcesGroupId()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
-        return findOne(beacon.getResourcesGroupId());
+    public ResourceGroup findOneByBeaconUUID(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
+        Beacon beacon = beaconService.findOne(showId, uuid);
+        if (null == beacon.getResourceGroup()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
+        return findOne(beacon.getResourceGroup().getId());
     }
 
     @Override
@@ -119,8 +101,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         group.setArBindTime(null);
         group.setBeacons(new ArrayList<>());
         group.setBeaconsBindTime(null);
-        group.setPositionHeight(0);
-        group.setPositionWidth(0);
+//        group.setPositionHeight(0);
+//        group.setPositionWidth(0);
         group.setId(null);
         group.setUpdateTime(new Date());
         return repository.save(group);
@@ -140,16 +122,25 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         if (uuids == null || uuids.isEmpty())
             throw new ActionParameterException("传入参数 [beacon:uuids] 不能为空");
         ResourceGroup group = findOne(groupId);
-        List<Beacon> beacons = beaconService.findAll(uuids);
+        List<Beacon> beacons = beaconService.findAll(0L, uuids); // TODO
         if (beacons == null || beacons.isEmpty())
             throw new ActionParameterException("传入参数 [beacon:uuids] 有误，无此 beacon 信息");
         group.setBeacons(beacons);
         group.setBeaconsBindTime(new Date());
-        group = repository.save(group);
-        // 将第一个 Beacon 的信息作为 group 的地理信息
-        Beacon beacon = beacons.get(0);
-        group = bindMapInfo(groupId, beacon.getPositionWidth(), beacon.getPositionHeight(), beacon.getShowMap());
-        return group;
+        return repository.save(group);
+        // XXXX 将第一个 Beacon 的信息作为 group 的地理信息
+//        Beacon beacon = beacons.get(0);
+//        group = bindMapInfo(groupId, beacon.getPositionWidth(), beacon.getPositionHeight(), beacon.getShowMap());
+//        return group;
+    }
+
+    // 清空绑定
+    @Override
+    public ResourceGroup cleanBeacons(Long groupId) throws ResourceNotFoundException {
+        ResourceGroup group = findOne(groupId);
+        group.setBeacons(new ArrayList<>());
+        group.setBeaconsBindTime(null);
+        return repository.save(group);
     }
 
     @Override
@@ -161,38 +152,12 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         return repository.save(group);
     }
 
-    @Override
-    public ResourceGroup cancelBindBeacon(Long groupId, String uuid) throws ResourceNotFoundException, ActionParameterException {
-        ResourceGroup group = findOne(groupId);
-        List<Beacon> beacons = group.getBeacons();
-        if (beacons == null || beacons.isEmpty()) throw new ActionParameterException("取消绑定失败！该资源并未绑定此 beacon");
-        boolean flag = false;
-        for (Beacon beacon : beacons) {
-            if (beacon == null) continue;
-            if (beacon.getUuid().equalsIgnoreCase(uuid)) {
-                beacons.remove(beacon);
-                flag = true;
-            }
-        }
-        if (flag)
-            return repository.save(group);
-        throw new ActionParameterException("取消绑定失败！该资源并未绑定此 beacon");
-    }
 
     @Override
     public ResourceGroup cancelBindAR(Long groupId) throws ResourceNotFoundException {
         ResourceGroup group = findOne(groupId);
         group.setArBindTime(null);
         group.setAr(null);
-        return repository.save(group);
-    }
-
-    @Override
-    public ResourceGroup bindMapInfo(Long groupId, Integer width, Integer height, ShowMap map) throws ResourceNotFoundException {
-        ResourceGroup group = findOne(groupId);
-        group.setPositionWidth(width);
-        group.setPositionHeight(height);
-        group.setShowMap(map);
         return repository.save(group);
     }
 
