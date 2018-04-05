@@ -73,7 +73,7 @@ public class InstallBeaconServiceImpl implements InstallBeaconService {
     @Override
     public Page<InstallBeacon> findAllReverse(Long showId, Pageable pageable) {
         List<Beacon> beaconList = beaconService.findAllWithEmptyBeacons(showId);
-        if (beaconList.isEmpty()) return new PageImpl<InstallBeacon>(new ArrayList<>());
+        if (beaconList.isEmpty()) return findAll(pageable); // 把所有的 beacon 都丢出去
         List<InstallBeacon> installBeacons = beaconList.parallelStream().map(Beacon::getBasicInfo).collect(Collectors.toList());
         List<Long> installBeaconIds = installBeacons.parallelStream().map(InstallBeacon::getId).collect(Collectors.toList());
         if (installBeaconIds.isEmpty())
