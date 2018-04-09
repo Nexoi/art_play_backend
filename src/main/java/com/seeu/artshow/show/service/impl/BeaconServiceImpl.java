@@ -43,7 +43,7 @@ public class BeaconServiceImpl implements BeaconService {
         List<Beacon> beaconList = repository.findAllByShowId(showId);
         if (beaconList.isEmpty()) return beaconList;
         // 填充 group 信息
-        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).filter(Objects::nonNull).collect(Collectors.toList());
         List<ResourceGroup> resourceGroups = resourceGroupService.findAll(groupIds);
         Map<Long, ResourceGroup> resourceGroupMap = new HashMap<>();
         for (ResourceGroup group : resourceGroups) {
@@ -65,7 +65,7 @@ public class BeaconServiceImpl implements BeaconService {
         List<Beacon> beaconList = beaconPage.getContent();
         if (beaconList.isEmpty()) return beaconPage;
         // 填充 group 信息
-        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).filter(Objects::nonNull).collect(Collectors.toList());
         List<ResourceGroup> resourceGroups = resourceGroupService.findAll(groupIds);
         Map<Long, ResourceGroup> resourceGroupMap = new HashMap<>();
         for (ResourceGroup group : resourceGroups) {
