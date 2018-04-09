@@ -51,7 +51,10 @@ public class BeaconServiceImpl implements BeaconService {
         }
         // fill
         for (Beacon beacon : beaconList) {
-            beacon.setResourceGroup(resourceGroupMap.get(beacon.getResourcesGroupId()));
+            ResourceGroup group = resourceGroupMap.get(beacon.getResourcesGroupId());
+            if (null == group) continue;
+            group.setBeacons(null);
+            beacon.setResourceGroup(group);
         }
         return beaconList;
     }
@@ -70,7 +73,10 @@ public class BeaconServiceImpl implements BeaconService {
         }
         // fill
         for (Beacon beacon : beaconList) {
-            beacon.setResourceGroup(resourceGroupMap.get(beacon.getResourcesGroupId()));
+            ResourceGroup group = resourceGroupMap.get(beacon.getResourcesGroupId());
+            if (null == group) continue;
+            group.setBeacons(null);
+            beacon.setResourceGroup(group);
         }
         return beaconPage;
     }
