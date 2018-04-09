@@ -44,7 +44,14 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
-    public List<ResourceGroup> findAll(Collection<Long> showIds) {
+    public List<ResourceGroup> findAll(Collection<Long> groupIds) {
+        if (null == groupIds || groupIds.isEmpty()) return new ArrayList<>();
+        return repository.findAll(groupIds);
+    }
+
+    @Override
+    public List<ResourceGroup> findAllByShowId(Collection<Long> showIds) {
+        if (null == showIds || showIds.isEmpty()) return new ArrayList<>();
         return repository.findAllByShowIdIn(showIds);
     }
 

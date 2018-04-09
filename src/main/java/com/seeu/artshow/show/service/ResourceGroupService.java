@@ -16,7 +16,9 @@ public interface ResourceGroupService {
 
     List<ResourceGroup> findAll(Long showId);
 
-    List<ResourceGroup> findAll(Collection<Long> showIds);
+    List<ResourceGroup> findAll(Collection<Long> groupIds);
+
+    List<ResourceGroup> findAllByShowId(Collection<Long> showIds);
 
     Page<ResourceGroup> findAll(Long showId, Long mapId, Pageable pageable) throws ResourceNotFoundException;
 
