@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 public class BeaconServiceImpl implements BeaconService {
     @Resource
     private BeaconRepository repository;
-//    @Autowired
-//    private ResourceGroupService resourceGroupService;
+    @Autowired
+    private ResourceGroupService resourceGroupService;
 
     @Override
     public Beacon findOne(Long showId, String uuid) throws ResourceNotFoundException {
@@ -42,12 +42,39 @@ public class BeaconServiceImpl implements BeaconService {
 
     @Override
     public List<Beacon> findAllWithEmptyBeacons(Long showId) {
-        return repository.findAllByShowId(showId);
+        List<Beacon> beaconList = repository.findAllByShowId(showId);
+        if (beaconList.isEmpty()) return beaconList;
+        // 填充 group 信息
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<ResourceGroup> resourceGroups = resourceGroupService.findAll(groupIds);
+        Map<Long, ResourceGroup> resourceGroupMap = new HashMap<>();
+        for (ResourceGroup group : resourceGroups) {
+            resourceGroupMap.put(group.getId(), group);
+        }
+        // fill
+        for (Beacon beacon : beaconList) {
+            beacon.setResourceGroup(resourceGroupMap.get(beacon.getResourcesGroupId()));
+        }
+        return beaconList;
     }
 
     @Override
     public Page<Beacon> findAllWithEmptyBeacons(Long showId, Pageable pageable) {
-        return repository.findAllByShowId(showId, pageable);
+        Page<Beacon> beaconPage = repository.findAllByShowId(showId, pageable);
+        List<Beacon> beaconList = beaconPage.getContent();
+        if (beaconList.isEmpty()) return beaconPage;
+        // 填充 group 信息
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<ResourceGroup> resourceGroups = resourceGroupService.findAll(groupIds);
+        Map<Long, ResourceGroup> resourceGroupMap = new HashMap<>();
+        for (ResourceGroup group : resourceGroups) {
+            resourceGroupMap.put(group.getId(), group);
+        }
+        // fill
+        for (Beacon beacon : beaconList) {
+            beacon.setResourceGroup(resourceGroupMap.get(beacon.getResourcesGroupId()));
+        }
+        return beaconPage;
     }
 
     @Override
