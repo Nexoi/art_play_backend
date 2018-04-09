@@ -46,8 +46,9 @@ public class InstallBeaconServiceImpl implements InstallBeaconService {
 
     @Override
     public InstallBeacon add(InstallBeacon beacon) throws ActionParameterException {
-        InstallBeacon installBeacon = repository.findByUuid(beacon.getUuid());
-        if (null != installBeacon) throw new ActionParameterException("已存在该 Beacon UUID，请勿重复添加");
+//        TODO update 修改为不检查重复
+//        InstallBeacon installBeacon = repository.findByUuid(beacon.getUuid());
+//        if (null != installBeacon) throw new ActionParameterException("已存在该 Beacon UUID，请勿重复添加");
         beacon.setId(null);
         return repository.save(beacon);
     }
