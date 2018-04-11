@@ -4,6 +4,7 @@ import com.seeu.artshow.collection.model.MyCollection;
 import com.seeu.artshow.collection.model.MyCollectionPKeys;
 import com.seeu.artshow.collection.repository.MyCollectionRepository;
 import com.seeu.artshow.collection.service.MyCollectionService;
+import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.service.ResourceGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,8 @@ public class MyCollectionServiceImpl implements MyCollectionService {
     }
 
     @Override
-    public void add(Long uid, Long resourceGroupId) {
+    public void add(Long uid, Long resourceGroupId) throws ResourceNotFoundException {
+        resourceGroupService.findOne(resourceGroupId);
         MyCollection collection = new MyCollection();
         collection.setUid(uid);
         collection.setResourceGroupId(resourceGroupId);
@@ -53,6 +55,6 @@ public class MyCollectionServiceImpl implements MyCollectionService {
 
     @Override
     public void remove(Long uid, Long resourceGroupId) {
-        repository.delete(new MyCollectionPKeys(uid, resourceGroupId));
+        repository.delete(new MyCollectionPKeys(resourceGroupId, uid));
     }
 }

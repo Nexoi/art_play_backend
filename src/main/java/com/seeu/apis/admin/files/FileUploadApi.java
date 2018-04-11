@@ -24,7 +24,7 @@ public class FileUploadApi {
 
     @PostMapping
     public Map upload(MultipartFile file) throws IOException {
-        String url = fileUploadService.upload(file);
+        String url = fileUploadService.upload(file, "");
         long size = file.getSize();
         Map map = new HashMap();
         map.put("url", url);

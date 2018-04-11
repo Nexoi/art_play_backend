@@ -5,6 +5,7 @@ import com.seeu.artshow.footprint.service.FootPrintShowService;
 import com.seeu.artshow.userlogin.model.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +27,8 @@ public class FootPrintApi {
     @ApiOperation("查看个人足迹（浏览的展览历史）【需登录用户】")
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public Page<FootPrintShow> list(@AuthenticationPrincipal User user,
+    public Page<FootPrintShow> list(@ApiParam(hidden = true)
+                                    @AuthenticationPrincipal User user,
                                     @RequestParam(defaultValue = "0") Integer page,
                                     @RequestParam(defaultValue = "10") Integer size) {
         return footPrintShowService.findAll(user.getUid(), new PageRequest(page, size));
