@@ -60,6 +60,9 @@ public class Beacon {
     @Transient
     private ResourceGroup resourceGroup; // 建议：获取到 beacon 信息后需要将此数据清空
 
+    @Transient
+    private Integer iconStatus = 0; // 全部为 0
+
     private Date updateTime;
 
     public String getName() {
@@ -156,5 +159,13 @@ public class Beacon {
 
     public void setBasicInfo(InstallBeacon basicInfo) {
         this.basicInfo = basicInfo;
+    }
+
+    public Integer getIconStatus() {
+        return 0;
+    }
+
+    public void setIconStatus(Integer iconStatus) {
+        this.iconStatus = 0;
     }
 }
