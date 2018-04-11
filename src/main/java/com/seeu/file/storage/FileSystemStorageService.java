@@ -1,6 +1,7 @@
 package com.seeu.file.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -97,8 +98,12 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    @Value("${com.xiaoyi.storage.location}")
+    private String fileRootPath;
+
     @Override
     public String getPath(String additionalName) {
-        return this.rootLocation.resolve(additionalName).toString();
+        if (null == additionalName) return fileRootPath + "/file.temp";
+        return (additionalName.startsWith("/")) ? fileRootPath + additionalName : fileRootPath + "/" + additionalName;
     }
 }
