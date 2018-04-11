@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 普通管理员操作，在某展览下的 beacon
+ *
+ * update 2018-04-11 修改 uuid 为 id 标识，避免重复 beacon uuid 出现 bug
  */
 @Api(tags = "Beacon", description = "CRUD Admin OneToMany")
 @RestController("adminBeaconApi")
@@ -36,10 +38,10 @@ public class BeaconApi {
         return beaconService.findAllWithEmptyBeacons(showId, new PageRequest(page, size, new Sort(Sort.Direction.DESC, "updateTime")));
     }
 
-    @GetMapping("/{uuid}")
+    @GetMapping("/{id}")
     public Beacon get(@PathVariable Long showId,
-                      @PathVariable String uuid) throws ResourceNotFoundException {
-        return beaconService.findOne(showId, uuid); //TODO by showId and UUID
+                      @PathVariable Long id) throws ResourceNotFoundException {
+        return beaconService.findOne(showId, id); //TODO by showId and UUID
     }
 
 //    @PostMapping
@@ -65,9 +67,9 @@ public class BeaconApi {
 //        return beaconService.add(beacon);
 //    }
 
-    @PutMapping("/{uuid}")
+    @PutMapping("/{id}")
     public Beacon update(@PathVariable Long showId,
-                         @PathVariable String uuid,
+                         @PathVariable Long id,
                          @RequestParam(required = false) String name,
                          @RequestParam(required = false) Beacon.RANGE availableRange,
                          @RequestParam(required = false) Beacon.STATUS status,
@@ -86,19 +88,19 @@ public class BeaconApi {
         beacon.setPositionHeight(height);
         if (mapId != null)
             beacon.setShowMap(showMapService.findOne(mapId));
-        return beaconService.update(showId, uuid, beacon);
+        return beaconService.update(showId, id, beacon);
     }
 
-    @PutMapping("/{uuid}/change-status")
+    @PutMapping("/{id}/change-status")
     public Beacon changeStatus(@PathVariable Long showId,
-                               @PathVariable String uuid) throws ResourceNotFoundException {
-        return beaconService.changeStatus(showId, uuid);
+                               @PathVariable Long id) throws ResourceNotFoundException {
+        return beaconService.changeStatus(showId, id);
     }
 
     // 把某一个 beacon 的绑定信息移除
-    @DeleteMapping("/{uuid}/remove-beacon")
+    @DeleteMapping("/{id}/remove-beacon")
     public Beacon unbindBeacons(@PathVariable Long showId,
-                                @PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
-        return beaconService.removeBindInfo(showId, uuid);
+                                @PathVariable Long id) throws ResourceNotFoundException, ActionParameterException {
+        return beaconService.removeBindInfo(showId, id);
     }
 }

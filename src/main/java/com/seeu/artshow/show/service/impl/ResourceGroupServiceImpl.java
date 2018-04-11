@@ -124,19 +124,12 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
-    public ResourceGroup findOneByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
-        Beacon beacon = beaconService.findOne(showId, uuid);
-        if (null == beacon.getResourceGroup()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
-        ResourceGroup group = findOne(beacon.getResourceGroup().getId());
-        List<Beacon> beaconList = group.getBeacons();
-        boolean flag = false;
-        if (!beaconList.isEmpty())
-            for (Beacon b : beaconList) {
-                flag = (null != b.getStatus() && Beacon.STATUS.on == b.getStatus());
-                if (flag) break;
-            }
-        if (flag) return group;
-        throw new ResourceNotFoundException("resources_group", "id: " + group.getId());
+    public List<ResourceGroup> findAllByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
+        List<Beacon> beacons = beaconService.findOne(showId, uuid);
+        if (beacons.isEmpty()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
+        List<Long> showIds = beacons.parallelStream().filter(it -> (null != it.getStatus() && Beacon.STATUS.on == it.getStatus())).map(Beacon::getShowId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        return groups;
     }
 
     @Override
@@ -217,11 +210,15 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         return group;
     }
 
+    // No Usages
     @Override
-    public ResourceGroup findOneByBeaconUUID(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
-        Beacon beacon = beaconService.findOne(showId, uuid);
-        if (null == beacon.getResourceGroup()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
-        return findOne(beacon.getResourceGroup().getId());
+    public List<ResourceGroup> findAllByBeaconUUID(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
+        List<Beacon> beacons = beaconService.findOne(showId, uuid);
+        if (beacons.isEmpty()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
+        List<Long> showIds = beacons.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+//        return findOne(beacon.getResourceGroup().getId());
+        return groups;
     }
 
     @Override

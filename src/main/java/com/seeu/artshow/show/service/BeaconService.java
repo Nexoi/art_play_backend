@@ -15,7 +15,9 @@ import java.util.List;
  */
 public interface BeaconService {
 
-    Beacon findOne(Long showId, String uuid) throws ResourceNotFoundException;
+    List<Beacon> findOne(Long showId, String uuid) throws ResourceNotFoundException;
+
+    Beacon findOne(Long showId, Long beaconId) throws ResourceNotFoundException;
 
     List<Beacon> findAll(Long showId, Collection<String> uuids);
 
@@ -31,11 +33,11 @@ public interface BeaconService {
 
     Page<Beacon> findAll(Long showId, Long showMapId, Pageable pageable);
 
-    Beacon update(Long showId, String uuid, Beacon beacon) throws ActionParameterException, ResourceNotFoundException;
+    Beacon update(Long showId, Long id, Beacon beacon) throws ActionParameterException, ResourceNotFoundException;
 
-    Beacon changeStatus(Long showId, String uuid) throws ResourceNotFoundException; // 改变状态（ on / off ）
+    Beacon changeStatus(Long showId, Long id) throws ResourceNotFoundException; // 改变状态（ on / off ）
 
-    Beacon removeBindInfo(Long showId, String uuid) throws ResourceNotFoundException;
+    Beacon removeBindInfo(Long showId, Long id) throws ResourceNotFoundException;
 
     // adminx
     // 新增的 beacon 不会将原来的数据覆盖 save 掉

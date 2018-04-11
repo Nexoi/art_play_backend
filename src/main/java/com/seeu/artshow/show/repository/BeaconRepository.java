@@ -15,7 +15,7 @@ public interface BeaconRepository extends JpaRepository<Beacon, Long> {
 //    List<Beacon> findAllByResourcesGroup(@Param("resourcesGroupId") Long resourcesGroupId);
 
 
-    Beacon findByShowIdAndBasicInfo_Uuid(@Param("showId") Long showId, @Param("uuid") String uuid);
+    List<Beacon> findAllByShowIdAndBasicInfo_Uuid(@Param("showId") Long showId, @Param("uuid") String uuid);
 
     List<Beacon> findAllByShowId(@Param("showId") Long showId);
 

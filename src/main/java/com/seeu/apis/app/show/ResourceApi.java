@@ -46,13 +46,15 @@ public class ResourceApi {
         return group;
     }
 
-    @ApiOperation(value = "通过 Beacon UUID 查找某一资源组内容（31 位 UUID，含分隔符）", notes = "具体内容请参见 Model 栏：ResourceGroup")
+    @ApiOperation(value = "！通过 Beacon UUID 查找某一资源组内容（31 位 UUID，含分隔符）", notes = "具体内容请参见 Model 栏：ResourceGroup")
     @GetMapping("/use-beacon/{uuid}")
-    public ResourceGroup getByBeaconUUID(@PathVariable Long showId,
-                                         @PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
-        ResourceGroup group = resourceGroupService.findOneByBeaconUUIDFilterSwitch(showId, uuid);
-        resourceGroupService.viewOnce(group.getId()); // 记录一次浏览量
-        return group;
+    public List<ResourceGroup> getByBeaconUUID(@PathVariable Long showId,
+                                               @PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
+        List<ResourceGroup> groups = resourceGroupService.findAllByBeaconUUIDFilterSwitch(showId, uuid);
+        for (ResourceGroup group : groups) {
+            resourceGroupService.viewOnce(group.getId()); // 记录一次浏览量
+        }
+        return groups;
     }
 
     @ApiOperation(value = "查看某一资源组包含的资源信息（可包含：视频、音频、图片、网页）", notes = "具体内容请参见 Model 栏：ResourceItem")

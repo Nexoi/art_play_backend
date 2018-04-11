@@ -27,7 +27,7 @@ public interface ResourceGroupService {
 
     ResourceGroup findOneFilterSwitch(Long groupId) throws ResourceNotFoundException; // 会把 items 自动带上
 
-    ResourceGroup findOneByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException;
+    List<ResourceGroup> findAllByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException;
 
     Page<ResourceGroup> findAll(Long showId, Pageable pageable);
 
@@ -53,7 +53,7 @@ public interface ResourceGroupService {
 
     ResourceGroup findOne(Long groupId) throws ResourceNotFoundException; // 会把 items 自动带上
 
-    ResourceGroup findOneByBeaconUUID(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException;
+    List<ResourceGroup> findAllByBeaconUUID(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException;
 
     ResourceGroup add(ResourceGroup group) throws ActionParameterException; // 需验证 showId
 

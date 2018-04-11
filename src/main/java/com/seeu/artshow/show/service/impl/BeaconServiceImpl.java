@@ -25,11 +25,21 @@ public class BeaconServiceImpl implements BeaconService {
     private ResourceGroupService resourceGroupService;
 
     @Override
-    public Beacon findOne(Long showId, String uuid) throws ResourceNotFoundException {
+    public List<Beacon> findOne(Long showId, String uuid) throws ResourceNotFoundException {
         if (null == showId || null == uuid)
             throw new ResourceNotFoundException("beacon", "showId/uuid: null");
-        Beacon beacon = repository.findByShowIdAndBasicInfo_Uuid(showId, uuid);
-        if (null == beacon) throw new ResourceNotFoundException("beacon", "showId: " + showId + "uuid: " + uuid);
+        List<Beacon> beacons = repository.findAllByShowIdAndBasicInfo_Uuid(showId, uuid);
+        if (null == beacons) throw new ResourceNotFoundException("beacon", "showId: " + showId + "uuid: " + uuid);
+        return beacons;
+    }
+
+    @Override
+    public Beacon findOne(Long showId, Long beaconId) throws ResourceNotFoundException {
+        if (null == showId || null == beaconId)
+            throw new ResourceNotFoundException("beacon", "showId/uuid: null");
+        Beacon beacon = repository.findByShowIdAndBasicInfo_Id(showId, beaconId);
+        if (null == beacon)
+            throw new ResourceNotFoundException("beacon", "showId: " + showId + "beaconId: " + beaconId);
         return beacon;
     }
 
@@ -107,10 +117,11 @@ public class BeaconServiceImpl implements BeaconService {
         return repository.findAllByShowIdAndShowMap_Id(showId, showMapId, pageable);
     }
 
+
     // 只能修改 admin 可操作的基本信息
     @Override
-    public Beacon update(Long showId, String uuid, Beacon beacon) throws ActionParameterException, ResourceNotFoundException {
-        Beacon savedBeacon = findOne(showId, uuid);
+    public Beacon update(Long showId, Long id, Beacon beacon) throws ActionParameterException, ResourceNotFoundException {
+        Beacon savedBeacon = findOne(showId, id);
         if (null != beacon.getAvailableRange()) savedBeacon.setAvailableRange(beacon.getAvailableRange());
         if (null != beacon.getName()) savedBeacon.setName(beacon.getName());
         if (null != beacon.getPositionHeight() && null != beacon.getPositionWidth()) {
@@ -125,16 +136,16 @@ public class BeaconServiceImpl implements BeaconService {
     }
 
     @Override
-    public Beacon changeStatus(Long showId, String uuid) throws ResourceNotFoundException {
-        Beacon beacon = findOne(showId, uuid);
+    public Beacon changeStatus(Long showId, Long id) throws ResourceNotFoundException {
+        Beacon beacon = findOne(showId, id);
         Beacon.STATUS status = beacon.getStatus();
         beacon.setStatus(Beacon.STATUS.on == status ? Beacon.STATUS.off : Beacon.STATUS.on);
         return repository.save(beacon);
     }
 
     @Override
-    public Beacon removeBindInfo(Long showId, String uuid) throws ResourceNotFoundException {
-        Beacon beacon = findOne(showId, uuid);
+    public Beacon removeBindInfo(Long showId, Long id) throws ResourceNotFoundException {
+        Beacon beacon = findOne(showId, id);
         beacon.setResourcesGroupId(null);
         return repository.save(beacon);
     }
