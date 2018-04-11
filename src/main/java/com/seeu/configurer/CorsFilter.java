@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class CorsFilter implements Filter {
 
-    private List<String> allowedOrigins = Arrays.asList("http://localhost:8000", "http://localhost:8090", "http://art.seeuio.com:8000", "http://admin.art.seeuio.com", "*");
+    private List<String> allowedOrigins = Arrays.asList("http://localhost:8000", "http://localhost:8090", "http://art.seeuio.com:8000", "http://admin.art.seeuio.com", "http://www.vvaryun.com", "http://admin.vvaryun.com", "*");
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
@@ -23,7 +23,8 @@ public class CorsFilter implements Filter {
         String origin = request.getHeader("Origin");
         response.setHeader("Access-Control-Allow-Origin", allowedOrigins.contains(origin) ? origin : "*");
         response.setHeader("Vary", "Origin");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Credentials", "include");
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
         // response.setHeader("Access-Control-Allow-Origin", "*");//解决跨域请求问题
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH");
         response.setHeader("Access-Control-Max-Age", "3600");
