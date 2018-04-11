@@ -81,50 +81,50 @@ public class ShowApi {
         return show.getMaps();
     }
 
-    @ApiOperation("查看某一个展览下的所有资源组【分页】")
-    @GetMapping("/{showId}/resources")
-    public Page<ResourceGroup> getGroup(@PathVariable Long showId,
-                                        @RequestParam(defaultValue = "0") Integer page,
-                                        @RequestParam(defaultValue = "10") Integer size) {
-        return resourceGroupService.findAll(showId, new PageRequest(page, size));
-    }
+//    @ApiOperation("查看某一个展览下的所有资源组【分页】")
+//    @GetMapping("/{showId}/resources")
+//    public Page<ResourceGroup> getGroup(@PathVariable Long showId,
+//                                        @RequestParam(defaultValue = "0") Integer page,
+//                                        @RequestParam(defaultValue = "10") Integer size) {
+//        return resourceGroupService.findAllFilterSwitch(showId, new PageRequest(page, size));
+//    }
 
     @ApiOperation("查看某一个展览下的所有资源组【全部】")
     @GetMapping("/{showId}/resources/all")
     public List<ResourceGroup> getAllGroup(@PathVariable Long showId) {
-        return resourceGroupService.findAll(showId);
+        return resourceGroupService.findAllFilterSwitch(showId);
     }
 
 
-    @ApiOperation("查看某一个展览下的所有绑定了 Beacon 的资源组【分页】")
-    @GetMapping("/{showId}/resources-beacon")
-    public Page<ResourceGroup> getBeacon(@PathVariable Long showId,
-                                         @RequestParam(defaultValue = "0") Integer page,
-                                         @RequestParam(defaultValue = "10") Integer size) {
-        return resourceGroupService.findAllByBeacon(showId, new PageRequest(page, size));
-    }
+//    @ApiOperation("查看某一个展览下的所有绑定了 Beacon 的资源组【分页】")
+//    @GetMapping("/{showId}/resources-beacon")
+//    public Page<ResourceGroup> getBeacon(@PathVariable Long showId,
+//                                         @RequestParam(defaultValue = "0") Integer page,
+//                                         @RequestParam(defaultValue = "10") Integer size) {
+//        return resourceGroupService.findAllByBeaconFilterSwitch(showId, new PageRequest(page, size));
+//    }
 
     @ApiOperation("查看某一个展览下的所有绑定了 Beacon 的资源组【全部】")
     @GetMapping("/{showId}/resources-beacon/all")
     public List<ResourceGroup> getAllBeacons(@PathVariable Long showId) {
-        return resourceGroupService.findAllByBeacon(showId);
+        return resourceGroupService.findAllByBeaconFilterSwitch(showId);
     }
 
 
-    @ApiOperation("查看某一个展览下某张地图下的所有资源组（必然是绑定了 Beacon 的）【分页】")
-    @GetMapping("/{showId}/{mapId}/resources")
-    public Page<ResourceGroup> getGroupByMap(@PathVariable Long showId,
-                                             @PathVariable Long mapId,
-                                             @RequestParam(defaultValue = "0") Integer page,
-                                             @RequestParam(defaultValue = "10") Integer size) throws ResourceNotFoundException {
-        return resourceGroupService.findAll(showId, mapId, new PageRequest(page, size));
-    }
+//    @ApiOperation("查看某一个展览下某张地图下的所有资源组（必然是绑定了 Beacon 的）【分页】")
+//    @GetMapping("/{showId}/{mapId}/resources")
+//    public Page<ResourceGroup> getGroupByMap(@PathVariable Long showId,
+//                                             @PathVariable Long mapId,
+//                                             @RequestParam(defaultValue = "0") Integer page,
+//                                             @RequestParam(defaultValue = "10") Integer size) throws ResourceNotFoundException {
+//        return resourceGroupService.findAllFilterSwitch(showId, mapId, new PageRequest(page, size));
+//    }
 
     @ApiOperation("查看某一个展览下某张地图下的所有资源组（必然是绑定了 Beacon 的）【全部】")
     @GetMapping("/{showId}/{mapId}/resources/all")
     public List<ResourceGroup> getAllGroupByMap(@PathVariable Long showId,
                                                 @PathVariable Long mapId) throws ResourceNotFoundException {
-        return resourceGroupService.findAll(showId, mapId);
+        return resourceGroupService.findAllFilterSwitch(showId, mapId);
     }
 
     @ApiOperation("点赞该展览")

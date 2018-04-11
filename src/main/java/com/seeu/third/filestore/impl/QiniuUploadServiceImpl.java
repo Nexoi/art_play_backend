@@ -40,7 +40,7 @@ public class QiniuUploadServiceImpl implements FileUploadService {
 
     @Override
     public Image uploadImage(MultipartFile file) throws IOException {
-        String url = upload(file);
+        String url = upload(file, ".jpg");
         BufferedImage bufferedImg = ImageIO.read(file.getInputStream());
         int imgWidth = bufferedImg.getWidth();
         int imgHeight = bufferedImg.getHeight();
@@ -67,8 +67,8 @@ public class QiniuUploadServiceImpl implements FileUploadService {
 
     @Override
     public Video uploadVideo(MultipartFile videoFile, MultipartFile coverImage) throws IOException {
-        String url = upload(videoFile);
-        String coverUrl = upload(coverImage);
+        String url = upload(videoFile, ".mp4");
+        String coverUrl = upload(coverImage, ".mp4");
         Video video = new Video();
         // 封面要用户自己传，不支持截屏取图，此处已经存储至 OSS 上
         video.setSrcUrl(url);
@@ -79,7 +79,7 @@ public class QiniuUploadServiceImpl implements FileUploadService {
 
     @Override
     public Video uploadVideo(MultipartFile videoFile) throws IOException {
-        String url = upload(videoFile);
+        String url = upload(videoFile, ".mp4");
         Video video = new Video();
         // 封面要用户自己传，不支持截屏取图
         video.setSrcUrl(url);
@@ -106,9 +106,9 @@ public class QiniuUploadServiceImpl implements FileUploadService {
     }
 
     @Override
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file, String suffix) throws IOException {
         ByteArrayInputStream byteInputStream = new ByteArrayInputStream(file.getBytes());
-        return upload(byteInputStream);
+        return upload(byteInputStream, suffix);
     }
 
     /**
@@ -118,8 +118,8 @@ public class QiniuUploadServiceImpl implements FileUploadService {
      * @return
      * @throws IOException
      */
-    private String upload(ByteArrayInputStream byteInputStream) throws IOException {
-        String key = "artshow" + UUID.randomUUID();
+    private String upload(ByteArrayInputStream byteInputStream, String suffix) throws IOException {
+        String key = "artshow" + UUID.randomUUID() + suffix;
         //构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(Zone.zone2());
         UploadManager uploadManager = new UploadManager(cfg);
@@ -137,7 +137,7 @@ public class QiniuUploadServiceImpl implements FileUploadService {
     private Image uploadImage(BufferedImage bufferedImg) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(bufferedImg, "jpeg", os);
-        String url = upload(new ByteArrayInputStream(os.toByteArray()));
+        String url = upload(new ByteArrayInputStream(os.toByteArray()), ".jpg");
         int imgWidth = bufferedImg.getWidth();
         int imgHeight = bufferedImg.getHeight();
         Image image = new Image();

@@ -1,6 +1,7 @@
 package com.seeu.apis.admin.show;
 
 
+import com.seeu.artshow.ar.service.ArService;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.show.model.Beacon;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -29,6 +31,8 @@ public class ResourceGroupApi {
 
     @Autowired
     private ResourceGroupService resourceGroupService;
+    @Autowired
+    private ArService arService;
 
     @GetMapping("/list")
     public Page<ResourceGroup> list(@PathVariable Long showId,
@@ -90,14 +94,30 @@ public class ResourceGroupApi {
     }
 
     @PutMapping("/{groupId}/bind-ar")
-    public ResourceGroup bindBeacons(@PathVariable Long groupId,
+    public ResourceGroup bindBeacons(@PathVariable Long showId,
+                                     @PathVariable Long groupId,
                                      @RequestParam(required = true) Long imageId) throws ResourceNotFoundException {
-        return resourceGroupService.bindAR(groupId, imageId);
+        ResourceGroup group = resourceGroupService.bindAR(groupId, imageId);
+        // 启动 zip 同步
+        try {
+            arService.asyncZipFile(showId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return group;
     }
 
     @DeleteMapping("/{groupId}/remove-ar")
-    public ResourceGroup unbindBeacons(@PathVariable Long groupId) throws ResourceNotFoundException {
-        return resourceGroupService.cancelBindAR(groupId);
+    public ResourceGroup unbindBeacons(@PathVariable Long showId,
+                                       @PathVariable Long groupId) throws ResourceNotFoundException {
+        ResourceGroup group = resourceGroupService.cancelBindAR(groupId);
+        // 启动 zip 同步
+        try {
+            arService.asyncZipFile(showId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return group;
     }
 
     @DeleteMapping("/{groupId}")

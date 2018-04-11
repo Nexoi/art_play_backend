@@ -2,8 +2,6 @@ package com.seeu.artshow.show.service.impl;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.installation.model.ShowMap;
-import com.seeu.artshow.installation.service.ShowMapService;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.show.model.Beacon;
@@ -30,6 +28,116 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     private BeaconService beaconService;
     @Autowired
     private ImageService imageService;
+
+    @Override
+    public Page<ResourceGroup> findAllFilterSwitch(Long showId, Pageable pageable) {
+        // TODO 无法过滤
+        Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
+        PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return repository.findAllByShowId(showId, request);
+    }
+
+    @Override
+    public List<ResourceGroup> findAllFilterSwitch(Long showId) {
+        // TODO 已经过滤
+        List<ResourceGroup> groups = repository.findAllByShowId(showId);
+        List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
+            List<Beacon> beaconList = it.getBeacons();
+            if (beaconList.isEmpty()) return true;
+            for (Beacon beacon : beaconList) {
+                boolean flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
+                if (flag) return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        return groupList;
+    }
+
+    @Override
+    public List<ResourceGroup> findAllByBeaconFilterSwitch(Long showId) {
+        List<ResourceGroup> groups = repository.findAllByShowIdAndBeaconsNotNull(showId);
+        List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
+            List<Beacon> beaconList = it.getBeacons();
+            if (beaconList.isEmpty()) return false;
+            for (Beacon beacon : beaconList) {
+                boolean flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
+                if (flag) return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        return groupList;
+    }
+
+    @Override
+    public Page<ResourceGroup> findAllByBeaconFilterSwitch(Long showId, Pageable pageable) {
+        // TODO 无法过滤
+        // 查询参数
+        Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
+        PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return repository.findAllByShowIdAndBeaconsNotNull(showId, request);
+    }
+
+    @Override
+    public Page<ResourceGroup> findAllFilterSwitch(Long showId, Long mapId, Pageable pageable) throws ResourceNotFoundException {
+        // TODO 无法过滤
+        Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
+        PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        Page<Beacon> page = beaconService.findAll(showId, mapId, request);
+        List<Beacon> beaconList = page.getContent();
+        if (beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
+        List<Long> showIds = beaconList.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        return new PageImpl<ResourceGroup>(groups, request, page.getTotalElements());
+    }
+
+    @Override
+    public List<ResourceGroup> findAllFilterSwitch(Long showId, Long mapId) throws ResourceNotFoundException {
+        List<Beacon> beacons = beaconService.findAll(showId, mapId);
+        if (beacons.isEmpty()) return new ArrayList<>();
+        List<Long> showIds = beacons.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
+            List<Beacon> beaconList = it.getBeacons();
+            if (beaconList.isEmpty()) return false;
+            for (Beacon beacon : beaconList) {
+                boolean flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
+                if (flag) return true;
+            }
+            return false;
+        }).collect(Collectors.toList());
+        return groupList;
+    }
+
+    @Override
+    public ResourceGroup findOneFilterSwitch(Long groupId) throws ResourceNotFoundException {
+        ResourceGroup group = repository.findOne(groupId);
+        if (group == null) throw new ResourceNotFoundException("resources_group", "id: " + groupId);
+        List<Beacon> beaconList = group.getBeacons();
+        boolean flag = false;
+        if (!beaconList.isEmpty())
+            for (Beacon beacon : beaconList) {
+                flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
+                if (flag) break;
+            }
+        if (flag) return group;
+        throw new ResourceNotFoundException("resources_group", "id: " + groupId);
+    }
+
+    @Override
+    public ResourceGroup findOneByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
+        Beacon beacon = beaconService.findOne(showId, uuid);
+        if (null == beacon.getResourceGroup()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
+        ResourceGroup group = findOne(beacon.getResourceGroup().getId());
+        List<Beacon> beaconList = group.getBeacons();
+        boolean flag = false;
+        if (!beaconList.isEmpty())
+            for (Beacon b : beaconList) {
+                flag = (null != b.getStatus() && Beacon.STATUS.on == b.getStatus());
+                if (flag) break;
+            }
+        if (flag) return group;
+        throw new ResourceNotFoundException("resources_group", "id: " + group.getId());
+    }
 
     @Override
     public Page<ResourceGroup> findAll(Long showId, Pageable pageable) {

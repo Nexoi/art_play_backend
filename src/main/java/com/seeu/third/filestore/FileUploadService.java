@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FileUploadService {
-    String upload(MultipartFile file) throws IOException;
+    String upload(MultipartFile file, String suffix) throws IOException;
 
     Image uploadImage(MultipartFile file) throws IOException;
 

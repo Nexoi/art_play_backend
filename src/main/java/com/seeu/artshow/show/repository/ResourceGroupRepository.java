@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ResourceGroupRepository extends JpaRepository<ResourceGroup, Long> {
+
     Page<ResourceGroup> findAllByNameLikeOrderByUpdateTimeDesc(@Param("name") String name, Pageable pageable);
 
     Page<ResourceGroup> findAllByOrderByUpdateTimeDesc(Pageable pageable);

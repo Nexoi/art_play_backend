@@ -37,7 +37,7 @@ public class FileSystemStorageService implements StorageService {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
             String dir = dateFormat.format(new Date());
             Path filePath = this.rootLocation.resolve(dir);
-            if (!filePath.toFile().exists()){
+            if (!filePath.toFile().exists()) {
                 Files.createDirectory(filePath);
             }
 
@@ -95,5 +95,10 @@ public class FileSystemStorageService implements StorageService {
         } catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);
         }
+    }
+
+    @Override
+    public String getPath(String additionalName) {
+        return this.rootLocation.resolve(additionalName).toString();
     }
 }

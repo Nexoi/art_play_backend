@@ -12,6 +12,23 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ResourceGroupService {
+
+    Page<ResourceGroup> findAllFilterSwitch(Long showId, Pageable pageable);
+
+    List<ResourceGroup> findAllFilterSwitch(Long showId);
+
+    List<ResourceGroup> findAllByBeaconFilterSwitch(Long showId);
+
+    Page<ResourceGroup> findAllByBeaconFilterSwitch(Long showId, Pageable pageable);
+
+    Page<ResourceGroup> findAllFilterSwitch(Long showId, Long mapId, Pageable pageable) throws ResourceNotFoundException;
+
+    List<ResourceGroup> findAllFilterSwitch(Long showId, Long mapId) throws ResourceNotFoundException;
+
+    ResourceGroup findOneFilterSwitch(Long groupId) throws ResourceNotFoundException; // 会把 items 自动带上
+
+    ResourceGroup findOneByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException;
+
     Page<ResourceGroup> findAll(Long showId, Pageable pageable);
 
     List<ResourceGroup> findAll(Long showId);

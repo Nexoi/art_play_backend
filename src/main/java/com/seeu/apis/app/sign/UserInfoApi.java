@@ -71,7 +71,7 @@ public class UserInfoApi {
     public UserVO changeNickname(@ApiParam(hidden = true)
                                  @AuthenticationPrincipal User user,
                                  @RequestParam(required = true) MultipartFile image) throws NoSuchUserException, IOException {
-        String url = fileUploadService.upload(image);
+        String url = fileUploadService.upload(image, ".jpg");
         User u = userService.findOne(user.getUid());
         u.setHeadIconUrl(url);
         u = userService.save(u);

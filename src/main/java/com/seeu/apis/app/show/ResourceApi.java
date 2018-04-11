@@ -36,7 +36,7 @@ public class ResourceApi {
     @GetMapping("/{groupId}")
     public ResourceGroup get(@PathVariable Long groupId,
                              @RequestParam(required = false) RecordService.VISIT_TYPE type) throws ResourceNotFoundException {
-        ResourceGroup group = resourceGroupService.findOne(groupId);
+        ResourceGroup group = resourceGroupService.findOneFilterSwitch(groupId);
         resourceGroupService.viewOnce(groupId); // 记录一次浏览量
         // 统计信息
         recordService.recordResourceGroup(groupId);
@@ -50,7 +50,7 @@ public class ResourceApi {
     @GetMapping("/use-beacon/{uuid}")
     public ResourceGroup getByBeaconUUID(@PathVariable Long showId,
                                          @PathVariable String uuid) throws ResourceNotFoundException, ActionParameterException {
-        ResourceGroup group = resourceGroupService.findOneByBeaconUUID(showId, uuid);
+        ResourceGroup group = resourceGroupService.findOneByBeaconUUIDFilterSwitch(showId, uuid);
         resourceGroupService.viewOnce(group.getId()); // 记录一次浏览量
         return group;
     }

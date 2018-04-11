@@ -10,6 +10,8 @@ public interface StorageService {
 
     void init();
 
+    String getPath(String additionalName);
+
     /**
      * @param file
      * @return 文件 URI
