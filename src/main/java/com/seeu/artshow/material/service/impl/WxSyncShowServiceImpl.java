@@ -84,7 +84,7 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
                     page.getAuthor(),
                     page.getIntroduce(),
                     true,
-                    page.getContentHtml(),
+                    fillContentStyle(page.getContentHtml()),
                     page.getArtUrl()
             );
             if (null != mediaId) {
@@ -103,11 +103,18 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
                     page.getAuthor(),
                     page.getIntroduce(),
                     true,
-                    page.getContentHtml(),
+                    fillContentStyle(page.getContentHtml()),
                     page.getArtUrl()
             );
             return result;
         }
+    }
+
+    private String fillContentStyle(String contentHtml) {
+        return "<div>" +
+                "<style>.image-wrap{text-align:center;}</style>" +
+                contentHtml +
+                "</div>";
     }
 
     // 异步
@@ -194,7 +201,7 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
         } catch (WxErrorException e) {
             wxSyncItem.setStatus(WxSyncItem.STATUS.FINISH);
             wxSyncItem.setMessage(e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             wxSyncItem.setStatus(WxSyncItem.STATUS.FINISH);
             wxSyncItem.setMessage(e.getMessage());
         }

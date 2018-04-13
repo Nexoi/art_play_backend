@@ -215,17 +215,17 @@
             <version>2.9.2-for-import</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/cn.jpush.api/jiguang-common -->
-        <dependency>
-            <groupId>cn.jpush.api</groupId>
-            <artifactId>jiguang-common</artifactId>
-            <version>1.0.9</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/cn.jpush.api/jpush-client -->
-        <dependency>
-            <groupId>cn.jpush.api</groupId>
-            <artifactId>jpush-client</artifactId>
-            <version>3.3.3</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>cn.jpush.api</groupId>-->
+            <!--<artifactId>jiguang-common</artifactId>-->
+            <!--<version>1.0.9</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/cn.jpush.api/jpush-client &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>cn.jpush.api</groupId>-->
+            <!--<artifactId>jpush-client</artifactId>-->
+            <!--<version>3.3.3</version>-->
+        <!--</dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
