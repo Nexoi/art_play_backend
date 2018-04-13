@@ -21,7 +21,9 @@ public class WebPageApi {
     @ResponseStatus(HttpStatus.OK)
     public WebPage get(@PathVariable Long id) throws ResourceNotFoundException {
         WebPage webPage = webPageService.findOne(id);
+        webPageService.viewItOnce(webPage.getResourceItemId());
         webPage.setWechatAsync(null);
+        webPage.setMediaId(null);
         return webPage;
     }
 }

@@ -191,4 +191,9 @@ public class BeaconServiceImpl implements BeaconService {
         if (null == savedBeacon) return;
         repository.delete(savedBeacon.getId());
     }
+
+    @Override
+    public void deleteAllByShowId(Long showId) {
+        repository.delBindShow(showId);
+    }
 }

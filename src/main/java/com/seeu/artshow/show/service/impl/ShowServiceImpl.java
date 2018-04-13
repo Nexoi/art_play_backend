@@ -9,6 +9,7 @@ import com.seeu.artshow.material.service.FolderService;
 import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.repository.ShowRepository;
+import com.seeu.artshow.show.service.BeaconService;
 import com.seeu.artshow.show.service.ShowService;
 import com.seeu.artshow.showauth.service.ShowAuthService;
 import com.seeu.artshow.userlogin.exception.NoSuchUserException;
@@ -37,6 +38,8 @@ public class ShowServiceImpl implements ShowService {
     private ShowAuthService showAuthService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private BeaconService beaconService;
 
     @Override
     public Show findOne(Long showId) throws ResourceNotFoundException {
@@ -239,6 +242,9 @@ public class ShowServiceImpl implements ShowService {
     @Override
     public void delete(Long showId) throws ResourceNotFoundException {
         Show show = findOne(showId);
+        // 先删除分配的 beacon，否则会有 locked 问题
+        beaconService.deleteAllByShowId(show.getId());
+        // 删除自己
         String folderName = show.getTitle();
         repository.delete(show.getId());
         // 删除对应的素材文件夹即可，内容就算了。。。

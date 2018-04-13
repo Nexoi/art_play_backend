@@ -93,7 +93,7 @@ public class WebPageServiceImpl implements WebPageService {
         if (page.getWechatAsync() != null && page.getWechatAsync().equals(true)) {
             return page; // 已经同步过，不再同步，如果需要强制更新同步，暂时不支持，请在其他模块实现
         }
-        // TODO 同步网页到微信公众号
+        // TODO 同步网页到微信公众号，已经在 WxAsync* 统一实现
         return null;
     }
 }

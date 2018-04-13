@@ -46,4 +46,6 @@ public interface BeaconService {
     List<Beacon> append(Long showId, List<InstallBeacon> beacons);
 
     void remove(Long showId, InstallBeacon beacon);
+
+    void deleteAllByShowId(Long showId);
 }
