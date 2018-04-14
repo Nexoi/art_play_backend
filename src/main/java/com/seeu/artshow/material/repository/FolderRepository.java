@@ -10,6 +10,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface FolderRepository extends JpaRepository<Folder, Long> {
+
+    List<Folder> findAllByShowId(@Param("showId") Long showId);
+
     List<Folder> findAllByName(@Param("name") String name);
 
     Folder findFirstByType(@Param("type") Folder.TYPE type);
@@ -20,6 +23,6 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     @Transactional
     @Modifying
-    @Query("delete from Folder f where f.name = :name")
-    void deleteWithFolderName(@Param("name") String  name);
+    @Query("delete from Folder f where f.showId = :showId")
+    void deleteWithFolderShowId(@Param("showId") Long  showId);
 }

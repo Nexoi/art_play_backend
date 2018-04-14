@@ -184,24 +184,29 @@ public class ShowServiceImpl implements ShowService {
             image.setId(null);
             show.setPosterImage(imageService.save(image));
         }
+        show = repository.save(show); // 持久化才会有 id
         // 自动添加素材文件夹
         String folderName = show.getTitle() == null ? "展览素材" : show.getTitle();
+        Long showId = show.getId();
         Folder folder1 = new Folder();
+        folder1.setShowId(showId);
         folder1.setCreateTime(now);
         folder1.setName(folderName);
         folder1.setType(Folder.TYPE.audio);
         Folder folder2 = new Folder();
+        folder2.setShowId(showId);
         folder2.setCreateTime(now);
         folder2.setName(folderName);
         folder2.setType(Folder.TYPE.video);
         Folder folder3 = new Folder();
+        folder3.setShowId(showId);
         folder3.setCreateTime(now);
         folder3.setName(folderName);
         folder3.setType(Folder.TYPE.picture);
         folderService.add(folder1);
         folderService.add(folder2);
         folderService.add(folder3);
-        return repository.save(show);
+        return show;
     }
 
     @Override
@@ -223,15 +228,15 @@ public class ShowServiceImpl implements ShowService {
         if (show.getTitle() != null) {
             if (!savedShow.getTitle().equals(show.getTitle())) {
                 // 修改文件夹名称
-                changeNameForFolder(show.getTitle());
+                changeNameForFolder(show.getId(), show.getTitle());
             }
         }
         return repository.save(savedShow);
     }
 
     // 修改文件夹名称
-    private List<Folder> changeNameForFolder(String folderName) {
-        List<Folder> folders = folderService.findAllByName(folderName);
+    private List<Folder> changeNameForFolder(Long showId, String folderName) {
+        List<Folder> folders = folderService.findAllByShowId(showId);
         if (null == folders || folders.isEmpty()) return new ArrayList<>();
         for (Folder folder : folders) {
             folder.setName(folderName);
@@ -248,7 +253,7 @@ public class ShowServiceImpl implements ShowService {
         String folderName = show.getTitle();
         repository.delete(show.getId());
         // 删除对应的素材文件夹即可，内容就算了。。。
-        folderService.deleteByName(folderName);
+        folderService.deleteByShowId(showId);
     }
 
     /**

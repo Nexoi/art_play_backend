@@ -31,6 +31,11 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
+    public List<Folder> findAllByShowId(Long showId) {
+        return repository.findAllByShowId(showId);
+    }
+
+    @Override
     public List<Folder> findAllByName(String name) {
         return repository.findAllByName(name);
     }
@@ -69,11 +74,10 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public void deleteByName(String name) {
+    public void deleteByShowId(Long showId) {
 //        repository.deleteAllByName(name);
 //        repository.flush();
-        if (null == name) return;
-        repository.deleteWithFolderName(name);
+        repository.deleteWithFolderShowId(showId);
     }
 
     private boolean isValidFileName(String fileName) {

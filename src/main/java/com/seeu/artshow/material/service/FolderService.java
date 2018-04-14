@@ -13,6 +13,8 @@ public interface FolderService {
 
     Folder findOne(Long id) throws ResourceNotFoundException;
 
+    List<Folder> findAllByShowId(Long showId);
+
     List<Folder> findAllByName(String name);
 
     List<Folder> findAllByType(Folder.TYPE type);
@@ -25,5 +27,5 @@ public interface FolderService {
 
     void delete(Long id);
 
-    void deleteByName(String name);
+    void deleteByShowId(Long showId);
 }

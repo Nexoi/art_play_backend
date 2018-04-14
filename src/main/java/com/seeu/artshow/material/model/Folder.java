@@ -20,6 +20,8 @@ public class Folder {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private Long showId;
+
     @NotNull
     private String name;
 
@@ -58,5 +60,13 @@ public class Folder {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Long getShowId() {
+        return showId;
+    }
+
+    public void setShowId(Long showId) {
+        this.showId = showId;
     }
 }
