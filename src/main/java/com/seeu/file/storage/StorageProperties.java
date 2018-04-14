@@ -11,7 +11,7 @@ public class StorageProperties {
     /**
      * Folder location for storing files
      */
-    @Value("${com.xiaoyi.storage.location}")
+    @Value("${com.seeu.storage.location}")
     private String location;
 
     public String getLocation() {

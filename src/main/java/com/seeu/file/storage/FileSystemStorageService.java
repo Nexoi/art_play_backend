@@ -98,7 +98,7 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-    @Value("${com.xiaoyi.storage.location}")
+    @Value("${com.seeu.storage.location}")
     private String fileRootPath;
 
     @Override

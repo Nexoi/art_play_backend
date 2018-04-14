@@ -14,7 +14,7 @@ import com.seeu.artshow.utils.jwt.JwtConstant;
 import com.seeu.artshow.utils.jwt.JwtUtil;
 import com.seeu.artshow.utils.jwt.PhoneCodeToken;
 import com.seeu.third.exception.SMSSendFailureException;
-import com.seeu.third.sms.SMSService;
+import com.seeu.third.qq.sms.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class UserSignInUpServiceImpl implements UserSignInUpService {
@@ -39,21 +40,17 @@ public class UserSignInUpServiceImpl implements UserSignInUpService {
     MD5Service md5Service;
     @Autowired
     private SMSService smsService;
-    @Value("${artshow.sms.regist_sendmessage}")
-    private String registMessage;
-    @Value("${artshow.sms.login_sendmessage}")
-    private String loginMessage;
     @Value("${artshow.default_headicon}")
     private String headIcon;
 
     public SignUpPhoneResult sendPhoneSignUpMessage(String phone) {
         // 此处生成 6 位验证码
-//        String code = String.valueOf(100000 + new Random().nextInt(899999));
-        String code = "123456";
+        String code = String.valueOf(100000 + new Random().nextInt(899999));
+//        String code = "123456";
         SignUpPhoneResult.SIGN_PHONE_SEND status = null;
         try {
 //            code = iSmsSV.sendSMS(phone);
-            smsService.send(phone, registMessage.replace("%code%", code));
+            smsService.sendCheckCode(phone, code);
             status = SignUpPhoneResult.SIGN_PHONE_SEND.success;
         } catch (SMSSendFailureException e) {
             code = null;
@@ -68,11 +65,12 @@ public class UserSignInUpServiceImpl implements UserSignInUpService {
 
     @Override
     public SignUpPhoneResult sendPhoneSignInMessage(String phone) {
-        String code = "123456";
+//        String code = "123456";
+        String code = String.valueOf(100000 + new Random().nextInt(899999));
         SignUpPhoneResult.SIGN_PHONE_SEND status = null;
         try {
 //            code = iSmsSV.sendSMS(phone);
-            smsService.send(phone, loginMessage.replace("%code%", code));
+            smsService.sendCheckCode(phone, code);
             status = SignUpPhoneResult.SIGN_PHONE_SEND.success;
         } catch (SMSSendFailureException e) {
             code = null;

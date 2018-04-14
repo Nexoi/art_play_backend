@@ -22,10 +22,27 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <exclusions>
+                    <!-- 作废此 json 包 -->
+                    <exclusion>
+                        <groupId>org.skyscreamer.jsonassert</groupId>
+                        <artifactId>jsonassert</artifactId>
+                    </exclusion>
+                </exclusions>
+
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
 
         <dependency>
@@ -66,19 +83,25 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-data-redis</artifactId>-->
+        <!--</dependency>-->
         <!--<dependency>-->
         <!--<groupId>org.springframework.security</groupId>-->
         <!--<artifactId>spring-security-globalconfig</artifactId>-->
@@ -143,19 +166,19 @@
 
 
         <!-- Apache Commons Email https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
-            <version>1.4</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apache.commons</groupId>-->
+        <!--<artifactId>commons-email</artifactId>-->
+        <!--<version>1.4</version>-->
+        <!--</dependency>-->
         <!-- Apache Commons Email -->
         <!-- JavaMail -->
         <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>javax.mail-api</artifactId>
-            <version>1.5.6</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>javax.mail</groupId>-->
+        <!--<artifactId>javax.mail-api</artifactId>-->
+        <!--<version>1.5.6</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jre8</artifactId>
@@ -209,41 +232,41 @@
         </dependency>
         <!--Spring restdocs End-->
         <!-- https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss -->
-        <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-            <version>2.9.2-for-import</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>com.aliyun.oss</groupId>-->
+        <!--<artifactId>aliyun-sdk-oss</artifactId>-->
+        <!--<version>2.9.2-for-import</version>-->
+        <!--</dependency>-->
         <!-- https://mvnrepository.com/artifact/cn.jpush.api/jiguang-common -->
         <!--<dependency>-->
-            <!--<groupId>cn.jpush.api</groupId>-->
-            <!--<artifactId>jiguang-common</artifactId>-->
-            <!--<version>1.0.9</version>-->
+        <!--<groupId>cn.jpush.api</groupId>-->
+        <!--<artifactId>jiguang-common</artifactId>-->
+        <!--<version>1.0.9</version>-->
         <!--</dependency>-->
         <!--&lt;!&ndash; https://mvnrepository.com/artifact/cn.jpush.api/jpush-client &ndash;&gt;-->
         <!--<dependency>-->
-            <!--<groupId>cn.jpush.api</groupId>-->
-            <!--<artifactId>jpush-client</artifactId>-->
-            <!--<version>3.3.3</version>-->
+        <!--<groupId>cn.jpush.api</groupId>-->
+        <!--<artifactId>jpush-client</artifactId>-->
+        <!--<version>3.3.3</version>-->
         <!--</dependency>-->
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.owasp/antisamy -->
-        <dependency>
-            <groupId>org.owasp</groupId>
-            <artifactId>antisamy</artifactId>
-            <version>1.4</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apache.httpcomponents</groupId>-->
+        <!--<artifactId>httpclient</artifactId>-->
+        <!--<version>4.5.4</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient &ndash;&gt;-->
+        <!--<dependency>-->
+        <!--<groupId>commons-httpclient</groupId>-->
+        <!--<artifactId>commons-httpclient</artifactId>-->
+        <!--<version>3.1</version>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.owasp/antisamy &ndash;&gt;-->
+        <!--<dependency>-->
+        <!--<groupId>org.owasp</groupId>-->
+        <!--<artifactId>antisamy</artifactId>-->
+        <!--<version>1.4</version>-->
+        <!--</dependency>-->
 
         <!-- 七牛云服务 -->
         <dependency>
@@ -254,18 +277,18 @@
 
         <!-- AliPay 引用第三方库，记得验证 -->
         <!-- https://mvnrepository.com/artifact/com.github.1991wangliang/alipay-sdk -->
-        <dependency>
-            <groupId>com.github.1991wangliang</groupId>
-            <artifactId>alipay-sdk</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>com.github.1991wangliang</groupId>-->
+        <!--<artifactId>alipay-sdk</artifactId>-->
+        <!--<version>1.0.0</version>-->
+        <!--</dependency>-->
 
 
-        <dependency>
-            <groupId>com.googlecode.log4jdbc</groupId>
-            <artifactId>log4jdbc</artifactId>
-            <version>1.2</version>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>com.googlecode.log4jdbc</groupId>-->
+        <!--<artifactId>log4jdbc</artifactId>-->
+        <!--<version>1.2</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.github.binarywang</groupId>
@@ -273,10 +296,20 @@
             <version>3.0.0</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.jsoup</groupId>-->
-            <!--<artifactId>jsoup</artifactId>-->
-            <!--<version>1.11.2</version>-->
+        <!--<groupId>org.jsoup</groupId>-->
+        <!--<artifactId>jsoup</artifactId>-->
+        <!--<version>1.11.2</version>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>com.github.qcloudsms</groupId>
+            <artifactId>sms</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20170516</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -327,7 +360,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.seeu.Application</mainClass>
                                 </transformer>
                             </transformers>
@@ -337,13 +371,13 @@
             </plugin>
         </plugins>
         <!--<resources>-->
-            <!--<material>-->
-                <!--<directory>${project.basedir}</directory>-->
-                <!--<targetPath>/src/main/resources</targetPath>-->
-                <!--<includes>-->
-                    <!--<include>**/*.properties</include>-->
-                <!--</includes>-->
-            <!--</material>-->
+        <!--<material>-->
+        <!--<directory>${project.basedir}</directory>-->
+        <!--<targetPath>/src/main/resources</targetPath>-->
+        <!--<includes>-->
+        <!--<include>**/*.properties</include>-->
+        <!--</includes>-->
+        <!--</material>-->
         <!--</resources>-->
     </build>
 
@@ -356,7 +390,6 @@
             </snapshots>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>aliyun-plugin</id>
