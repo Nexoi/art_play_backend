@@ -34,7 +34,7 @@ public class ResourceItemApi {
 //    public ResourceItem addImage(@PathVariable Long groupId, @RequestParam(required = true) Long imageId) throws ResourceNotFoundException, ActionParameterException {
 //        return resourceItemService.addImage(groupId, imageId);
 //    }
-
+    
     @PostMapping("/audio")
     @ResponseStatus(HttpStatus.CREATED)
     public ResourceItem addAudio(@PathVariable Long groupId, @RequestParam(required = true) Long audioId) throws ResourceNotFoundException, ActionParameterException {

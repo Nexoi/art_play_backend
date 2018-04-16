@@ -46,7 +46,8 @@ public class ResourceApi {
                              @PathVariable Long showId,
                              @PathVariable Long groupId,
                              @RequestParam(required = false) RecordService.VISIT_TYPE type) throws ResourceNotFoundException {
-        ResourceGroup group = resourceGroupService.findOneFilterSwitch(groupId);
+//        ResourceGroup group = resourceGroupService.findOneFilterSwitch(groupId);
+        ResourceGroup group = resourceGroupService.findOne(groupId);
         resourceGroupService.viewOnce(groupId); // 记录一次浏览量
         // 统计信息
         recordService.recordResourceGroup(groupId);
