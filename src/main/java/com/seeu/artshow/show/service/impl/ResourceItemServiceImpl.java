@@ -207,4 +207,10 @@ public class ResourceItemServiceImpl implements ResourceItemService {
         if (itemIds != null && !itemIds.isEmpty())
             repository.deleteAllByIdIn(itemIds);
     }
+
+    @Override
+    public void deleteAllByGroupId(Long groupId) {
+        if (null == groupId) return;
+        repository.delByGroupId(groupId);
+    }
 }

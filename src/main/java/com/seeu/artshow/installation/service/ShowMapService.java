@@ -21,4 +21,6 @@ public interface ShowMapService {
     ShowMap updateMap(Long mapId, Long imageId) throws ActionParameterException, ResourceNotFoundException;
 
     void delete(Long mapId);
+
+    void deleteAllByShowId(Long showId);
 }

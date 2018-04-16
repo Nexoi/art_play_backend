@@ -3,6 +3,7 @@ package com.seeu.artshow.show.service.impl;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.installation.model.ShowMap;
+import com.seeu.artshow.installation.service.ShowMapService;
 import com.seeu.artshow.material.model.Folder;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.material.service.FolderService;
@@ -10,6 +11,8 @@ import com.seeu.artshow.material.service.ImageService;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.repository.ShowRepository;
 import com.seeu.artshow.show.service.BeaconService;
+import com.seeu.artshow.show.service.ResourceGroupService;
+import com.seeu.artshow.show.service.ResourceItemService;
 import com.seeu.artshow.show.service.ShowService;
 import com.seeu.artshow.showauth.service.ShowAuthService;
 import com.seeu.artshow.userlogin.exception.NoSuchUserException;
@@ -40,6 +43,12 @@ public class ShowServiceImpl implements ShowService {
     private UserService userService;
     @Autowired
     private BeaconService beaconService;
+    @Autowired
+    private ShowMapService showMapService;
+    @Autowired
+    private ResourceGroupService resourceGroupService;
+    @Autowired
+    private ResourceItemService resourceItemService;
 
     @Override
     public Show findOne(Long showId) throws ResourceNotFoundException {
@@ -249,6 +258,8 @@ public class ShowServiceImpl implements ShowService {
         Show show = findOne(showId);
         // 先删除分配的 beacon，否则会有 locked 问题
         beaconService.deleteAllByShowId(show.getId());
+        resourceGroupService.deleteAllByShowId(showId);
+        showMapService.deleteAllByShowId(showId);
         // 删除自己
         String folderName = show.getTitle();
         repository.delete(show.getId());

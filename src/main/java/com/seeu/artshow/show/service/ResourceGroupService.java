@@ -71,6 +71,8 @@ public interface ResourceGroupService {
 
     void delete(Collection<Long> groupIds);
 
+    void deleteAllByShowId(Long showId);
+
     void viewOnce(Long groupId) throws ResourceNotFoundException;
 
     void likeOnce(Long groupId) throws ResourceNotFoundException;

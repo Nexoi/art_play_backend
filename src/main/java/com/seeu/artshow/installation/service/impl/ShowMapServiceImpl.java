@@ -75,4 +75,10 @@ public class ShowMapServiceImpl implements ShowMapService {
     public void delete(Long mapId) {
         repository.delete(mapId);
     }
+
+    @Override
+    public void deleteAllByShowId(Long showId) {
+        if (null == showId) return;
+        repository.delByShowId(showId);
+    }
 }

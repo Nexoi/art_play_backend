@@ -304,6 +304,12 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     @Override
+    public void deleteAllByShowId(Long showId) {
+        if (null == showId) return;
+        repository.delByShowId(showId);
+    }
+
+    @Override
     public void viewOnce(Long groupId) throws ResourceNotFoundException {
         ResourceGroup group = findOne(groupId);
         repository.viewItOnce(group.getId());

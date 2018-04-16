@@ -36,4 +36,6 @@ public interface ResourceItemService {
     void delete(Long itemId) throws ResourceNotFoundException;
 
     void delete(Collection<Long> itemIds);
+
+    void deleteAllByGroupId(Long groupId);
 }

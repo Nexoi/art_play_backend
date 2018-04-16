@@ -56,4 +56,9 @@ public interface ResourceGroupRepository extends JpaRepository<ResourceGroup, Lo
     void cancelLikeItOnce(@Param("groupId") Long groupId);
 
     void deleteAllByIdIn(@Param("id") Collection<Long> ids);
+
+    @Transactional
+    @Modifying
+    @Query("delete from ResourceGroup s where s.showId = :showId")
+    void delByShowId(@Param("showId") Long showId);
 }
