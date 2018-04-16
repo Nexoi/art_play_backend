@@ -82,7 +82,17 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
-    public ResourceItem addImage(Long groupId, Long imageId) throws ResourceNotFoundException {
+    public ResourceItem addImage(Long groupId, Long imageId) throws ResourceNotFoundException, ActionParameterException {
+        ResourceGroup group = resourceGroupService.findOne(groupId);
+        // 判断是否已经有音频数据
+        List<ResourceItem> items = group.getResourceItems();
+        for (ResourceItem item : items) {
+            if (null == item) continue;
+            ResourceItem.TYPE type = item.getType();
+            if (null == type) continue;
+            if (type == ResourceItem.TYPE.PICTURE)
+                throw new ActionParameterException("已存在图片资源，请勿重复添加");
+        }
         Image image = imageService.findOne(imageId);
         ResourceItem item = new ResourceItem();
         item.setResourcesGroupId(groupId);
@@ -97,7 +107,17 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
-    public ResourceItem addVideo(Long groupId, Long videoId) throws ResourceNotFoundException {
+    public ResourceItem addVideo(Long groupId, Long videoId) throws ResourceNotFoundException, ActionParameterException {
+        ResourceGroup group = resourceGroupService.findOne(groupId);
+        // 判断是否已经有音频数据
+        List<ResourceItem> items = group.getResourceItems();
+        for (ResourceItem item : items) {
+            if (null == item) continue;
+            ResourceItem.TYPE type = item.getType();
+            if (null == type) continue;
+            if (type == ResourceItem.TYPE.VIDEO)
+                throw new ActionParameterException("已存在视频资源，请勿重复添加");
+        }
         Video video = videoService.findOne(videoId);
         ResourceItem item = new ResourceItem();
         item.setResourcesGroupId(groupId);
@@ -112,8 +132,18 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
-    public ResourceItem addAudio(Long groupId, Long audioId) throws ResourceNotFoundException {
+    public ResourceItem addAudio(Long groupId, Long audioId) throws ResourceNotFoundException, ActionParameterException {
         ResourceGroup group = resourceGroupService.findOne(groupId);
+        // 判断是否已经有音频数据
+        List<ResourceItem> items = group.getResourceItems();
+        for (ResourceItem item : items) {
+            if (null == item) continue;
+            ResourceItem.TYPE type = item.getType();
+            if (null == type) continue;
+            if (type == ResourceItem.TYPE.AUDIO)
+                throw new ActionParameterException("已存在音频资源，请勿重复添加");
+        }
+        // 统计音频数量
         Long showId = group.getShowId();
         if (showId == null)
             throw new ResourceNotFoundException("show", "groupId=" + groupId);

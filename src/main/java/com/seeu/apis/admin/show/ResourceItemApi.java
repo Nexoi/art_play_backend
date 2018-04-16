@@ -1,5 +1,6 @@
 package com.seeu.apis.admin.show;
 
+import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.material.vo.WebPageVO;
@@ -27,21 +28,22 @@ public class ResourceItemApi {
         return resourceItemService.findAll(groupId);
     }
 
-    @PostMapping("/image")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResourceItem addImage(@PathVariable Long groupId, @RequestParam(required = true) Long imageId) throws ResourceNotFoundException {
-        return resourceItemService.addImage(groupId, imageId);
-    }
+//    @Deprecated
+//    @PostMapping("/image")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResourceItem addImage(@PathVariable Long groupId, @RequestParam(required = true) Long imageId) throws ResourceNotFoundException, ActionParameterException {
+//        return resourceItemService.addImage(groupId, imageId);
+//    }
 
     @PostMapping("/audio")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResourceItem addAudio(@PathVariable Long groupId, @RequestParam(required = true) Long audioId) throws ResourceNotFoundException {
+    public ResourceItem addAudio(@PathVariable Long groupId, @RequestParam(required = true) Long audioId) throws ResourceNotFoundException, ActionParameterException {
         return resourceItemService.addAudio(groupId, audioId);
     }
 
     @PostMapping("/video")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResourceItem addVideo(@PathVariable Long groupId, @RequestParam(required = true) Long videoId) throws ResourceNotFoundException {
+    public ResourceItem addVideo(@PathVariable Long groupId, @RequestParam(required = true) Long videoId) throws ResourceNotFoundException, ActionParameterException {
         return resourceItemService.addVideo(groupId, videoId);
     }
 

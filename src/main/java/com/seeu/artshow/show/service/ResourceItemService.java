@@ -1,5 +1,6 @@
 package com.seeu.artshow.show.service;
 
+import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.show.model.ResourceItem;
@@ -20,11 +21,11 @@ public interface ResourceItemService {
 
     void cancelLikeOnce(Long itemId) throws ResourceNotFoundException;
 
-    ResourceItem addImage(Long groupId, Long imageId) throws ResourceNotFoundException;
+    ResourceItem addImage(Long groupId, Long imageId) throws ResourceNotFoundException, ActionParameterException;
 
-    ResourceItem addVideo(Long groupId, Long videoId) throws ResourceNotFoundException;
+    ResourceItem addVideo(Long groupId, Long videoId) throws ResourceNotFoundException, ActionParameterException;
 
-    ResourceItem addAudio(Long groupId, Long audioId) throws ResourceNotFoundException;
+    ResourceItem addAudio(Long groupId, Long audioId) throws ResourceNotFoundException, ActionParameterException;
 
     ResourceItem addWebPage(Long groupId, String title, String author, String coverImageUrl, String introduce, String contentHtml); // webpage 的主键 id 默认与该 resourceItem 的主键保持一致
 

@@ -256,12 +256,14 @@ public class ShowServiceImpl implements ShowService {
     @Override
     public void delete(Long showId) throws ResourceNotFoundException {
         Show show = findOne(showId);
+        String folderName = show.getTitle();
         // 先删除分配的 beacon，否则会有 locked 问题
         beaconService.deleteAllByShowId(show.getId());
+        // 删除资源组（会自动删除底下的资源列表）
         resourceGroupService.deleteAllByShowId(showId);
+        // 删除地图
         showMapService.deleteAllByShowId(showId);
         // 删除自己
-        String folderName = show.getTitle();
         repository.delete(show.getId());
         // 删除对应的素材文件夹即可，内容就算了。。。
         folderService.deleteByShowId(showId);
