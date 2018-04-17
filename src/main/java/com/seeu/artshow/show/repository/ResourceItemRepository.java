@@ -40,4 +40,9 @@ public interface ResourceItemRepository extends JpaRepository<ResourceItem, Long
     @Modifying
     @Query("delete from ResourceItem s where s.resourcesGroupId = :groupId")
     void delByGroupId(@Param("groupId") Long groupId);
+
+    @Transactional
+    @Modifying
+    @Query("delete from ResourceItem s where s.resourcesGroupId in (:groupIds)")
+    void delByGroupIdIn(@Param("groupIds") Long groupIds);
 }

@@ -19,6 +19,8 @@ public interface BeaconService {
 
     Beacon findOne(Long showId, Long beaconId) throws ResourceNotFoundException;
 
+    List<Beacon> findAllWithBeaconIds(Long showId, Collection<Long> beaconIds);
+
     List<Beacon> findAll(Long showId, Collection<String> uuids);
 
     List<Beacon> findAllWithEmptyBeacons(Long showId);

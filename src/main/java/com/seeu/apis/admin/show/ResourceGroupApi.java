@@ -84,13 +84,22 @@ public class ResourceGroupApi {
         return resourceGroupService.changeName(groupId, name);
     }
 
+//    @PutMapping("/{groupId}/bind-beacons")
+//    public ResourceGroup bindBeacons(@PathVariable Long showId,
+//                                     @PathVariable Long groupId,
+//                                     @RequestParam(required = true) String[] uuids) throws ResourceNotFoundException, ActionParameterException {
+//        if (null == uuids || uuids.length == 0)
+//            return resourceGroupService.cleanBeacons(groupId); // 清空绑定信息
+//        return resourceGroupService.bindBeacons(showId, groupId, Arrays.asList(uuids));
+//    }
+
     @PutMapping("/{groupId}/bind-beacons")
     public ResourceGroup bindBeacons(@PathVariable Long showId,
                                      @PathVariable Long groupId,
-                                     @RequestParam(required = true) String[] uuids) throws ResourceNotFoundException, ActionParameterException {
-        if (null == uuids || uuids.length == 0)
+                                     @RequestParam(required = true) Long[] beaconIds) throws ResourceNotFoundException, ActionParameterException {
+        if (null == beaconIds || beaconIds.length == 0)
             return resourceGroupService.cleanBeacons(groupId); // 清空绑定信息
-        return resourceGroupService.bindBeacons(showId, groupId, Arrays.asList(uuids));
+        return resourceGroupService.bindBeaconWithBeaconIds(showId, groupId, Arrays.asList(beaconIds));
     }
 
     @PutMapping("/{groupId}/bind-ar")

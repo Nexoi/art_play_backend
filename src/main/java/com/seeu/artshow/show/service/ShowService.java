@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public interface ShowService {
 
     Show update(@Validated Show show, Image image) throws ActionParameterException, ResourceNotFoundException;
 
+    @Transactional
     void delete(Long showId) throws ResourceNotFoundException;
 
 }

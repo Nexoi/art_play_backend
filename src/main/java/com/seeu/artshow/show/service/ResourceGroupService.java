@@ -61,6 +61,8 @@ public interface ResourceGroupService {
 
     ResourceGroup bindBeacons(Long showId, Long groupId, Collection<String> uuids) throws ResourceNotFoundException, ActionParameterException;
 
+    ResourceGroup bindBeaconWithBeaconIds(Long showId, Long groupId, Collection<Long> beaconIds) throws ResourceNotFoundException, ActionParameterException;
+
     ResourceGroup cleanBeacons(Long groupId) throws ResourceNotFoundException;
 
     ResourceGroup bindAR(Long groupId, Long imageId) throws ResourceNotFoundException;

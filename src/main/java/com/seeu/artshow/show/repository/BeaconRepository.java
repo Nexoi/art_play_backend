@@ -27,6 +27,9 @@ public interface BeaconRepository extends JpaRepository<Beacon, Long> {
     // 绑定 beacon 时使用
     List<Beacon> findAllByShowIdAndBasicInfo_UuidIn(@Param("showId") Long showId, @Param("uuid") Collection<String> uuids);
 
+    // 绑定 beacon 时使用
+    List<Beacon> findAllByShowIdAndBasicInfo_IdIn(@Param("showId") Long showId, @Param("ids") Collection<Long> ids);
+
     Page<Beacon> findAllByShowId(@Param("showId") Long showId, Pageable pageable);
 
     Page<Beacon> findAllByShowIdAndResourcesGroupIdNotNull(@Param("showId") Long showId, Pageable pageable);

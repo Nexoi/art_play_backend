@@ -6,6 +6,8 @@ import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.material.repository.WebPageRepository;
 import com.seeu.artshow.material.service.WebPageService;
 import com.seeu.artshow.material.vo.WebPageVO;
+import com.seeu.artshow.show.service.ResourceItemService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,6 +19,8 @@ import java.util.List;
 public class WebPageServiceImpl implements WebPageService {
     @Resource
     private WebPageRepository repository;
+    @Autowired
+    private ResourceItemService resourceItemService;
 
     @Override
     public List<WebPage> findAll(Collection<Long> itemIds) {
@@ -73,6 +77,7 @@ public class WebPageServiceImpl implements WebPageService {
     public void viewItOnce(Long resourceItemId) throws ResourceNotFoundException {
         WebPage page = findOne(resourceItemId);
         repository.viewItOnce(page.getResourceItemId());
+        resourceItemService.viewOnce(resourceItemId);
     }
 
     @Override

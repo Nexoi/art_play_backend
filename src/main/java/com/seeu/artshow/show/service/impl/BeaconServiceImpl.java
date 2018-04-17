@@ -44,6 +44,11 @@ public class BeaconServiceImpl implements BeaconService {
     }
 
     @Override
+    public List<Beacon> findAllWithBeaconIds(Long showId, Collection<Long> beaconIds) {
+        return repository.findAllByShowIdAndBasicInfo_IdIn(showId,beaconIds);
+    }
+
+    @Override
     public List<Beacon> findAll(Long showId, Collection<String> uuids) {
         return repository.findAllByShowIdAndBasicInfo_UuidIn(showId, uuids);
     }
@@ -147,6 +152,7 @@ public class BeaconServiceImpl implements BeaconService {
     public Beacon removeBindInfo(Long showId, Long id) throws ResourceNotFoundException {
         Beacon beacon = findOne(showId, id);
         beacon.setResourcesGroupId(null);
+        beacon.setStatus(Beacon.STATUS.off); // update 2018-04-17 如果取消资源的绑定，则自动关闭
         return repository.save(beacon);
     }
 

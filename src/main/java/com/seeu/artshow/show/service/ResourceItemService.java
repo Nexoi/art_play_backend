@@ -39,4 +39,6 @@ public interface ResourceItemService {
     void delete(Collection<Long> itemIds);
 
     void deleteAllByGroupId(Long groupId);
+
+    void deleteAllByShowId(Long showId);
 }

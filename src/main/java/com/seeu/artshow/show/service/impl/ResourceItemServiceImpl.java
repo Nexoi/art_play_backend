@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ResourceItemServiceImpl implements ResourceItemService {
@@ -242,5 +243,13 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     public void deleteAllByGroupId(Long groupId) {
         if (null == groupId) return;
         repository.delByGroupId(groupId);
+    }
+
+    @Override
+    public void deleteAllByShowId(Long showId) {
+        List<ResourceGroup> groups = resourceGroupService.findAll(showId);
+        if (groups.isEmpty()) return;
+        List<Long> groupIds = groups.parallelStream().map(ResourceGroup::getId).collect(Collectors.toList());
+        repository.deleteAllByIdIn(groupIds);
     }
 }

@@ -8,6 +8,7 @@ import com.seeu.artshow.material.model.Folder;
 import com.seeu.artshow.material.model.Image;
 import com.seeu.artshow.material.service.FolderService;
 import com.seeu.artshow.material.service.ImageService;
+import com.seeu.artshow.show.model.ResourceGroup;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.repository.ShowRepository;
 import com.seeu.artshow.show.service.BeaconService;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ShowServiceImpl implements ShowService {
@@ -256,17 +258,20 @@ public class ShowServiceImpl implements ShowService {
     @Override
     public void delete(Long showId) throws ResourceNotFoundException {
         Show show = findOne(showId);
-        String folderName = show.getTitle();
-        // 先删除分配的 beacon，否则会有 locked 问题
+//        // 先删除分配的 beacon
         beaconService.deleteAllByShowId(show.getId());
+//        // 删除资源列表，关联了的，不必单独删除
+//        resourceItemService.deleteAllByShowId(showId);
         // 删除资源组（会自动删除底下的资源列表）
-        resourceGroupService.deleteAllByShowId(showId);
-        // 删除地图
-        showMapService.deleteAllByShowId(showId);
-        // 删除自己
-        repository.delete(show.getId());
+        List<ResourceGroup> groups = resourceGroupService.findAll(showId);
+        List<Long> groupIds = groups.parallelStream().map(ResourceGroup::getId).collect(Collectors.toList());
+        resourceGroupService.delete(groupIds);
+//      // 删除地图，关联了的，不必单独删除
+//        showMapService.deleteAllByShowId(showId);
         // 删除对应的素材文件夹即可，内容就算了。。。
         folderService.deleteByShowId(showId);
+        // 删除自己
+        repository.delete(show.getId());
     }
 
     /**
