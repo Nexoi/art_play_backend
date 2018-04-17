@@ -39,6 +39,8 @@ public interface BeaconService {
 
     Beacon changeStatus(Long showId, Long id) throws ResourceNotFoundException; // 改变状态（ on / off ）
 
+    List<Beacon> removeBindInfo(Collection<Long> beaconIds) throws ResourceNotFoundException;
+
     Beacon removeBindInfo(Long showId, Long id) throws ResourceNotFoundException;
 
     // adminx

@@ -45,7 +45,7 @@ public class BeaconServiceImpl implements BeaconService {
 
     @Override
     public List<Beacon> findAllWithBeaconIds(Long showId, Collection<Long> beaconIds) {
-        return repository.findAllByShowIdAndBasicInfo_IdIn(showId,beaconIds);
+        return repository.findAllByShowIdAndBasicInfo_IdIn(showId, beaconIds);
     }
 
     @Override
@@ -146,6 +146,16 @@ public class BeaconServiceImpl implements BeaconService {
         Beacon.STATUS status = beacon.getStatus();
         beacon.setStatus(Beacon.STATUS.on == status ? Beacon.STATUS.off : Beacon.STATUS.on);
         return repository.save(beacon);
+    }
+
+    @Override
+    public List<Beacon> removeBindInfo(Collection<Long> beaconIds) throws ResourceNotFoundException {
+        List<Beacon> beaconList = repository.findAll(beaconIds);
+        if (beaconList.isEmpty()) return beaconList;
+        for (Beacon beacon : beaconList) {
+            beacon.setStatus(Beacon.STATUS.off);
+        }
+        return repository.save(beaconList);
     }
 
     @Override
