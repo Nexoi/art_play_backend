@@ -14,10 +14,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,8 +82,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         Page<Beacon> page = beaconService.findAll(showId, mapId, request);
         List<Beacon> beaconList = page.getContent();
         if (beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
-        List<Long> showIds = beaconList.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
-        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAll(groupIds);
         return new PageImpl<ResourceGroup>(groups, request, page.getTotalElements());
     }
 
@@ -94,8 +91,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     public List<ResourceGroup> findAllFilterSwitch(Long showId, Long mapId) throws ResourceNotFoundException {
         List<Beacon> beacons = beaconService.findAll(showId, mapId);
         if (beacons.isEmpty()) return new ArrayList<>();
-        List<Long> showIds = beacons.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
-        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        List<Long> groupIds = beacons.parallelStream().map(Beacon::getResourcesGroupId).filter(Objects::nonNull).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAll(groupIds);
         List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
             List<Beacon> beaconList = it.getBeacons();
             if (beaconList.isEmpty()) return false;
@@ -157,6 +154,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     }
 
     // 根据 mapId 找的 必须要有 beacon 信息
+    @Deprecated
     @Override
     public Page<ResourceGroup> findAll(Long showId, Long mapId, Pageable pageable) throws ResourceNotFoundException {
         Sort sort = new Sort(Sort.Direction.DESC, "updateTime");
@@ -164,8 +162,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         Page<Beacon> page = beaconService.findAll(showId, mapId, request);
         List<Beacon> beaconList = page.getContent();
         if (beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
-        List<Long> showIds = beaconList.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
-        List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
+        List<ResourceGroup> groups = repository.findAll(groupIds);
         return new PageImpl<ResourceGroup>(groups, request, page.getTotalElements());
     }
 
@@ -174,8 +172,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     public List<ResourceGroup> findAll(Long showId, Long mapId) throws ResourceNotFoundException {
         List<Beacon> beaconList = beaconService.findAll(showId, mapId);
         if (beaconList.isEmpty()) return new ArrayList<>();
-        List<Long> showIds = beaconList.parallelStream().map(Beacon::getShowId).collect(Collectors.toList());
-        return repository.findAllByShowIdIn(showIds);
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).filter(Objects::nonNull).collect(Collectors.toList());
+        return repository.findAll(groupIds);
     }
 
     @Override
