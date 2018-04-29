@@ -275,21 +275,6 @@
             <version>7.2.6</version>
         </dependency>
 
-        <!-- AliPay 引用第三方库，记得验证 -->
-        <!-- https://mvnrepository.com/artifact/com.github.1991wangliang/alipay-sdk -->
-        <!--<dependency>-->
-        <!--<groupId>com.github.1991wangliang</groupId>-->
-        <!--<artifactId>alipay-sdk</artifactId>-->
-        <!--<version>1.0.0</version>-->
-        <!--</dependency>-->
-
-
-        <!--<dependency>-->
-        <!--<groupId>com.googlecode.log4jdbc</groupId>-->
-        <!--<artifactId>log4jdbc</artifactId>-->
-        <!--<version>1.2</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-mp</artifactId>
@@ -309,6 +294,17 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20170516</version>
+        </dependency>
+        <!-- qrcode -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.3.2</version>
         </dependency>
     </dependencies>
 
