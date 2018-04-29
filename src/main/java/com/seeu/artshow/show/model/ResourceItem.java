@@ -1,5 +1,6 @@
 package com.seeu.artshow.show.model;
 
+import com.seeu.artshow.material.model.WebPage;
 import io.swagger.annotations.ApiParam;
 
 import javax.persistence.*;
@@ -42,6 +43,9 @@ public class ResourceItem {
     private Long viewTimes;
 
     private Long likeTimes;
+
+    @Transient
+    private WebPage webPage;
 
     public Long getId() {
         return id;
@@ -105,5 +109,13 @@ public class ResourceItem {
 
     public void setLikeTimes(Long likeTimes) {
         this.likeTimes = likeTimes;
+    }
+
+    public WebPage getWebPage() {
+        return webPage;
+    }
+
+    public void setWebPage(WebPage webPage) {
+        this.webPage = webPage;
     }
 }

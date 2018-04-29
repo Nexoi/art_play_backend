@@ -9,6 +9,9 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ResourceItemService {
+
+    List<ResourceItem> findAllWebItemByShowId(Long showId);
+
     List<ResourceItem> findAll(Long groupId);
 
     List<ResourceItem> findAll(Collection<Long> groupIds);
@@ -27,7 +30,7 @@ public interface ResourceItemService {
 
     ResourceItem addAudio(Long groupId, Long audioId) throws ResourceNotFoundException, ActionParameterException;
 
-    ResourceItem addWebPage(Long groupId, String title, String author, String coverImageUrl, String introduce, String contentHtml); // webpage 的主键 id 默认与该 resourceItem 的主键保持一致
+    ResourceItem addWebPage(Long groupId, String title, String author, String link, String coverImageUrl, String introduce, String contentHtml); // webpage 的主键 id 默认与该 resourceItem 的主键保持一致
 
     // 只改 resourceItem 名称，不改对应的素材名称（包括网页、视频、音频、图片）
     ResourceItem changeName(Long itemId, String name) throws ResourceNotFoundException;

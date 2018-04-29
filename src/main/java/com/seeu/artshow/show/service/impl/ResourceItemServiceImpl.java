@@ -21,9 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,8 +46,38 @@ public class ResourceItemServiceImpl implements ResourceItemService {
 
 
     @Override
+    public List<ResourceItem> findAllWebItemByShowId(Long showId) {
+        List<ResourceGroup> groups = resourceGroupService.findAll(showId);
+        if (groups.isEmpty()) return new ArrayList<>();
+        List<Long> groupIds = groups.parallelStream().map(ResourceGroup::getId).filter(Objects::nonNull).collect(Collectors.toList());
+        List<ResourceItem> items = findAll(groupIds);
+        if (items.isEmpty()) return new ArrayList<>();
+
+        return items.parallelStream().filter(it -> {
+            ResourceItem.TYPE type = it.getType();
+            return null != type && type == ResourceItem.TYPE.WEB;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     public List<ResourceItem> findAll(Long groupId) {
-        return repository.findAllByResourcesGroupId(groupId);
+        List<ResourceItem> items = repository.findAllByResourcesGroupId(groupId);
+        if (items.isEmpty()) return new ArrayList<>();
+        for (ResourceItem item : items) {
+            ResourceItem.TYPE type = item.getType();
+            if (type != null && type == ResourceItem.TYPE.WEB) {
+                try {
+                    WebPage page = getWebPage(item.getId());
+                    page.setMediaId(null);
+                    page.setWechatAsync(null);
+                    page.setContentHtml(null);
+                    item.setWebPage(page);
+                } catch (ResourceNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return items;
     }
 
     @Override
@@ -163,7 +191,7 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
-    public ResourceItem addWebPage(Long groupId, String title, String author, String coverImageUrl, String introduce, String contentHtml) {
+    public ResourceItem addWebPage(Long groupId, String title, String author, String link, String coverImageUrl, String introduce, String contentHtml) {
         // 先持久化 resourceItem，生成 id
         ResourceItem item = new ResourceItem();
         item.setResourcesGroupId(groupId);
@@ -183,6 +211,7 @@ public class ResourceItemServiceImpl implements ResourceItemService {
         webPage.setResourceItemId(item.getId());
         webPage.setTitle(title);
         webPage.setAuthor(author);
+        webPage.setLink(link);
         webPage.setIntroduce(introduce);
         webPage.setCoverImageUrl(coverImageUrl);
         webPage.setContentHtml(contentHtml);

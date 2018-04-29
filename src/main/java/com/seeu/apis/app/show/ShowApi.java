@@ -89,9 +89,15 @@ public class ShowApi {
 //        return resourceGroupService.findAllFilterSwitch(showId, new PageRequest(page, size));
 //    }
 
+    @ApiOperation("查看某一个展览下的所有资源组【全部】（不论 Beacon 是否开启）")
+    @GetMapping("/{showId}/resources/entire")
+    public List<ResourceGroup> getAllGroup(@PathVariable Long showId) {
+        return resourceGroupService.findAll(showId);
+    }
+
     @ApiOperation("查看某一个展览下的所有资源组【全部】")
     @GetMapping("/{showId}/resources/all")
-    public List<ResourceGroup> getAllGroup(@PathVariable Long showId) {
+    public List<ResourceGroup> getAllGroupFilter(@PathVariable Long showId) {
         return resourceGroupService.findAllFilterSwitch(showId);
     }
 

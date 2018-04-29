@@ -28,6 +28,9 @@ public class WebPage {
 
     private String author;
 
+    @Column(name = "author_link")
+    private String link;
+
     @Column(length = 1024)
     private String introduce;
 
@@ -147,5 +150,13 @@ public class WebPage {
 
     public void setArtUrl(String artUrl) {
         this.artUrl = artUrl;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }

@@ -59,6 +59,7 @@ public class WebPageServiceImpl implements WebPageService {
 //            throw new ActionParameterException("webpage resourcesItemId 不能为空");
         WebPage page = findOne(itemId);
         if (webPage.getAuthor() != null) page.setAuthor(webPage.getAuthor());
+        if (webPage.getLink() != null) page.setLink(webPage.getLink());
         if (webPage.getIntroduce() != null) page.setIntroduce(webPage.getIntroduce());
         if (webPage.getContentHtml() != null) page.setContentHtml(webPage.getContentHtml());
         if (webPage.getCoverImageUrl() != null) page.setCoverImageUrl(webPage.getCoverImageUrl());

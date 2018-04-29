@@ -34,7 +34,7 @@ public class ResourceItemApi {
 //    public ResourceItem addImage(@PathVariable Long groupId, @RequestParam(required = true) Long imageId) throws ResourceNotFoundException, ActionParameterException {
 //        return resourceItemService.addImage(groupId, imageId);
 //    }
-    
+
     @PostMapping("/audio")
     @ResponseStatus(HttpStatus.CREATED)
     public ResourceItem addAudio(@PathVariable Long groupId, @RequestParam(required = true) Long audioId) throws ResourceNotFoundException, ActionParameterException {
@@ -51,7 +51,7 @@ public class ResourceItemApi {
     @ResponseStatus(HttpStatus.CREATED)
     public ResourceItem addWebPage(@PathVariable Long groupId,
                                    @RequestBody WebPageVO vo) throws ResourceNotFoundException {
-        return resourceItemService.addWebPage(groupId, vo.getTitle(), vo.getAuthor(), vo.getCoverImageUrl(), vo.getIntroduce(), vo.getContentHtml());
+        return resourceItemService.addWebPage(groupId, vo.getTitle(), vo.getAuthor(), vo.getLink(), vo.getCoverImageUrl(), vo.getIntroduce(), vo.getContentHtml());
     }
 
     @GetMapping("/web/{itemId}")

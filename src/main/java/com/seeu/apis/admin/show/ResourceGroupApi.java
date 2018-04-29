@@ -6,7 +6,9 @@ import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.show.model.ResourceGroup;
+import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.service.ResourceGroupService;
+import com.seeu.artshow.show.service.ResourceItemService;
 import com.seeu.core.R;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 资源组
@@ -31,6 +34,8 @@ public class ResourceGroupApi {
 
     @Autowired
     private ResourceGroupService resourceGroupService;
+    @Autowired
+    private ResourceItemService resourceItemService;
     @Autowired
     private ArService arService;
 
@@ -47,6 +52,17 @@ public class ResourceGroupApi {
                                             @RequestParam(defaultValue = "10") Integer size) {
         // 做法和 /list 一致
         return resourceGroupService.findAll(showId, new PageRequest(page, size));
+    }
+
+    @GetMapping("/list/by-qrcode/all")
+    public List<ResourceGroup> listByQRCodeAll(@PathVariable Long showId) {
+        // 做法和 /list 一致
+        return resourceGroupService.findAll(showId);
+    }
+
+    @GetMapping("/list/by-webcode/all")
+    public List<ResourceItem> listWebItemAll(@PathVariable Long showId) {
+        return resourceItemService.findAllWebItemByShowId(showId);
     }
 
     @GetMapping("/list/by-beacon") // TODO update 17:20 04-05
