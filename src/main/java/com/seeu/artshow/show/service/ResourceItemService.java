@@ -16,6 +16,8 @@ public interface ResourceItemService {
 
     List<ResourceItem> findAll(Collection<Long> groupIds);
 
+    List<ResourceItem> findAllByItemIds(Collection<Long> itemIds);
+
     ResourceItem findOne(Long itemId) throws ResourceNotFoundException;
 
     void viewOnce(Long itemId) throws ResourceNotFoundException;

@@ -191,7 +191,8 @@ public final class QRCode {
         Graphics2D g2 = roundRect.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(Color.WHITE);
-        g2.fillRoundRect(0, 0, roundRectWidth, roundRectHeight, 27, 27);
+//        g2.fillRoundRect(0, 0, roundRectWidth, roundRectHeight, 27, 27);
+        g2.fillRoundRect(0, 0, roundRectWidth, roundRectHeight, 0, 0);
         g2.setComposite(AlphaComposite.SrcAtop);
         g2.drawImage(appendImage, 0, 0, roundRectWidth, roundRectHeight, null);
         g2.dispose();

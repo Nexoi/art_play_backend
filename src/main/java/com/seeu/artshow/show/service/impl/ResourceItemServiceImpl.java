@@ -86,6 +86,12 @@ public class ResourceItemServiceImpl implements ResourceItemService {
     }
 
     @Override
+    public List<ResourceItem> findAllByItemIds(Collection<Long> itemIds) {
+        List<Long> itemId_s = itemIds.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
+        return repository.findAll(itemId_s);
+    }
+
+    @Override
     public ResourceItem findOne(Long itemId) throws ResourceNotFoundException {
         ResourceItem item = repository.findOne(itemId);
         if (item == null) throw new ResourceNotFoundException("resource_item", "id: " + itemId);

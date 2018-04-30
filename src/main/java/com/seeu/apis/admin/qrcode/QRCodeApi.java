@@ -23,8 +23,7 @@ public class QRCodeApi {
 
     @Autowired
     private QRCodeService qrCodeService;
-
-
+    
     @GetMapping
     public void equals(String title, String content, HttpServletResponse response) throws IOException {
         BufferedImage image = qrCodeService.genCodeImage(title,content);
