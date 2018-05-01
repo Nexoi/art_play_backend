@@ -5,6 +5,7 @@ import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.utils.QRCodeService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +20,7 @@ import java.util.Arrays;
 @Api(tags = "QRCode", description = "+")
 @RestController("adminQRCodeApi")
 @RequestMapping("/api/admin/v1/qrcode")
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN')")
 public class QRCodeApi {
 
     @Autowired
