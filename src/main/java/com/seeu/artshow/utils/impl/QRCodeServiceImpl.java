@@ -42,7 +42,8 @@ public class QRCodeServiceImpl implements QRCodeService {
         ZipOutputStream zos = new ZipOutputStream(bos);
         for (ResourceGroup group : groups) {
             String name = group.getName();
-            String url = host + "/api/v1/show/resources/" + group.getId() + "?type=QRCODE";
+            Long showId = group.getShowId() == null ? 0 : group.getShowId();
+            String url = host + "/api/v1/show/" + showId + "/resources/" + group.getId() + "?type=QRCODE";
             File file = genCodeImageFile(name, url);
             // 创建Zip条目
             ZipEntry entry = new ZipEntry(file.getName());
@@ -150,7 +151,8 @@ public class QRCodeServiceImpl implements QRCodeService {
     public BufferedImage getResourceGroup(Long groupId) throws ResourceNotFoundException, IOException {
         ResourceGroup group = resourceGroupService.findOne(groupId);
         String name = group.getName();
-        String url = host + "/api/v1/show/resources/" + group.getId() + "?type=QRCODE";
+        Long showId = group.getShowId() == null ? 0 : group.getShowId();
+        String url = host + "/api/v1/show/" + showId + "/resources/" + group.getId() + "?type=QRCODE";
         return genCodeImage(name, url);
     }
 
