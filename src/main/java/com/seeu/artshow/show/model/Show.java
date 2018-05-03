@@ -49,6 +49,9 @@ public class Show {
     @OrderBy("floor")
     private List<ShowMap> maps;
 
+    @Transient
+    private Boolean mapShow;
+
     public Long getId() {
         return id;
     }
@@ -143,5 +146,13 @@ public class Show {
 
     public void setAudioNum(Integer audioNum) {
         this.audioNum = audioNum;
+    }
+
+    public Boolean getMapShow() {
+        return !this.getMaps().isEmpty();
+    }
+
+    public void setMapShow(Boolean mapShow) {
+        this.mapShow = !this.getMaps().isEmpty();
     }
 }

@@ -67,7 +67,7 @@ public class QRCodeServiceImpl implements QRCodeService {
     @Override
     public InputStream genZipFile4WebItems(Collection<Long> itemIds) throws ActionParameterException, IOException {
         List<Long> itemId_s = itemIds.parallelStream().filter(Objects::nonNull).collect(Collectors.toList());
-        List<ResourceItem> items = resourceItemService.findAll(itemId_s);
+        List<ResourceItem> items = resourceItemService.findAllByItemIds(itemId_s);
         if (items.isEmpty()) throw new ActionParameterException("找不到相关网页，无法下载对应二维码");
         File zip = File.createTempFile("webpage", ".zip");
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(zip));

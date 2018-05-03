@@ -50,14 +50,15 @@ public class ShowApi {
     // 将创建展览的管理员加入权限清单
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Show add(String title,
+    public Show add(@AuthenticationPrincipal User user,
+                    String title,
                     @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
                     @DateTimeFormat(pattern = "yyyy-MM-dd") Date endTime,
                     String introduceText,
                     Integer imageHeight,
                     Integer imageWidth,
                     String imageUrl,
-                    String imageThumbUrl) throws ResourceNotFoundException, ActionParameterException {
+                    String imageThumbUrl) throws ResourceNotFoundException, ActionParameterException, NoSuchUserException {
         Show show = new Show();
         show.setTitle(title);
         show.setStartTime(startTime);
@@ -69,7 +70,7 @@ public class ShowApi {
         image.setThumbUrl(imageThumbUrl);
         image.setWidth(imageWidth);
         image.setHeight(imageHeight);
-        return showService.add(show, image);
+        return showService.add(user.getUid(), show, image);
     }
 
     @PutMapping("/{showId}")

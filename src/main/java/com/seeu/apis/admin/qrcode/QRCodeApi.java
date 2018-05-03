@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,9 +40,8 @@ public class QRCodeApi {
         writeFile(response, is, "application/zip;charset=utf-8", "qrcode_webpages.zip");
     }
 
-
     @GetMapping("/resources/{groupId}")
-    public void getResGroup(HttpServletResponse response, Long groupId) throws ResourceNotFoundException, IOException {
+    public void getResGroup(HttpServletResponse response, @PathVariable Long groupId) throws ResourceNotFoundException, IOException {
         BufferedImage image = qrCodeService.getResourceGroup(groupId);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(image, "jpg", os);
@@ -50,7 +50,7 @@ public class QRCodeApi {
     }
 
     @GetMapping("/webitems/{itemId}")
-    public void getWebItem(HttpServletResponse response, Long itemId) throws ResourceNotFoundException, IOException {
+    public void getWebItem(HttpServletResponse response, @PathVariable Long itemId) throws ResourceNotFoundException, IOException {
         BufferedImage image = qrCodeService.getWebItem(itemId);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(image, "jpg", os);

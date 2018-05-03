@@ -71,7 +71,7 @@ public class ShowApi {
     @ApiOperation("查看某一个展览的地图信息")
     @GetMapping("/{showId}/maps")
     public List<ShowMap> getMaps(@AuthenticationPrincipal User user,
-                        @PathVariable Long showId) throws ResourceNotFoundException {
+                                 @PathVariable Long showId) throws ResourceNotFoundException {
         Show show = showService.findOne(showId);
         showService.viewOnce(showId); // 记录一次浏览量
         if (user != null) // 记录足迹

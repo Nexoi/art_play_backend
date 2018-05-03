@@ -179,7 +179,7 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public Show add(Show show, Image image) throws ActionParameterException {
+    public Show add(Long uid, Show show, Image image) throws ActionParameterException, NoSuchUserException, ResourceNotFoundException {
         if (show == null) throw new ActionParameterException("参数不能为空");
         Date now = new Date();
         show.setId(null);
@@ -217,6 +217,11 @@ public class ShowServiceImpl implements ShowService {
         folderService.add(folder1);
         folderService.add(folder2);
         folderService.add(folder3);
+        // 添加权限
+        List<Show> authShows = showAuthService.listAllShowForAdmin(uid);
+        authShows.add(show); // add this show for current admin
+        List<Long> authIds = authShows.parallelStream().map(Show::getId).collect(Collectors.toList());
+        showAuthService.updateShowAuthForAdmin(uid, authIds);
         return show;
     }
 
