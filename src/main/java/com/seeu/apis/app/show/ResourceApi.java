@@ -56,7 +56,7 @@ public class ResourceApi {
         }
         if (user != null) // 记录足迹
             footPrintShowService.setFootPrint(user.getUid(), showService.findOne(showId));
-        return group;
+        return resourceGroupService.fillAllWebItemId(group); // append webpages info
     }
 
     @ApiOperation(value = "！通过 Beacon UUID 查找某一资源组内容（31 位 UUID，含分隔符）", notes = "具体内容请参见 Model 栏：ResourceGroup")
@@ -70,7 +70,7 @@ public class ResourceApi {
         }
         if (user != null) // 记录足迹
             footPrintShowService.setFootPrint(user.getUid(), showService.findOne(showId));
-        return groups;
+        return resourceGroupService.fillAllWebItemIdsByGroup(groups); // append webpages info
     }
 
     @ApiOperation(value = "查看某一资源组包含的资源信息（可包含：视频、音频、图片、网页）", notes = "具体内容请参见 Model 栏：ResourceItem")
@@ -80,7 +80,8 @@ public class ResourceApi {
                                         @PathVariable Long groupId) throws ResourceNotFoundException {
         if (user != null) // 记录足迹
             footPrintShowService.setFootPrint(user.getUid(), showService.findOne(showId));
-        return resourceItemService.findAll(groupId);
+        List<ResourceItem> items = resourceItemService.findAll(groupId);
+        return resourceGroupService.fillAllWebItemIdsByItem(items); // append webpages info
     }
 
     @ApiOperation(value = "查看某一资源组下的某一条资源信息（可能是：视频、音频、图片、网页）", notes = "具体内容请参见 Model 栏：ResourceItem")
@@ -90,7 +91,7 @@ public class ResourceApi {
         resourceItemService.viewOnce(itemId); // 记录一次浏览量
         // 统计信息
         recordService.recordResource(itemId);
-        return item;
+        return resourceGroupService.fillAllWebItemId(item); // append webpages info
     }
 
     @ApiOperation("点赞该资源")

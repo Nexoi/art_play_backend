@@ -4,9 +4,12 @@ import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.footprint.model.FootPrintShow;
 import com.seeu.artshow.footprint.service.FootPrintShowService;
 import com.seeu.artshow.installation.model.ShowMap;
+import com.seeu.artshow.material.model.WebPage;
+import com.seeu.artshow.material.service.WebPageService;
 import com.seeu.artshow.record.service.RecordService;
 import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.show.model.ResourceGroup;
+import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.model.Show;
 import com.seeu.artshow.show.service.ResourceGroupService;
 import com.seeu.artshow.show.service.ShowService;
@@ -20,7 +23,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "展览信息", description = "展览列表／资源组信息")
 @RestController
@@ -34,6 +40,8 @@ public class ShowApi {
     private FootPrintShowService footPrintShowService;
     @Autowired
     private RecordService recordService;
+    @Autowired
+    private WebPageService webPageService;
 
 
     @ApiOperation("封面展览列表（默认10条）")
@@ -92,13 +100,15 @@ public class ShowApi {
     @ApiOperation("查看某一个展览下的所有资源组【全部】（不论 Beacon 是否开启）")
     @GetMapping("/{showId}/resources/entire")
     public List<ResourceGroup> getAllGroup(@PathVariable Long showId) {
-        return resourceGroupService.findAll(showId);
+        List<ResourceGroup> groups = resourceGroupService.findAll(showId);
+        return fillAllWebItemIds(groups);
     }
 
     @ApiOperation("查看某一个展览下的所有资源组【全部】")
     @GetMapping("/{showId}/resources/all")
     public List<ResourceGroup> getAllGroupFilter(@PathVariable Long showId) {
-        return resourceGroupService.findAllFilterSwitch(showId);
+        List<ResourceGroup> groups = resourceGroupService.findAllFilterSwitch(showId);
+        return fillAllWebItemIds(groups);
     }
 
 
@@ -113,7 +123,8 @@ public class ShowApi {
     @ApiOperation("查看某一个展览下的所有绑定了 Beacon 的资源组【全部】")
     @GetMapping("/{showId}/resources-beacon/all")
     public List<ResourceGroup> getAllBeacons(@PathVariable Long showId) {
-        return resourceGroupService.findAllByBeaconFilterSwitch(showId);
+        List<ResourceGroup> groups = resourceGroupService.findAllByBeaconFilterSwitch(showId);
+        return fillAllWebItemIds(groups);
     }
 
 
@@ -130,7 +141,12 @@ public class ShowApi {
     @GetMapping("/{showId}/{mapId}/resources/all")
     public List<ResourceGroup> getAllGroupByMap(@PathVariable Long showId,
                                                 @PathVariable Long mapId) throws ResourceNotFoundException {
-        return resourceGroupService.findAllFilterSwitch(showId, mapId);
+        List<ResourceGroup> groups = resourceGroupService.findAllFilterSwitch(showId, mapId);
+        return fillAllWebItemIds(groups);
+    }
+
+    private List<ResourceGroup> fillAllWebItemIds(List<ResourceGroup> groups) {
+        return resourceGroupService.fillAllWebItemIdsByGroup(groups);
     }
 
     @ApiOperation("点赞该展览")

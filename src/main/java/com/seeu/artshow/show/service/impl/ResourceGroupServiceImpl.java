@@ -3,9 +3,12 @@ package com.seeu.artshow.show.service.impl;
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
 import com.seeu.artshow.material.model.Image;
+import com.seeu.artshow.material.model.WebPage;
 import com.seeu.artshow.material.service.ImageService;
+import com.seeu.artshow.material.service.WebPageService;
 import com.seeu.artshow.show.model.Beacon;
 import com.seeu.artshow.show.model.ResourceGroup;
+import com.seeu.artshow.show.model.ResourceItem;
 import com.seeu.artshow.show.repository.ResourceGroupRepository;
 import com.seeu.artshow.show.service.BeaconService;
 import com.seeu.artshow.show.service.ResourceGroupService;
@@ -25,6 +28,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     private BeaconService beaconService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private WebPageService webPageService;
 
     @Override
     public Page<ResourceGroup> findAllFilterSwitch(Long showId, Pageable pageable) {
@@ -38,9 +43,9 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     public List<ResourceGroup> findAllFilterSwitch(Long showId) {
         // TODO 已经过滤
         List<ResourceGroup> groups = repository.findAllByShowId(showId);
-        List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
+        List<ResourceGroup> groupList = groups.parallelStream().filter(Objects::nonNull).filter(it -> {
             List<Beacon> beaconList = it.getBeacons();
-            if (beaconList.isEmpty()) return true;
+            if (beaconList == null || beaconList.isEmpty()) return true;
             for (Beacon beacon : beaconList) {
                 boolean flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
                 if (flag) return true;
@@ -53,9 +58,9 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     @Override
     public List<ResourceGroup> findAllByBeaconFilterSwitch(Long showId) {
         List<ResourceGroup> groups = repository.findAllByShowIdAndBeaconsNotNull(showId);
-        List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
+        List<ResourceGroup> groupList = groups.parallelStream().filter(Objects::nonNull).filter(it -> {
             List<Beacon> beaconList = it.getBeacons();
-            if (beaconList.isEmpty()) return false;
+            if (beaconList == null || beaconList.isEmpty()) return false;
             for (Beacon beacon : beaconList) {
                 boolean flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
                 if (flag) return true;
@@ -81,7 +86,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<Beacon> page = beaconService.findAll(showId, mapId, request);
         List<Beacon> beaconList = page.getContent();
-        if (beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
+        if (beaconList == null || beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
         List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
         List<ResourceGroup> groups = repository.findAll(groupIds);
         return new PageImpl<ResourceGroup>(groups, request, page.getTotalElements());
@@ -91,11 +96,11 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     public List<ResourceGroup> findAllFilterSwitch(Long showId, Long mapId) throws ResourceNotFoundException {
         List<Beacon> beacons = beaconService.findAll(showId, mapId);
         if (beacons.isEmpty()) return new ArrayList<>();
-        List<Long> groupIds = beacons.parallelStream().map(Beacon::getResourcesGroupId).filter(Objects::nonNull).collect(Collectors.toList());
+        List<Long> groupIds = beacons.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
         List<ResourceGroup> groups = repository.findAll(groupIds);
-        List<ResourceGroup> groupList = groups.parallelStream().filter(it -> {
+        List<ResourceGroup> groupList = groups.parallelStream().filter(Objects::nonNull).filter(it -> {
             List<Beacon> beaconList = it.getBeacons();
-            if (beaconList.isEmpty()) return false;
+            if (beaconList == null || beaconList.isEmpty()) return false;
             for (Beacon beacon : beaconList) {
                 boolean flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
                 if (flag) return true;
@@ -111,7 +116,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         if (group == null) throw new ResourceNotFoundException("resources_group", "id: " + groupId);
         List<Beacon> beaconList = group.getBeacons();
         boolean flag = false;
-        if (!beaconList.isEmpty())
+        if (beaconList != null && !beaconList.isEmpty())
             for (Beacon beacon : beaconList) {
                 flag = (null != beacon.getStatus() && Beacon.STATUS.on == beacon.getStatus());
                 if (flag) break;
@@ -124,7 +129,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     public List<ResourceGroup> findAllByBeaconUUIDFilterSwitch(Long showId, String uuid) throws ResourceNotFoundException, ActionParameterException {
         List<Beacon> beacons = beaconService.findOne(showId, uuid);
         if (beacons.isEmpty()) throw new ActionParameterException("该 beacon 未绑定任何资源组信息");
-        List<Long> showIds = beacons.parallelStream().filter(it -> (null != it.getStatus() && Beacon.STATUS.on == it.getStatus())).map(Beacon::getShowId).collect(Collectors.toList());
+        List<Long> showIds = beacons.parallelStream().filter(it -> (null != it.getStatus() && Beacon.STATUS.on == it.getStatus())).map(Beacon::getShowId).filter(Objects::nonNull).collect(Collectors.toList());
         List<ResourceGroup> groups = repository.findAllByShowIdIn(showIds);
         return groups;
     }
@@ -161,7 +166,7 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         PageRequest request = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<Beacon> page = beaconService.findAll(showId, mapId, request);
         List<Beacon> beaconList = page.getContent();
-        if (beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
+        if (beaconList == null || beaconList.isEmpty()) return new PageImpl<ResourceGroup>(new ArrayList<>());
         List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
         List<ResourceGroup> groups = repository.findAll(groupIds);
         return new PageImpl<ResourceGroup>(groups, request, page.getTotalElements());
@@ -171,8 +176,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
     @Override
     public List<ResourceGroup> findAll(Long showId, Long mapId) throws ResourceNotFoundException {
         List<Beacon> beaconList = beaconService.findAll(showId, mapId);
-        if (beaconList.isEmpty()) return new ArrayList<>();
-        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).filter(Objects::nonNull).collect(Collectors.toList());
+        if (beaconList == null || beaconList.isEmpty()) return new ArrayList<>();
+        List<Long> groupIds = beaconList.parallelStream().map(Beacon::getResourcesGroupId).collect(Collectors.toList());
         return repository.findAll(groupIds);
     }
 
@@ -307,6 +312,99 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
         group.setArBindTime(null);
         group.setAr(null);
         return repository.save(group);
+    }
+
+    @Override
+    public List<ResourceGroup> fillAllWebItemIdsByGroup(List<ResourceGroup> groups) {
+        if (groups.isEmpty()) return new ArrayList<>();
+        List<Long> ids = new ArrayList<>();
+        Map<Long, ResourceItem> map = new HashMap<>();
+        for (ResourceGroup group : groups) {
+            if (group == null) continue;
+            List<ResourceItem> items = group.getResourceItems();
+            if (items == null) continue;
+            if (items.isEmpty()) continue;
+            for (ResourceItem item : items) {
+                ResourceItem.TYPE type = item.getType();
+                if (type == null || type != ResourceItem.TYPE.WEB) continue;
+                ids.add(item.getId());
+                map.put(item.getId(), item);
+            }
+        }
+        List<WebPage> webPages = webPageService.findAll(ids);
+        for (WebPage page : webPages) {
+            ResourceItem item = map.get(page.getResourceItemId());
+            if (item == null) continue;
+            page.setMediaId(null);
+            page.setWechatAsync(null);
+            page.setContentHtml(null);
+            item.setWebPage(page);
+        }
+        return groups;
+    }
+
+    @Override
+    public ResourceGroup fillAllWebItemId(ResourceGroup group) {
+        if (group == null) return null;
+        List<Long> ids = new ArrayList<>();
+        Map<Long, ResourceItem> map = new HashMap<>();
+        List<ResourceItem> items = group.getResourceItems();
+        if (items == null || items.isEmpty()) return group;
+        for (ResourceItem item : items) {
+            ResourceItem.TYPE type = item.getType();
+            if (type == null || type != ResourceItem.TYPE.WEB) continue;
+            ids.add(item.getId());
+            map.put(item.getId(), item);
+        }
+        List<WebPage> webPages = webPageService.findAll(ids);
+        for (WebPage page : webPages) {
+            ResourceItem item = map.get(page.getResourceItemId());
+            if (item == null) continue;
+            page.setMediaId(null);
+            page.setWechatAsync(null);
+            page.setContentHtml(null);
+            item.setWebPage(page);
+        }
+        return group;
+    }
+
+    @Override
+    public List<ResourceItem> fillAllWebItemIdsByItem(List<ResourceItem> items) {
+        if (items == null || items.isEmpty()) return new ArrayList<>();
+        List<Long> ids = new ArrayList<>();
+        Map<Long, ResourceItem> map = new HashMap<>();
+        for (ResourceItem item : items) {
+            ResourceItem.TYPE type = item.getType();
+            if (type == null || type != ResourceItem.TYPE.WEB) continue;
+            ids.add(item.getId());
+            map.put(item.getId(), item);
+        }
+        List<WebPage> webPages = webPageService.findAll(ids);
+        for (WebPage page : webPages) {
+            ResourceItem item = map.get(page.getResourceItemId());
+            if (item == null) continue;
+            page.setMediaId(null);
+            page.setWechatAsync(null);
+            page.setContentHtml(null);
+            item.setWebPage(page);
+        }
+        return items;
+    }
+
+    @Override
+    public ResourceItem fillAllWebItemId(ResourceItem item) {
+        if (item == null) return null;
+        Long id = item.getId();
+        try {
+            WebPage page = webPageService.findOne(id);
+            page.setMediaId(null);
+            page.setWechatAsync(null);
+            page.setContentHtml(null);
+            item.setWebPage(page);
+        } catch (ResourceNotFoundException e) {
+            // do nothing
+        }
+        return item;
     }
 
     @Override

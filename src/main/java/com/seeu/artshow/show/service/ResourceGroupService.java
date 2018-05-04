@@ -2,9 +2,8 @@ package com.seeu.artshow.show.service;
 
 import com.seeu.artshow.exception.ActionParameterException;
 import com.seeu.artshow.exception.ResourceNotFoundException;
-import com.seeu.artshow.show.model.Beacon;
-import com.seeu.artshow.installation.model.ShowMap;
 import com.seeu.artshow.show.model.ResourceGroup;
+import com.seeu.artshow.show.model.ResourceItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -68,6 +67,15 @@ public interface ResourceGroupService {
     ResourceGroup bindAR(Long groupId, Long imageId) throws ResourceNotFoundException;
 
     ResourceGroup cancelBindAR(Long groupId) throws ResourceNotFoundException;
+
+    // 添加网页摘要信息到自己的 item 内，仅供 app 使用，会比较消耗性能
+    List<ResourceGroup> fillAllWebItemIdsByGroup(List<ResourceGroup> groups);
+
+    ResourceGroup fillAllWebItemId(ResourceGroup group);
+
+    List<ResourceItem> fillAllWebItemIdsByItem(List<ResourceItem> items);
+
+    ResourceItem fillAllWebItemId(ResourceItem item);
 
     void delete(Long groupId);
 
