@@ -286,6 +286,7 @@ public class ShowServiceImpl implements ShowService {
         List<ShowMap> maps = show.getMaps();
         if (maps == null) {
             maps = new ArrayList<>();
+            show.setMaps(maps);
         }
         if (!maps.isEmpty()) {
             List<String> hallNames = new ArrayList<>();
