@@ -61,7 +61,7 @@ import java.util.Map;
  * "path": "/api/admin/v2/product-category/1"
  * }
  */
-@ControllerAdvice(basePackages = {"com.seeu"})
+@ControllerAdvice(basePackages = {"com.seeu.apis"})
 public class ArtShowResponseBodyAdvice implements ResponseBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Class aClass) {
@@ -83,9 +83,8 @@ public class ArtShowResponseBodyAdvice implements ResponseBodyAdvice {
     public Object beforeBodyWrite(Object returnValue, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
 //        if (methodParameter.getMethod().getName().equals("error")) // 这是 error 错误页面，建议以后单独再封装一次 error
 //            return returnValue;
-//        if (mediaType==MediaType.APPLICATION_XML){
+//        if (mediaType == MediaType.TEXT_HTML) {
 //            // 不做处理
-//            serverHttpResponse.getHeaders().setContentType(MediaType.TEXT_PLAIN); // 普通文本
 //            return returnValue;
 //        }
 

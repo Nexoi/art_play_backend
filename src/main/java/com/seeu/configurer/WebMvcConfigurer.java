@@ -129,6 +129,6 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 //                    modelAndView.addObject("signed", authUser.getUsername()); // email
 //                }
             }
-        }).addPathPatterns("/api/**").excludePathPatterns("/signin", "/signin/**", "/*.xml", "/export/**");
+        }).addPathPatterns("/api/**").excludePathPatterns("/signin", "/signin/**", "/*.xml", "/export/**", "/*.jsp");
     }
 }

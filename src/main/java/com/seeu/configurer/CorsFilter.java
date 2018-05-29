@@ -34,9 +34,11 @@ public class CorsFilter implements Filter {
         response.setHeader("Vary", "Origin");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         // response.setHeader("Access-Control-Allow-Origin", "*");//解决跨域请求问题
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH, OPTION");
         response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
+        response.setHeader("Access-Control-Allow-Headers", "Origin, Access-Control-Allow-Headers, Authorization, X_Requested_With, Content-Type, Accept, token");
+
+        response.setHeader("X-Frame-Options", "SAMEORIGIN");
         chain.doFilter(req, res);
     }
 

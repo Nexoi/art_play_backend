@@ -112,7 +112,7 @@ public class WxSyncShowServiceImpl implements WxSyncShowService {
 
     private String fillContentStyle(String contentHtml) {
         return "<div>" +
-                "<style>.image-wrap{text-align:center;}</style>" +
+                "<style>.image-wrap{text-align:center;} video, audio, img{max-width: 100%}</style>" +
                 contentHtml +
                 "</div>";
     }
